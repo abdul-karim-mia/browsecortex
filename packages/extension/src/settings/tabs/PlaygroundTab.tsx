@@ -36,7 +36,7 @@ export function PlaygroundTab() {
   };
 
   return (
-    <div class="space-y-3 text-sm">
+    <div class="space-y-6 text-sm">
       <p class="text-xs text-gray-500">
         Dev-only. Runs a single tool against the current active tab. {tools.length} tools.
       </p>
@@ -75,7 +75,7 @@ export function PlaygroundTab() {
         ))}
       </div>
 
-      <button type="button" onClick={run} class="rounded bg-blue-500 px-3 py-1 text-white">
+      <button type="button" onClick={run} class="rounded bg-blue-500 px-4 py-1.5 font-medium text-white">
         ▶ Execute
       </button>
 

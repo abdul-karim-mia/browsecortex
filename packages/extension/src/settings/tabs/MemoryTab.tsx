@@ -59,20 +59,20 @@ export function MemoryTab() {
               </option>
             ))}
           </select>
-          <button type="button" onClick={add} class="rounded bg-blue-500 px-3 py-1 text-white">
+          <button type="button" onClick={add} class="rounded bg-blue-500 px-4 py-1.5 font-medium text-white">
             Add memory
           </button>
         </div>
       </div>
 
       {memories.length === 0 ? (
-        <p class="text-gray-400">No memories yet.</p>
+        <p class="text-sm text-gray-400">No memories yet.</p>
       ) : (
         <ul class="space-y-2">
           {memories.map((m) => (
             <li
               key={m.id}
-              class="flex items-start justify-between rounded border border-gray-200 px-3 py-2 dark:border-gray-700"
+              class="flex items-start justify-between gap-3 rounded border border-gray-200 px-3 py-2 dark:border-gray-700"
             >
               <div>
                 <span class="mr-2 rounded bg-gray-200 px-1 text-xs dark:bg-gray-700">{m.type}</span>

@@ -88,9 +88,9 @@ export function BackupTab() {
     setCategories((c) => ({ ...c, [k]: !c[k] }));
 
   return (
-    <div class="max-w-md space-y-6 text-sm">
-      <section class="space-y-2 rounded border border-gray-200 p-3 dark:border-gray-700">
-        <h2 class="font-semibold">Export</h2>
+    <div class="space-y-6 text-sm">
+      <section class="space-y-2 rounded border border-gray-200 p-4 dark:border-gray-700">
+        <h2 class="text-sm font-semibold">Export</h2>
         <input
           type="password"
           value={exportPwd}
@@ -104,13 +104,13 @@ export function BackupTab() {
           placeholder="Optional password hint"
           class={inputCls}
         />
-        <button type="button" onClick={doExport} class="rounded bg-blue-500 px-3 py-1 text-white">
+        <button type="button" onClick={doExport} class="rounded bg-blue-500 px-4 py-1.5 font-medium text-white">
           Export encrypted backup
         </button>
       </section>
 
-      <section class="space-y-2 rounded border border-gray-200 p-3 dark:border-gray-700">
-        <h2 class="font-semibold">Import</h2>
+      <section class="space-y-2 rounded border border-gray-200 p-4 dark:border-gray-700">
+        <h2 class="text-sm font-semibold">Import</h2>
         <input type="file" accept=".browsecortex,application/json" onChange={onFile} />
         <input
           type="password"
@@ -123,7 +123,7 @@ export function BackupTab() {
           type="button"
           onClick={doPreview}
           disabled={!importFile}
-          class="rounded border border-gray-300 px-3 py-1 disabled:opacity-50 dark:border-gray-600"
+          class="rounded border border-gray-300 px-4 py-1.5 disabled:opacity-50 dark:border-gray-600"
         >
           Decrypt &amp; preview
         </button>
@@ -156,14 +156,14 @@ export function BackupTab() {
           type="button"
           onClick={doImport}
           disabled={!importFile}
-          class="rounded bg-blue-500 px-3 py-1 text-white disabled:opacity-50"
+          class="rounded bg-blue-500 px-4 py-1.5 font-medium text-white disabled:opacity-50"
         >
           Restore
         </button>
       </section>
 
-      <section class="space-y-2 rounded border border-gray-200 p-3 dark:border-gray-700">
-        <h2 class="font-semibold">Auto-backup</h2>
+      <section class="space-y-2 rounded border border-gray-200 p-4 dark:border-gray-700">
+        <h2 class="text-sm font-semibold">Auto-backup</h2>
         <label class="flex items-center gap-2 text-xs">
           Keep a local recovery snapshot every
           <select
@@ -187,9 +187,9 @@ export function BackupTab() {
         </p>
       </section>
 
-      {status && <p class="text-xs text-gray-500">{status}</p>}
+      {status && <p class="text-sm text-gray-500">{status}</p>}
     </div>
   );
 }
 
-const inputCls = 'w-full rounded border border-gray-300 px-2 py-1 dark:border-gray-600 dark:bg-gray-800';
+const inputCls = 'w-full rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800';

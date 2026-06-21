@@ -62,11 +62,11 @@ export function McpTab() {
   };
 
   return (
-    <div class="space-y-5 text-sm">
+    <div class="space-y-6 text-sm">
       <section>
-        <h2 class="mb-2 font-semibold">Connected MCP servers</h2>
+        <h2 class="mb-2 text-sm font-semibold">Connected MCP servers</h2>
         {servers.length === 0 ? (
-          <p class="text-gray-400">No servers yet.</p>
+          <p class="text-sm text-gray-400">No servers yet.</p>
         ) : (
           <ul class="space-y-2">
             {servers.map((s) => (
@@ -104,8 +104,8 @@ export function McpTab() {
         )}
       </section>
 
-      <section class="space-y-2 rounded border border-gray-200 p-3 dark:border-gray-700">
-        <h2 class="font-semibold">Add a server</h2>
+      <section class="space-y-2 rounded border border-gray-200 p-4 dark:border-gray-700">
+        <h2 class="text-sm font-semibold">Add a server</h2>
         <input
           value={draft.name}
           onInput={(e) => setDraft({ ...draft, name: (e.target as HTMLInputElement).value })}
@@ -124,13 +124,13 @@ export function McpTab() {
           placeholder="Auth token (optional)"
           class={inputCls}
         />
-        <button type="button" onClick={addAndConnect} class="rounded bg-blue-500 px-3 py-1 text-white">
+        <button type="button" onClick={addAndConnect} class="rounded bg-blue-500 px-4 py-1.5 font-medium text-white">
           Connect &amp; Save
         </button>
-        {status && <p class="text-xs text-gray-500">{status}</p>}
+        {status && <p class="text-sm text-gray-500">{status}</p>}
       </section>
     </div>
   );
 }
 
-const inputCls = 'w-full rounded border border-gray-300 px-2 py-1 dark:border-gray-600 dark:bg-gray-800';
+const inputCls = 'w-full rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800';

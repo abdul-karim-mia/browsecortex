@@ -76,9 +76,9 @@ export function SkillsTab() {
   return (
     <div class="space-y-6 text-sm">
       <section>
-        <h2 class="mb-2 font-semibold">Installed skills</h2>
+        <h2 class="mb-2 text-sm font-semibold">Installed skills</h2>
         {installed.length === 0 ? (
-          <p class="text-gray-400">No skills installed.</p>
+          <p class="text-sm text-gray-400">No skills installed.</p>
         ) : (
           <ul class="space-y-1">
             {installed.map((s) => (
@@ -107,7 +107,7 @@ export function SkillsTab() {
       </section>
 
       <section class="space-y-2">
-        <h2 class="font-semibold">Marketplace</h2>
+        <h2 class="text-sm font-semibold">Marketplace</h2>
         <div class="flex gap-2">
           <input
             value={repo}
@@ -115,11 +115,11 @@ export function SkillsTab() {
             placeholder="Skills repo URL"
             class="flex-1 rounded border border-gray-300 px-2 py-1 text-xs dark:border-gray-600 dark:bg-gray-800"
           />
-          <button type="button" onClick={sync} class="rounded bg-blue-500 px-3 py-1 text-white">
+          <button type="button" onClick={sync} class="rounded bg-blue-500 px-4 py-1.5 font-medium text-white">
             Sync
           </button>
         </div>
-        {status && <p class="text-xs text-gray-500">{status}</p>}
+        {status && <p class="text-sm text-gray-500">{status}</p>}
         {available.length > 0 && (
           <ul class="space-y-1">
             {available.map((s) => (
@@ -148,8 +148,8 @@ export function SkillsTab() {
         )}
       </section>
 
-      <section class="space-y-2 rounded border border-gray-200 p-3 dark:border-gray-700">
-        <h2 class="font-semibold">Create a custom skill</h2>
+      <section class="space-y-2 rounded border border-gray-200 p-4 dark:border-gray-700">
+        <h2 class="text-sm font-semibold">Create a custom skill</h2>
         <input
           value={editor.name}
           onInput={(e) => setEditor({ ...editor, name: (e.target as HTMLInputElement).value })}
@@ -163,7 +163,7 @@ export function SkillsTab() {
           placeholder={'# My Skill\n\n## Instructions\n1. ...'}
           class="w-full rounded border border-gray-300 px-2 py-1 font-mono text-xs dark:border-gray-600 dark:bg-gray-800"
         />
-        <button type="button" onClick={saveCustom} class="rounded bg-blue-500 px-3 py-1 text-white">
+        <button type="button" onClick={saveCustom} class="rounded bg-blue-500 px-4 py-1.5 font-medium text-white">
           Save skill
         </button>
       </section>

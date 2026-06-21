@@ -62,9 +62,9 @@ export function ProvidersTab() {
     <div class="space-y-6 text-sm">
       {/* Existing providers */}
       <section>
-        <h2 class="mb-2 font-semibold">Your providers</h2>
+        <h2 class="mb-2 text-sm font-semibold">Your providers</h2>
         {providers.length === 0 ? (
-          <p class="text-gray-400">No providers yet. Add one below.</p>
+          <p class="text-sm text-gray-400">No providers yet. Add one below.</p>
         ) : (
           <ul class="space-y-2">
             {providers.map((p) => (
@@ -76,7 +76,7 @@ export function ProvidersTab() {
 
       {/* Add / edit */}
       <section class="space-y-3 rounded border border-gray-200 p-4 dark:border-gray-700">
-        <h2 class="font-semibold">Add a provider</h2>
+        <h2 class="text-sm font-semibold">Add a provider</h2>
 
         <label class="block">
           <span class="text-xs text-gray-500">Name</span>
@@ -156,7 +156,7 @@ export function ProvidersTab() {
           >
             Test &amp; Save
           </button>
-          {status && <span class="text-xs text-gray-500">{status}</span>}
+          {status && <span class="text-sm text-gray-500">{status}</span>}
         </div>
       </section>
     </div>

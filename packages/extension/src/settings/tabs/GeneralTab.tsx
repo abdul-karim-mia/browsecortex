@@ -18,7 +18,7 @@ export function GeneralTab() {
   };
 
   return (
-    <div class="max-w-md space-y-5 text-sm">
+    <div class="space-y-6 text-sm">
       <Field label="Agent mode">
         <select
           value={settings.agentMode}
@@ -186,15 +186,15 @@ export function GeneralTab() {
           rows={3}
           value={settings.systemPromptAdditions}
           onInput={(e) => update({ systemPromptAdditions: (e.target as HTMLTextAreaElement).value })}
-          class="w-full rounded border border-gray-300 px-2 py-1 dark:border-gray-600 dark:bg-gray-800"
-        />
-      </Field>
-    </div>
-  );
+              class="w-full rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800"
+          />
+        </Field>
+      </div>
+    );
 }
 
 const selectCls =
-  'mt-1 w-full rounded border border-gray-300 px-2 py-1 dark:border-gray-600 dark:bg-gray-800';
+  'mt-1 w-full rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800';
 
 function Field({ label, children }: { label: string; children: preact.ComponentChildren }) {
   return (

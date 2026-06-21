@@ -29,7 +29,7 @@ export function McpServerTab() {
   const copy = (text: string) => navigator.clipboard.writeText(text).catch(() => {});
 
   return (
-    <div class="space-y-5 text-sm">
+    <div class="space-y-6 text-sm">
       <label class="flex items-center gap-2">
         <input
           type="checkbox"
@@ -43,8 +43,8 @@ export function McpServerTab() {
         localhost only, token required.
       </p>
 
-      <section class="space-y-2 rounded border border-gray-200 p-3 dark:border-gray-700">
-        <h3 class="font-semibold">Setup</h3>
+      <section class="space-y-2 rounded border border-gray-200 p-4 dark:border-gray-700">
+        <h2 class="text-sm font-semibold">Setup</h2>
         <ol class="list-decimal space-y-1 pl-5 text-xs text-gray-600 dark:text-gray-300">
           <li>Install Node.js</li>
           <li class="flex items-center gap-2">
@@ -73,7 +73,7 @@ export function McpServerTab() {
       </section>
 
       <section class="space-y-2">
-        <h3 class="font-semibold">Security</h3>
+        <h2 class="text-sm font-semibold">Security</h2>
         <div class="flex items-center gap-2">
           <span class="text-xs text-gray-500">Auth token:</span>
           <code class="flex-1 truncate rounded bg-gray-100 px-2 py-1 text-xs dark:bg-gray-800">
