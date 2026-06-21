@@ -86,7 +86,7 @@ export function ModelsTab() {
   }
 
   return (
-    <div class="space-y-4 text-sm">
+    <div class="space-y-6 text-sm">
       <div class="flex items-center gap-2">
         <select
           value={providerId ?? ''}
@@ -102,15 +102,15 @@ export function ModelsTab() {
         <button
           type="button"
           onClick={refreshFromApi}
-          class="rounded bg-blue-500 px-3 py-1 text-white"
+          class="rounded bg-blue-500 px-4 py-1.5 font-medium text-white"
         >
           Refresh from API
         </button>
-        {status && <span class="text-xs text-gray-500">{status}</span>}
+        {status && <span class="text-sm text-gray-500">{status}</span>}
       </div>
 
       {models.length === 0 ? (
-        <p class="text-gray-400">No models yet — click “Refresh from API”.</p>
+        <p class="text-sm text-gray-400">No models yet — click "Refresh from API".</p>
       ) : (
         <ul class="divide-y divide-gray-200 dark:divide-gray-700">
           {models.map((m) => (

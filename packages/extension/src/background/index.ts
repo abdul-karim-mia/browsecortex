@@ -22,6 +22,7 @@ import { clearCheckpoint, getCheckpoint, saveCheckpoint } from './checkpoint';
 import { connect as connectRelay } from '@/mcp-server/relay-client';
 import { writeRecoverySnapshot } from '@/backup/backup';
 import { runMigrationSafety } from '@/db/migration';
+import { executeTool } from '@/tools/registry';
 
 // Snapshot data on version change before further use (PLAN §42).
 runMigrationSafety();
@@ -59,7 +60,6 @@ recoverCheckpoint();
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (msg?.type !== 'playground_run') return;
   (async () => {
-    const { executeTool } = await import('@/tools/registry');
     const ctx = {
       conversationId: 'playground',
       async getActiveTabId() {

@@ -38,8 +38,8 @@ export function MemoryTab() {
   };
 
   return (
-    <div class="space-y-4 text-sm">
-      <div class="space-y-2 rounded border border-gray-200 p-3 dark:border-gray-700">
+    <div class="space-y-6 text-sm">
+      <div class="space-y-2 rounded border border-gray-200 p-4 dark:border-gray-700">
         <textarea
           rows={2}
           value={content}
