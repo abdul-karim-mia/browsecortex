@@ -15,7 +15,9 @@ let context: BrowserContext;
 
 test.beforeAll(async () => {
   context = await chromium.launchPersistentContext('', {
-    headless: true,
+    // MV3 service workers don't reliably register under headless Chromium;
+    // run headed (CI provides a virtual display via xvfb-run).
+    headless: false,
     args: [`--disable-extensions-except=${distPath}`, `--load-extension=${distPath}`],
   });
 });
