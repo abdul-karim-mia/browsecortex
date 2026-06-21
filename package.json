@@ -4,6 +4,7 @@
   "private": true,
   "description": "Open source AI browser assistant — Chrome extension, bring your own AI provider, full browser control.",
   "license": "MIT",
+  "packageManager": "npm@11.8.0",
   "workspaces": [
     "packages/*"
   ],
