@@ -1,0 +1,84 @@
+{
+  "skills": [
+    {
+      "id": "web-researcher",
+      "name": "Web Researcher",
+      "path": "web-researcher.md",
+      "category": "research",
+      "author": "browsecortex",
+      "version": "1.0",
+      "tags": ["research", "analysis"],
+      "description": "Deep research on any topic with cited sources"
+    },
+    {
+      "id": "page-summarizer",
+      "name": "Page Summarizer",
+      "path": "page-summarizer.md",
+      "category": "productivity",
+      "author": "browsecortex",
+      "version": "1.0",
+      "tags": ["summary", "reading"],
+      "description": "Condense any webpage into key takeaways"
+    },
+    {
+      "id": "tab-organizer",
+      "name": "Tab Organizer",
+      "path": "tab-organizer.md",
+      "category": "productivity",
+      "author": "browsecortex",
+      "version": "1.0",
+      "tags": ["tabs", "organization"],
+      "description": "Group and organize open tabs by topic"
+    },
+    {
+      "id": "data-scraper",
+      "name": "Data Scraper",
+      "path": "data-scraper.md",
+      "category": "data",
+      "author": "browsecortex",
+      "version": "1.0",
+      "tags": ["scraping", "data"],
+      "description": "Extract structured data from tables and lists on a page"
+    },
+    {
+      "id": "link-collector",
+      "name": "Link Collector",
+      "path": "link-collector.md",
+      "category": "data",
+      "author": "browsecortex",
+      "version": "1.0",
+      "tags": ["links", "collection"],
+      "description": "Collect and categorize all links from the current page"
+    },
+    {
+      "id": "competitor-analysis",
+      "name": "Competitor Analysis",
+      "path": "competitor-analysis.md",
+      "category": "research",
+      "author": "browsecortex",
+      "version": "1.0",
+      "tags": ["research", "competitive", "analysis"],
+      "description": "Research and compare competitors in a given market"
+    },
+    {
+      "id": "session-saver",
+      "name": "Session Saver",
+      "path": "session-saver.md",
+      "category": "productivity",
+      "author": "browsecortex",
+      "version": "1.0",
+      "tags": ["sessions", "backup"],
+      "description": "Snapshot current browsing session to a workspace file"
+    },
+    {
+      "id": "browser-health-check",
+      "name": "Browser Health Check",
+      "path": "browser-health-check.md",
+      "category": "diagnostics",
+      "author": "browsecortex",
+      "version": "1.0",
+      "tags": ["diagnostics", "performance"],
+      "description": "Audit browser tabs, memory, downloads, and performance"
+    }
+  ]
+}
