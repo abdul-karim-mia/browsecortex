@@ -7,6 +7,11 @@ All notable changes to BrowseCortex are documented here. The format is based on
 ## [Unreleased]
 
 ### Added
+
+
+## [1.0.1] - 2026-06-21
+
+### Added
 - Monorepo scaffold (extension + relay) with Vite, CRXJS, Preact, Tailwind v4.
 - Streaming agent loop with parallel tool calls, iteration cap, and abort.
 - 100+ browser tools: tabs, navigation, page read/interaction, waits, windows,
@@ -24,4 +29,5 @@ All notable changes to BrowseCortex are documented here. The format is based on
   storage-quota handling, session checkpointing, and keyboard shortcuts.
 - SVG icon set and branded extension icons.
 
-[Unreleased]: https://github.com/abdul-karim-mia/browsecortex
+[Unreleased]: https://github.com/abdul-karim-mia/browsecortex/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/abdul-karim-mia/browsecortex/releases/tag/v1.0.1
