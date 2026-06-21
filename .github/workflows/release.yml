@@ -1,0 +1,130 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version bump (major, minor, patch)'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+  push:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - 'packages/*/package.json'
+      - 'CHANGELOG.md'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Get current version
+        id: current_version
+        run: |
+          echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Bump version
+        id: bump
+        run: |
+          CURRENT_VERSION="${{ steps.current_version.outputs.version }}"
+          BUMP_TYPE="${{ github.event.inputs.bump || 'patch' }}"
+
+          # Parse version
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+
+          case "$BUMP_TYPE" in
+            major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
+            minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
+            patch) PATCH=$((PATCH + 1)) ;;
+          esac
+
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "Previous version: $CURRENT_VERSION"
+          echo "New version: $NEW_VERSION"
+
+      - name: Update versions
+        run: |
+          NEW_VERSION="${{ steps.bump.outputs.version }}"
+
+          # Update root package.json
+          npm version $NEW_VERSION --no-git-tag-version
+
+          # Update relay package
+          (cd packages/relay && npm version $NEW_VERSION --no-git-tag-version)
+
+      - name: Update CHANGELOG.md
+        run: |
+          NEW_VERSION="${{ steps.bump.outputs.version }}"
+          RELEASE_DATE=$(date -u +%Y-%m-%d)
+
+          # Replace [Unreleased] with version
+          sed -i "s/## \[Unreleased\]/## [$NEW_VERSION] - $RELEASE_DATE/g" CHANGELOG.md
+
+          # Add new [Unreleased] section
+          sed -i "/^## \[$NEW_VERSION\]/i ## [Unreleased]\n\n### Added\n\n" CHANGELOG.md
+
+          # Update comparison links
+          OLD_LINK="\[Unreleased\]: https://github.com/abdul-karim-mia/browsecortex"
+          NEW_LINK="\[Unreleased\]: https://github.com/abdul-karim-mia/browsecortex/compare/v$NEW_VERSION...HEAD\n\[$NEW_VERSION\]: https://github.com/abdul-karim-mia/browsecortex/releases/tag/v$NEW_VERSION"
+          sed -i "s|$OLD_LINK|$NEW_LINK|g" CHANGELOG.md
+
+      - name: Commit changes
+        run: |
+          NEW_VERSION="${{ steps.bump.outputs.version }}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add package.json packages/*/package.json CHANGELOG.md
+          git commit -m "chore: release v$NEW_VERSION"
+          git tag "v$NEW_VERSION"
+
+      - name: Push changes
+        run: |
+          git push origin main
+          git push origin "v${{ steps.bump.outputs.version }}"
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.bump.outputs.version }}
+          release_name: Release v${{ steps.bump.outputs.version }}
+          body_path: ./CHANGELOG_RELEASE.md
+          draft: false
+          prerelease: false
+
+      - name: Publish relay to npm
+        if: success()
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          cd packages/relay
+          npm publish --access public
