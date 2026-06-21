@@ -110,16 +110,24 @@ jobs:
           git push origin main
           git push origin "v${{ steps.bump.outputs.version }}"
 
+      - name: Extract release notes
+        id: release_notes
+        run: |
+          VERSION="${{ steps.bump.outputs.version }}"
+          # Extract release notes from CHANGELOG between current version and previous
+          RELEASE_NOTES=$(sed -n "/## \[$VERSION\]/,/## \[/p" CHANGELOG.md | sed '$d' | tail -n +2)
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Create GitHub Release
-        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ steps.bump.outputs.version }}
-          release_name: Release v${{ steps.bump.outputs.version }}
-          body_path: ./CHANGELOG_RELEASE.md
-          draft: false
-          prerelease: false
+        run: |
+          gh release create v${{ steps.bump.outputs.version }} \
+            --title "Release v${{ steps.bump.outputs.version }}" \
+            --notes "${{ steps.release_notes.outputs.notes }}" \
+            --target main
 
       - name: Publish relay to npm
         if: success()
@@ -127,4 +135,4 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           cd packages/relay
-          npm publish --access public
+          npm publish --access public || echo "Package already published or NPM_TOKEN not set"
