@@ -1,0 +1,15 @@
+{
+  "app_name": "BrowseCortex",
+  "send_message": "Send",
+  "stop": "Stop",
+  "type_a_message": "Type a message...",
+  "tab_chat": "Chat",
+  "tab_tasks": "Tasks",
+  "tab_files": "Files",
+  "settings": "Settings",
+  "new_conversation": "New conversation",
+  "no_provider": "No provider configured. Open Settings to add one.",
+  "provider_saved": "Provider {{name}} saved.",
+  "onboarding_welcome": "BrowseCortex lets you control your browser with AI. Bring your own AI provider — your keys, your data.",
+  "get_started": "Get Started"
+}

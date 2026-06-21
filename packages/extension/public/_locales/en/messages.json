@@ -1,0 +1,10 @@
+{
+  "extName": {
+    "message": "BrowseCortex",
+    "description": "The name of the extension."
+  },
+  "extDescription": {
+    "message": "AI browser assistant with full browser control. Bring your own AI provider.",
+    "description": "The description of the extension."
+  }
+}

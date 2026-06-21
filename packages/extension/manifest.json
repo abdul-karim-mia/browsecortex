@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "BrowseCortex",
+  "version": "1.0.0",
+  "description": "AI browser assistant with full browser control. Bring your own AI provider.",
+  "minimum_chrome_version": "116",
+  "icons": {
+    "16": "src/assets/icons/icon-16.png",
+    "48": "src/assets/icons/icon-48.png",
+    "128": "src/assets/icons/icon-128.png"
+  },
+  "action": {
+    "default_title": "Open BrowseCortex"
+  },
+  "background": {
+    "service_worker": "src/background/index.ts",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "src/sidepanel/index.html"
+  },
+  "options_page": "src/settings/index.html",
+  "permissions": [
+    "tabs",
+    "tabGroups",
+    "scripting",
+    "storage",
+    "history",
+    "bookmarks",
+    "downloads",
+    "offscreen",
+    "sidePanel",
+    "windows",
+    "activeTab",
+    "clipboardWrite",
+    "notifications",
+    "sessions",
+    "search",
+    "readingList",
+    "alarms"
+  ],
+  "optional_permissions": ["clipboardRead", "cookies"],
+  "host_permissions": ["<all_urls>", "http://localhost/*", "http://127.0.0.1/*"],
+  "commands": {
+    "toggle-panel": {
+      "suggested_key": { "default": "Ctrl+Shift+B", "mac": "Command+Shift+B" },
+      "description": "Open or close BrowseCortex"
+    },
+    "new-conversation": {
+      "suggested_key": { "default": "Ctrl+Shift+N", "mac": "Command+Shift+N" },
+      "description": "Start a new conversation"
+    }
+  },
+  "default_locale": "en"
+}

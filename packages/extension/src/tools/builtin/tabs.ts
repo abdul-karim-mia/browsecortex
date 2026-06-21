@@ -1,0 +1,93 @@
+/**
+ * Tab management tools (PLAN §11). Native Chrome APIs in the service worker.
+ */
+import type { ToolDefinition } from '../types';
+
+const MAX_TABS = 50;
+
+export const getActiveTab: ToolDefinition = {
+  name: 'get_active_tab',
+  description: 'Get the currently active tab (id, title, URL).',
+  parameters: { type: 'object', properties: {} },
+  destructive: false,
+  timeout: 'tab',
+  async execute() {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (!tab) return { error: 'No active tab found.' };
+    return { id: tab.id, title: tab.title, url: tab.url };
+  },
+};
+
+export const getAllTabs: ToolDefinition = {
+  name: 'get_all_tabs',
+  description: 'List all open tabs across all windows (id, title, URL).',
+  parameters: { type: 'object', properties: {} },
+  destructive: false,
+  timeout: 'tab',
+  async execute() {
+    const tabs = await chrome.tabs.query({});
+    return {
+      tabs: tabs.slice(0, MAX_TABS).map((t) => ({ id: t.id, title: t.title, url: t.url })),
+    };
+  },
+};
+
+export const openTab: ToolDefinition = {
+  name: 'open_tab',
+  description: 'Open a new tab at the given URL.',
+  parameters: {
+    type: 'object',
+    properties: {
+      url: { type: 'string', description: 'The URL to open.' },
+      active: { type: 'boolean', description: 'Focus the new tab (default true).' },
+    },
+    required: ['url'],
+  },
+  destructive: false,
+  timeout: 'tab',
+  async execute(args) {
+    const tab = await chrome.tabs.create({
+      url: String(args.url),
+      active: args.active !== false,
+    });
+    return { id: tab.id, url: tab.url };
+  },
+};
+
+export const closeTab: ToolDefinition = {
+  name: 'close_tab',
+  description: 'Close a tab by its id.',
+  parameters: {
+    type: 'object',
+    properties: { tab_id: { type: 'number', description: 'The id of the tab to close.' } },
+    required: ['tab_id'],
+  },
+  destructive: true,
+  timeout: 'tab',
+  async execute(args) {
+    const id = Number(args.tab_id);
+    if (!Number.isInteger(id)) return { error: 'tab_id must be an integer.' };
+    await chrome.tabs.remove(id);
+    return { closed: id };
+  },
+};
+
+export const switchToTab: ToolDefinition = {
+  name: 'switch_to_tab',
+  description: 'Focus an existing tab by its id.',
+  parameters: {
+    type: 'object',
+    properties: { tab_id: { type: 'number' } },
+    required: ['tab_id'],
+  },
+  destructive: false,
+  timeout: 'tab',
+  async execute(args) {
+    const id = Number(args.tab_id);
+    const tab = await chrome.tabs.update(id, { active: true });
+    if (tab?.windowId !== undefined) await chrome.windows.update(tab.windowId, { focused: true });
+    return { active: id };
+  },
+};
+
+export const tabTools = [getActiveTab, getAllTabs, openTab, closeTab, switchToTab];
