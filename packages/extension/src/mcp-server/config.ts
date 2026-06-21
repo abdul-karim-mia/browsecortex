@@ -23,15 +23,16 @@ function genToken(): string {
 
 export async function getConfig(): Promise<McpServerConfig> {
   const stored = await local.get<McpServerConfig>(KEY);
-  return (
-    stored ?? {
-      enabled: false,
-      port: 7822,
-      token: genToken(),
-      toolAccess: 'safe',
-      customTools: [],
-    }
-  );
+  if (stored) return stored;
+  const created: McpServerConfig = {
+    enabled: false,
+    port: 7822,
+    token: genToken(),
+    toolAccess: 'safe',
+    customTools: [],
+  };
+  await local.set(KEY, created);
+  return created;
 }
 
 export async function setConfig(patch: Partial<McpServerConfig>): Promise<McpServerConfig> {

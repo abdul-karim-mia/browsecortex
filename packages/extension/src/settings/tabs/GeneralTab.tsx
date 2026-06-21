@@ -35,7 +35,7 @@ export function GeneralTab() {
         <input
           type="range"
           min={5}
-          max={30}
+          max={100}
           value={settings.maxToolCallLoops}
           onInput={(e) => update({ maxToolCallLoops: Number((e.target as HTMLInputElement).value) })}
           class="w-full"
