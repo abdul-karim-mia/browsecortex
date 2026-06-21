@@ -7,6 +7,9 @@ All notable changes to BrowseCortex are documented here. The format is based on
 ## [Unreleased]
 
 ### Added
+## [1.0.2] - 2026-06-21
+
+### Added
 
 
 ## [1.0.2] - 2026-06-21
