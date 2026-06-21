@@ -1,0 +1,20 @@
+# BrowseCortex Code Owners
+
+# Global codeowners - all files require review from main maintainer
+* @abdul-karim-mia
+
+# Extension-specific ownership
+packages/extension/ @abdul-karim-mia
+packages/extension/src/agent/ @abdul-karim-mia
+packages/extension/src/tools/ @abdul-karim-mia
+packages/extension/src/storage/ @abdul-karim-mia
+
+# Relay-specific ownership
+packages/relay/ @abdul-karim-mia
+
+# Documentation
+*.md @abdul-karim-mia
+docs/ @abdul-karim-mia
+
+# CI/CD
+.github/ @abdul-karim-mia
