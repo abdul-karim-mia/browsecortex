@@ -12,12 +12,6 @@ on:
           - major
           - minor
           - patch
-  push:
-    branches: [main]
-    paths:
-      - 'package.json'
-      - 'packages/*/package.json'
-      - 'CHANGELOG.md'
 
 permissions:
   contents: write
@@ -30,6 +24,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-node@v4
         with:
@@ -38,7 +33,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --no-audit
 
       - name: Build
         run: npm run build
@@ -52,7 +47,7 @@ jobs:
         id: bump
         run: |
           CURRENT_VERSION="${{ steps.current_version.outputs.version }}"
-          BUMP_TYPE="${{ github.event.inputs.bump || 'patch' }}"
+          BUMP_TYPE="${{ github.event.inputs.bump }}"
 
           # Parse version
           IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
@@ -65,7 +60,8 @@ jobs:
 
           NEW_VERSION="$MAJOR.$MINOR.$PATCH"
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-          echo "Previous version: $CURRENT_VERSION"
+          echo "Current version: $CURRENT_VERSION"
+          echo "Bump type: $BUMP_TYPE"
           echo "New version: $NEW_VERSION"
 
       - name: Update versions
@@ -76,48 +72,75 @@ jobs:
           npm version $NEW_VERSION --no-git-tag-version
 
           # Update relay package
-          (cd packages/relay && npm version $NEW_VERSION --no-git-tag-version)
+          cd packages/relay
+          npm version $NEW_VERSION --no-git-tag-version
+          cd ../..
 
       - name: Update CHANGELOG.md
         run: |
           NEW_VERSION="${{ steps.bump.outputs.version }}"
           RELEASE_DATE=$(date -u +%Y-%m-%d)
 
+          # Create sed compatible escaped string
           # Replace [Unreleased] with version
           sed -i "s/## \[Unreleased\]/## [$NEW_VERSION] - $RELEASE_DATE/g" CHANGELOG.md
 
-          # Add new [Unreleased] section
+          # Add new [Unreleased] section at the top
           sed -i "/^## \[$NEW_VERSION\]/i ## [Unreleased]\n\n### Added\n\n" CHANGELOG.md
 
-          # Update comparison links
-          OLD_LINK="\[Unreleased\]: https://github.com/abdul-karim-mia/browsecortex"
-          NEW_LINK="\[Unreleased\]: https://github.com/abdul-karim-mia/browsecortex/compare/v$NEW_VERSION...HEAD\n\[$NEW_VERSION\]: https://github.com/abdul-karim-mia/browsecortex/releases/tag/v$NEW_VERSION"
-          sed -i "s|$OLD_LINK|$NEW_LINK|g" CHANGELOG.md
+          # Update links
+          sed -i "s|\[Unreleased\]: https://github.com/abdul-karim-mia/browsecortex|\[Unreleased\]: https://github.com/abdul-karim-mia/browsecortex/compare/v$NEW_VERSION...HEAD|g" CHANGELOG.md
+          sed -i "s|https://github.com/abdul-karim-mia/browsecortex/compare/v$NEW_VERSION...HEAD$|https://github.com/abdul-karim-mia/browsecortex/compare/v$NEW_VERSION...HEAD\n\[$NEW_VERSION\]: https://github.com/abdul-karim-mia/browsecortex/releases/tag/v$NEW_VERSION|g" CHANGELOG.md
 
-      - name: Commit changes
+      - name: Verify changes
+        run: |
+          echo "=== Modified files ==="
+          git status --short
+          echo ""
+          echo "=== Version files ==="
+          head -3 package.json
+          head -3 packages/relay/package.json
+          echo ""
+          echo "=== Changelog ==="
+          head -10 CHANGELOG.md
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Commit and tag
         run: |
           NEW_VERSION="${{ steps.bump.outputs.version }}"
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Check if there are changes
+          if git diff --quiet HEAD; then
+            echo "No changes detected"
+            exit 0
+          fi
 
           git add package.json packages/*/package.json CHANGELOG.md
-          git commit -m "chore: release v$NEW_VERSION"
-          git tag "v$NEW_VERSION"
+          git commit -m "chore(release): v$NEW_VERSION"
+          git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
 
-      - name: Push changes
+          echo "Created commit and tag for v$NEW_VERSION"
+          git log -1 --oneline
+          git tag -l v$NEW_VERSION
+
+      - name: Push changes and tags
         run: |
-          git push origin main
-          git push origin "v${{ steps.bump.outputs.version }}"
+          git push origin main --force
+          git push origin "v${{ steps.bump.outputs.version }}" --force
 
       - name: Extract release notes
         id: release_notes
         run: |
           VERSION="${{ steps.bump.outputs.version }}"
           # Extract release notes from CHANGELOG between current version and previous
-          RELEASE_NOTES=$(sed -n "/## \[$VERSION\]/,/## \[/p" CHANGELOG.md | sed '$d' | tail -n +2)
+          NOTES=$(sed -n "/## \[$VERSION\]/,/^## \[/p" CHANGELOG.md | head -n -1 | tail -n +2)
           echo "notes<<EOF" >> $GITHUB_OUTPUT
-          echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
+          echo "$NOTES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
@@ -129,10 +152,15 @@ jobs:
             --notes "${{ steps.release_notes.outputs.notes }}" \
             --target main
 
-      - name: Publish relay to npm
+      - name: Publish to npm
         if: success()
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           cd packages/relay
-          npm publish --access public || echo "Package already published or NPM_TOKEN not set"
+          if [ -n "$NODE_AUTH_TOKEN" ]; then
+            npm publish --access public
+            echo "Published browsecortex-relay@${{ steps.bump.outputs.version }} to npm"
+          else
+            echo "NPM_TOKEN not set, skipping npm publish"
+          fi
