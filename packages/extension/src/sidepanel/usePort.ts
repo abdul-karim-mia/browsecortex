@@ -4,6 +4,9 @@ import { PORT_NAME, type ClientMessage, type ServerMessage } from '@/background/
 /**
  * Connects to the background 'chat' port (PLAN §23) and exposes a send fn
  * plus the streaming server messages.
+ *
+ * Automatically reconnects when the port is disconnected (e.g., MV3 service
+ * worker termination). Without this, the second message silently fails.
  */
 export function usePort(onMessage: (msg: ServerMessage) => void) {
   const portRef = useRef<chrome.runtime.Port | null>(null);
@@ -12,18 +15,41 @@ export function usePort(onMessage: (msg: ServerMessage) => void) {
   handlerRef.current = onMessage;
 
   useEffect(() => {
-    if (typeof chrome === 'undefined' || !chrome.runtime?.connect) return;
-    const port = chrome.runtime.connect({ name: PORT_NAME });
-    portRef.current = port;
-    setConnected(true);
+    let cancelled = false;
+    let port: chrome.runtime.Port | null = null;
 
-    const listener = (msg: ServerMessage) => handlerRef.current(msg);
-    port.onMessage.addListener(listener);
-    port.onDisconnect.addListener(() => setConnected(false));
+    function connect() {
+      if (typeof chrome === 'undefined' || !chrome.runtime?.connect) return;
+      try {
+        port = chrome.runtime.connect({ name: PORT_NAME });
+        portRef.current = port;
+        setConnected(true);
+
+        const listener = (msg: ServerMessage) => handlerRef.current(msg);
+        port.onMessage.addListener(listener);
+        port.onDisconnect.addListener(() => {
+          setConnected(false);
+          portRef.current = null;
+          port = null;
+          // MV3 may terminate the SW after idle; retry so future sends work.
+          if (!cancelled) setTimeout(connect, 500);
+        });
+      } catch {
+        setConnected(false);
+        portRef.current = null;
+        if (!cancelled) setTimeout(connect, 1000);
+      }
+    }
+
+    connect();
 
     return () => {
-      port.onMessage.removeListener(listener);
-      port.disconnect();
+      cancelled = true;
+      if (port) {
+        port.disconnect();
+        port = null;
+        portRef.current = null;
+      }
     };
   }, []);
 

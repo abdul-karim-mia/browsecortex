@@ -10,7 +10,7 @@ const KEY = 'installed_skills';
 
 const DEFAULT_REPO =
   (import.meta.env.VITE_SKILLS_REPO_URL as string | undefined) ??
-  'https://raw.githubusercontent.com/browsecortex/skills/main';
+  'https://raw.githubusercontent.com/abdul-karim-mia/browsecortex/main/skills';
 
 const REPO_KEY = 'skills_repo_url';
 

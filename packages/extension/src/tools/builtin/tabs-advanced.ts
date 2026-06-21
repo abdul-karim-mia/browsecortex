@@ -105,7 +105,7 @@ export const setTabZoom: ToolDefinition = {
 
 export const discardTab: ToolDefinition = {
   name: 'discard_tab',
-  description: 'Discard a tab from memory (stays in the tab strip, reloads on focus).',
+  description: 'Discard a tab from memory (stays in the tab strip, reloads on focus). Returns the new tab info in case the tab ID changes.',
   parameters: {
     type: 'object',
     properties: { tab_id: { type: 'number' } },
@@ -114,8 +114,9 @@ export const discardTab: ToolDefinition = {
   destructive: false,
   timeout: 'tab',
   async execute(args) {
-    await chrome.tabs.discard(Number(args.tab_id));
-    return { discarded: Number(args.tab_id) };
+    const tabId = Number(args.tab_id);
+    const tab = await chrome.tabs.discard(tabId);
+    return { discarded: tab.id ?? tabId, previous_id: tabId };
   },
 };
 

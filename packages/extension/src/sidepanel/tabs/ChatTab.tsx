@@ -66,6 +66,8 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
   const [contextWindow, setContextWindow] = useState<number | null>(null);
   /** Whether the trailing assistant line is still receiving tokens. */
   const openRef = useRef(false);
+  /** Tracks if a new send was issued during the 'done' storage reload (avoids race). */
+  const submittedRef = useRef(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Load the selected model's context window for the usage meter (PLAN §31).
@@ -141,9 +143,11 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
     } else if (msg.type === 'done') {
       setRunning(false);
       openRef.current = false;
+      submittedRef.current = false;
       // Reload from storage so persisted messages carry ids (enables pin/delete).
+      // Guard with submittedRef so a quick second submit doesn't get overwritten.
       Storage.messages.byConversation(conversationId).then((m) => {
-        if (m.length) setLines(messagesToLines(m));
+        if (m.length && !submittedRef.current) setLines(messagesToLines(m));
       });
     } else if (msg.type === 'error') {
       setRunning(false);
@@ -163,12 +167,17 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
   const submit = () => {
     const content = input.trim();
     if ((!content && attachments.length === 0) || running) return;
+    if (!connected) {
+      setLines((prev) => [...prev, { role: 'assistant', content: '⚠️ Not connected to background. Try closing and reopening the panel.' }]);
+      return;
+    }
     const atts = attachments;
     const displayed = atts.length ? `${content}\n📎 ${atts.map((a) => a.name).join(', ')}` : content;
     setInput('');
     setAttachments([]);
     setRunning(true);
     openRef.current = false;
+    submittedRef.current = true;
     setLines((prev) => [...prev, { role: 'user', content: displayed }]);
     send({ type: 'send', conversationId, content, attachments: atts.length ? atts : undefined });
   };

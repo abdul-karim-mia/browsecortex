@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'preact/hooks';
 import {
   fetchIndex,
-  getRepoUrl,
   install,
   listInstalled,
   saveInstalled,
-  setRepoUrl,
   uninstall,
 } from '@/skills/store';
 import type { InstalledSkill, SkillIndexEntry } from '@/skills/types';
@@ -14,29 +12,16 @@ import type { InstalledSkill, SkillIndexEntry } from '@/skills/types';
 export function SkillsTab() {
   const [installed, setInstalled] = useState<InstalledSkill[]>([]);
   const [available, setAvailable] = useState<SkillIndexEntry[]>([]);
-  const [repo, setRepo] = useState('');
   const [status, setStatus] = useState<string | null>(null);
   const [editor, setEditor] = useState({ name: '', content: '' });
 
   const refresh = () => listInstalled().then(setInstalled);
   useEffect(() => {
     refresh();
-    getRepoUrl().then(setRepo);
+    fetchIndex().then(setAvailable).catch(() => {});
   }, []);
 
   const installedIds = new Set(installed.map((s) => s.id));
-
-  const sync = async () => {
-    setStatus('Fetching skills…');
-    try {
-      await setRepoUrl(repo);
-      const index = await fetchIndex();
-      setAvailable(index);
-      setStatus(`Found ${index.length} skills.`);
-    } catch (e) {
-      setStatus(`Failed: ${e instanceof Error ? e.message : String(e)}`);
-    }
-  };
 
   const doInstall = async (entry: SkillIndexEntry) => {
     setStatus(`Installing ${entry.name}…`);
@@ -108,18 +93,6 @@ export function SkillsTab() {
 
       <section class="space-y-2">
         <h2 class="text-sm font-semibold">Marketplace</h2>
-        <div class="flex gap-2">
-          <input
-            value={repo}
-            onInput={(e) => setRepo((e.target as HTMLInputElement).value)}
-            placeholder="Skills repo URL"
-            class="flex-1 rounded border border-gray-300 px-2 py-1 text-xs dark:border-gray-600 dark:bg-gray-800"
-          />
-          <button type="button" onClick={sync} class="rounded bg-blue-500 px-4 py-1.5 font-medium text-white">
-            Sync
-          </button>
-        </div>
-        {status && <p class="text-sm text-gray-500">{status}</p>}
         {available.length > 0 && (
           <ul class="space-y-1">
             {available.map((s) => (

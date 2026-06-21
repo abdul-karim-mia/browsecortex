@@ -154,10 +154,15 @@ chrome.runtime.onConnect.addListener((port) => {
       return;
     }
 
+    // Set before any await to prevent concurrent runs from double-submit.
+    abortController = new AbortController();
+    setBadge('running');
+
     const resolved = await resolveActive();
     if ('error' in resolved) {
       send({ type: 'error', message: resolved.error });
       send({ type: 'done' });
+      abortController = null;
       return;
     }
     // Surface fallback routing to the user (PLAN §40).
@@ -165,8 +170,6 @@ chrome.runtime.onConnect.addListener((port) => {
 
     await ensureOffscreen();
     const stopKeepAlive = startKeepAlive();
-    abortController = new AbortController();
-    setBadge('running');
     const settings = await Storage.settings.get();
 
     try {
