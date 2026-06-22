@@ -9,6 +9,11 @@ All notable changes to BrowseCortex are documented here. The format is based on
 ### Added
 
 
+## [1.1.2] - 2026-06-22
+
+### Added
+
+
 ## [1.1.1] - 2026-06-22
 
 ### Added
@@ -76,7 +81,7 @@ All notable changes to BrowseCortex are documented here. The format is based on
   storage-quota handling, session checkpointing, and keyboard shortcuts.
 - SVG icon set and branded extension icons.
 
-[Unreleased]: https://github.com/abdul-karim-mia/browsecortex/compare/v1.1.1...HEAD/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/abdul-karim-mia/browsecortex/compare/v1.1.2...HEAD/compare/v1.1.1...HEAD/compare/v1.1.0...HEAD
 [1.1.0]: https://github.com/abdul-karim-mia/browsecortex/compare/v1.0.5...v1.1.0
 [1.0.5]: https://github.com/abdul-karim-mia/browsecortex/compare/v1.0.1...v1.0.5
 [1.0.1]: https://github.com/abdul-karim-mia/browsecortex/releases/tag/v1.0.1
