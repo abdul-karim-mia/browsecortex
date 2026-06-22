@@ -6,6 +6,21 @@ interface Contributor {
   contributions: number;
 }
 
+// --- INSTALL BUTTON WIRING ---
+// All "Install" CTAs default to the releases/latest page (set in index.html).
+// When the latest release exposes a packaged extension zip, we upgrade these
+// to a direct download link.
+function setInstallButtonsHref(url: string) {
+  ['nav-btn-download', 'hero-btn-download', 'footer-btn-download'].forEach((id) => {
+    const btn = document.getElementById(id);
+    if (btn instanceof HTMLAnchorElement) {
+      btn.href = url;
+      btn.target = '_blank';
+      btn.rel = 'noopener noreferrer';
+    }
+  });
+}
+
 // --- GITHUB API INTEGRATION ---
 async function fetchGithubStats() {
   const repoUrl = 'https://api.github.com/repos/abdul-karim-mia/browsecortex';
@@ -51,7 +66,7 @@ async function fetchGithubStats() {
     if (bentoIssues) bentoIssues.textContent = '0';
   }
 
-  // 2. Fetch Latest Release Tag
+  // 2. Fetch Latest Release Tag + wire install buttons to the extension zip
   try {
     const response = await fetch(releaseUrl);
     if (!response.ok) throw new Error('Release fetch rate limited');
@@ -59,7 +74,18 @@ async function fetchGithubStats() {
     if (releaseTag && data.tag_name) {
       releaseTag.textContent = data.tag_name;
     }
+
+    // Point the install buttons straight at the built extension zip if the
+    // release ships one; otherwise the static releases/latest href stays.
+    const assets: { name?: string; browser_download_url?: string }[] = Array.isArray(data.assets)
+      ? data.assets
+      : [];
+    const extensionZip = assets.find((a) => /extension.*\.zip$/i.test(a.name ?? ''));
+    if (extensionZip?.browser_download_url) {
+      setInstallButtonsHref(extensionZip.browser_download_url);
+    }
   } catch (e) {
+    console.warn('[GitHub Release] Keeping fallback install link:', e);
     if (releaseTag) releaseTag.textContent = 'v1.0.0';
   }
 

@@ -17,6 +17,12 @@ permissions:
   contents: write
   packages: write
 
+# Serialize release runs so two of them can never race on main/tags. Queue
+# rather than cancel — a release mid-push should always be allowed to finish.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -68,12 +74,13 @@ jobs:
         run: |
           NEW_VERSION="${{ steps.bump.outputs.version }}"
 
-          # Update root package.json
-          npm version $NEW_VERSION --no-git-tag-version
+          # Update root package.json (--allow-same-version keeps the step
+          # idempotent if a package is already at the target version)
+          npm version $NEW_VERSION --no-git-tag-version --allow-same-version
 
           # Update relay package
           cd packages/relay
-          npm version $NEW_VERSION --no-git-tag-version
+          npm version $NEW_VERSION --no-git-tag-version --allow-same-version
           cd ../..
 
           # Update extension package + manifest (manifest.version is what Chrome displays)
@@ -150,8 +157,10 @@ jobs:
 
       - name: Push changes and tags
         run: |
-          git push origin main --force
-          git push origin "v${{ steps.bump.outputs.version }}" --force
+          # Plain pushes (no --force): if main advanced since checkout or the
+          # tag already exists, fail loudly instead of clobbering remote history.
+          git push origin HEAD:main
+          git push origin "v${{ steps.bump.outputs.version }}"
 
       - name: Extract release notes
         id: release_notes
