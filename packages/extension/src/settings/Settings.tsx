@@ -70,6 +70,24 @@ export function Settings() {
       {tab === 'general' && <GeneralTab />}
       {tab === 'skills' && <SkillsTab />}
       {tab === 'playground' && <PlaygroundTab />}
+
+      {/* Footer / Sponsorship Section */}
+      <footer class="mt-12 border-t border-gray-200 pt-6 text-center text-xs text-gray-500 dark:border-gray-700">
+        <p class="mb-3">
+          BrowseCortex is open-source. If you enjoy using it, please consider supporting the project!
+        </p>
+        <div class="flex justify-center">
+          <a
+            href="https://paypal.me/akmia51"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center gap-1.5 rounded bg-blue-500/10 px-4 py-2 font-medium text-blue-600 hover:bg-blue-500/20 dark:text-blue-400"
+          >
+            <Icon name="sparkle" size={14} />
+            Support on PayPal
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }

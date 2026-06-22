@@ -35,6 +35,12 @@ npm run typecheck    # type checking
 
 Then load `packages/extension/dist` as an unpacked extension in `chrome://extensions` (Developer mode on).
 
+## Support the project
+
+BrowseCortex is an open-source project. If you find it useful or enjoy using it, please consider supporting development!
+
+[![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/akmia51)
+
 ## License
 
 [MIT](LICENSE)
