@@ -65,7 +65,11 @@ export function McpServerTab() {
             <code class="rounded bg-gray-100 px-1 dark:bg-gray-800">
               http://localhost:{cfg.port}/sse
             </code>
-            <button type="button" onClick={() => copy(`http://localhost:${cfg.port}/sse`)} class="text-blue-500">
+            <button
+              type="button"
+              onClick={() => copy(`http://localhost:${cfg.port}/sse`)}
+              class="text-blue-500"
+            >
               Copy
             </button>
           </li>
@@ -138,11 +142,7 @@ export function McpServerTab() {
 
       <div class="text-xs">
         Status:{' '}
-        {!cfg.enabled
-          ? '⚪ Disabled'
-          : status === 'up'
-            ? '🟢 Connected'
-            : '🔴 Relay not detected'}
+        {!cfg.enabled ? '⚪ Disabled' : status === 'up' ? '🟢 Connected' : '🔴 Relay not detected'}
       </div>
     </div>
   );

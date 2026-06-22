@@ -60,7 +60,9 @@ export const readClipboard: ToolDefinition = {
   readsExternal: true,
   timeout: 'page_interact',
   async execute(_args, ctx) {
-    const has = await chrome.permissions.contains({ permissions: ['clipboardRead'] }).catch(() => false);
+    const has = await chrome.permissions
+      .contains({ permissions: ['clipboardRead'] })
+      .catch(() => false);
     if (!has) return { error: 'Clipboard read permission not granted.' };
     const tabId = await ctx.getActiveTabId();
     const [res] = await chrome.scripting.executeScript({
@@ -181,4 +183,3 @@ export const miscTools = [
   readClipboard,
   sendNotification,
 ];
-

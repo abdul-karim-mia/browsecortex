@@ -44,7 +44,7 @@ export const searchSkills: ToolDefinition = {
 export const getSkill: ToolDefinition = {
   name: 'get_skill',
   description:
-    'Load a skill\'s full instructions by id. Optionally provide variables to ' +
+    "Load a skill's full instructions by id. Optionally provide variables to " +
     'substitute into the skill template. Then follow the instructions returned.',
   parameters: {
     type: 'object',

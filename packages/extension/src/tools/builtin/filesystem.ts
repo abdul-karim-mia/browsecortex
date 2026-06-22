@@ -19,7 +19,7 @@ function scoped(ctx: ToolContext, fn: (cid: string) => Promise<ToolResult>): Pro
 
 export const fsCreateFile: ToolDefinition = {
   name: 'fs_create_file',
-  description: 'Create a file in this conversation\'s workspace at an absolute path with content.',
+  description: "Create a file in this conversation's workspace at an absolute path with content.",
   parameters: {
     type: 'object',
     properties: { path: { type: 'string' }, content: { type: 'string' } },
@@ -36,7 +36,7 @@ export const fsCreateFile: ToolDefinition = {
 
 export const fsReadFile: ToolDefinition = {
   name: 'fs_read_file',
-  description: 'Read a file from this conversation\'s workspace.',
+  description: "Read a file from this conversation's workspace.",
   parameters: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] },
   destructive: false,
   timeout: 'file',
@@ -53,7 +53,7 @@ export const fsReadFile: ToolDefinition = {
 
 export const fsUpdateFile: ToolDefinition = {
   name: 'fs_update_file',
-  description: 'Overwrite or append to a file in this conversation\'s workspace.',
+  description: "Overwrite or append to a file in this conversation's workspace.",
   parameters: {
     type: 'object',
     properties: {
@@ -67,14 +67,19 @@ export const fsUpdateFile: ToolDefinition = {
   timeout: 'file',
   execute: (args, ctx) =>
     scoped(ctx, async (cid) => {
-      const f = await vfs.updateFile(cid, String(args.path), String(args.content), args.append === true);
+      const f = await vfs.updateFile(
+        cid,
+        String(args.path),
+        String(args.content),
+        args.append === true,
+      );
       return { updated: f.path, size: f.size };
     }),
 };
 
 export const fsDeleteFile: ToolDefinition = {
   name: 'fs_delete_file',
-  description: 'Delete a file or folder (and its contents) from this conversation\'s workspace.',
+  description: "Delete a file or folder (and its contents) from this conversation's workspace.",
   parameters: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] },
   destructive: true,
   timeout: 'file',
@@ -87,7 +92,7 @@ export const fsDeleteFile: ToolDefinition = {
 
 export const fsCreateFolder: ToolDefinition = {
   name: 'fs_create_folder',
-  description: 'Create a folder (and any missing parents) in this conversation\'s workspace.',
+  description: "Create a folder (and any missing parents) in this conversation's workspace.",
   parameters: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] },
   destructive: false,
   timeout: 'file',
@@ -100,7 +105,7 @@ export const fsCreateFolder: ToolDefinition = {
 
 export const fsList: ToolDefinition = {
   name: 'fs_list',
-  description: 'List files and folders at a path in this conversation\'s workspace.',
+  description: "List files and folders at a path in this conversation's workspace.",
   parameters: { type: 'object', properties: { path: { type: 'string' } } },
   destructive: false,
   timeout: 'file',
@@ -110,7 +115,7 @@ export const fsList: ToolDefinition = {
 
 export const fsMove: ToolDefinition = {
   name: 'fs_move',
-  description: 'Move or rename a file/folder in this conversation\'s workspace.',
+  description: "Move or rename a file/folder in this conversation's workspace.",
   parameters: {
     type: 'object',
     properties: { from: { type: 'string' }, to: { type: 'string' } },
@@ -127,7 +132,7 @@ export const fsMove: ToolDefinition = {
 
 export const fsSearch: ToolDefinition = {
   name: 'fs_search',
-  description: 'Search this conversation\'s workspace by file name or content.',
+  description: "Search this conversation's workspace by file name or content.",
   parameters: { type: 'object', properties: { query: { type: 'string' } }, required: ['query'] },
   destructive: false,
   timeout: 'file',
@@ -137,7 +142,7 @@ export const fsSearch: ToolDefinition = {
 
 export const fsExport: ToolDefinition = {
   name: 'fs_export',
-  description: 'Export a workspace file to the user\'s real Downloads folder.',
+  description: "Export a workspace file to the user's real Downloads folder.",
   parameters: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] },
   destructive: true,
   timeout: 'file',
@@ -157,7 +162,10 @@ export const fsCreateZip: ToolDefinition = {
   parameters: {
     type: 'object',
     properties: {
-      path_prefix: { type: 'string', description: 'Only include files under this path (default all).' },
+      path_prefix: {
+        type: 'string',
+        description: 'Only include files under this path (default all).',
+      },
       filename: { type: 'string' },
     },
   },

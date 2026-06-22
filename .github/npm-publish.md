@@ -24,6 +24,7 @@ npm publish --access public
 ## Automatic Publishing
 
 The Release workflow publishes `browsecortex-relay` to npm automatically when:
+
 1. A new tag `v*` is created
 2. The workflow completes successfully
 

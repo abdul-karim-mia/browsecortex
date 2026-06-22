@@ -121,7 +121,9 @@ export function AskUserWidget({ payload, onSubmit }: Props) {
                   <label key={opt} class="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={Array.isArray(answers[q.key]) && (answers[q.key] as string[]).includes(opt)}
+                      checked={
+                        Array.isArray(answers[q.key]) && (answers[q.key] as string[]).includes(opt)
+                      }
                       onChange={() => toggleMulti(q.key, opt)}
                     />
                     {opt}

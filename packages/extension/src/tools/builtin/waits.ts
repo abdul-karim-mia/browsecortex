@@ -141,7 +141,8 @@ export const waitForText: ToolDefinition = {
         const start = Date.now();
         const needle = text.toLowerCase();
         while (Date.now() - start < timeoutMs) {
-          if ((document.body?.innerText ?? '').toLowerCase().includes(needle)) return { found: true };
+          if ((document.body?.innerText ?? '').toLowerCase().includes(needle))
+            return { found: true };
           await new Promise((r) => setTimeout(r, 250));
         }
         return { found: false, note: 'Timed out.' };

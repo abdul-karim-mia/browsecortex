@@ -59,7 +59,11 @@ export function MemoryTab() {
               </option>
             ))}
           </select>
-          <button type="button" onClick={add} class="rounded bg-blue-500 px-4 py-1.5 font-medium text-white">
+          <button
+            type="button"
+            onClick={add}
+            class="rounded bg-blue-500 px-4 py-1.5 font-medium text-white"
+          >
             Add memory
           </button>
         </div>

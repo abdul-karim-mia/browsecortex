@@ -38,10 +38,7 @@ export async function remove(key: string): Promise<void> {
 
 export function onChange(listener: Listener): () => void {
   if (hasChromeStorage()) {
-    const wrapped = (
-      changes: Record<string, chrome.storage.StorageChange>,
-      areaName: string,
-    ) => {
+    const wrapped = (changes: Record<string, chrome.storage.StorageChange>, areaName: string) => {
       if (areaName === 'local') listener(changes);
     };
     chrome.storage.onChanged.addListener(wrapped);

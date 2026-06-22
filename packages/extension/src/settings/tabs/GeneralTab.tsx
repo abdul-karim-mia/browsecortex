@@ -28,7 +28,9 @@ export function GeneralTab() {
       <Field label="Agent mode">
         <select
           value={settings.agentMode}
-          onChange={(e) => update({ agentMode: (e.target as HTMLSelectElement).value as AgentMode })}
+          onChange={(e) =>
+            update({ agentMode: (e.target as HTMLSelectElement).value as AgentMode })
+          }
           class={selectCls}
         >
           <option value="full_auto">Full Auto</option>
@@ -57,7 +59,9 @@ export function GeneralTab() {
           min={5}
           max={100}
           value={settings.maxToolCallLoops}
-          onInput={(e) => update({ maxToolCallLoops: Number((e.target as HTMLInputElement).value) })}
+          onInput={(e) =>
+            update({ maxToolCallLoops: Number((e.target as HTMLInputElement).value) })
+          }
           class="w-full"
         />
       </Field>
@@ -74,7 +78,9 @@ export function GeneralTab() {
         <select
           value={String(settings.compactionThreshold)}
           onChange={(e) =>
-            update({ compactionThreshold: Number((e.target as HTMLSelectElement).value) as 0.5 | 0.7 | 0.8 })
+            update({
+              compactionThreshold: Number((e.target as HTMLSelectElement).value) as 0.5 | 0.7 | 0.8,
+            })
           }
           class={selectCls}
         >
@@ -88,7 +94,13 @@ export function GeneralTab() {
         <select
           value={String(settings.toolTimeoutMultiplier)}
           onChange={(e) =>
-            update({ toolTimeoutMultiplier: Number((e.target as HTMLSelectElement).value) as 0.5 | 1 | 2 | 3 })
+            update({
+              toolTimeoutMultiplier: Number((e.target as HTMLSelectElement).value) as
+                | 0.5
+                | 1
+                | 2
+                | 3,
+            })
           }
           class={selectCls}
         >
@@ -136,7 +148,8 @@ export function GeneralTab() {
           value={settings.visionFallbackMode}
           onChange={(e) =>
             update({
-              visionFallbackMode: (e.target as HTMLSelectElement).value as Settings['visionFallbackMode'],
+              visionFallbackMode: (e.target as HTMLSelectElement)
+                .value as Settings['visionFallbackMode'],
             })
           }
           class={selectCls}
@@ -205,12 +218,14 @@ export function GeneralTab() {
         <textarea
           rows={3}
           value={settings.systemPromptAdditions}
-          onInput={(e) => update({ systemPromptAdditions: (e.target as HTMLTextAreaElement).value })}
-              class="w-full rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800"
-          />
-        </Field>
-      </div>
-    );
+          onInput={(e) =>
+            update({ systemPromptAdditions: (e.target as HTMLTextAreaElement).value })
+          }
+          class="w-full rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800"
+        />
+      </Field>
+    </div>
+  );
 }
 
 const selectCls =

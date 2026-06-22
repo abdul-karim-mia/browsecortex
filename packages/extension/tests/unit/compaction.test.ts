@@ -22,7 +22,9 @@ describe('estimateTokens', () => {
       {
         role: 'assistant',
         content: null,
-        tool_calls: [{ id: '1', type: 'function', function: { name: 'x', arguments: 'a'.repeat(40) } }],
+        tool_calls: [
+          { id: '1', type: 'function', function: { name: 'x', arguments: 'a'.repeat(40) } },
+        ],
       },
     ];
     expect(estimateTokens(msgs)).toBeGreaterThan(0);
@@ -32,16 +34,22 @@ describe('estimateTokens', () => {
 describe('shouldCompact', () => {
   it('triggers past the threshold', () => {
     const msgs: ApiMessage[] = [{ role: 'user', content: 'a'.repeat(4000) }]; // ~1000 tokens
-    expect(shouldCompact(msgs, { ...DEFAULT_SETTINGS, compactionThreshold: 0.7 }, model)).toBe(true);
+    expect(shouldCompact(msgs, { ...DEFAULT_SETTINGS, compactionThreshold: 0.7 }, model)).toBe(
+      true,
+    );
   });
 
   it('does not trigger when disabled', () => {
     const msgs: ApiMessage[] = [{ role: 'user', content: 'a'.repeat(4000) }];
-    expect(shouldCompact(msgs, { ...DEFAULT_SETTINGS, compactionEnabled: false }, model)).toBe(false);
+    expect(shouldCompact(msgs, { ...DEFAULT_SETTINGS, compactionEnabled: false }, model)).toBe(
+      false,
+    );
   });
 
   it('does not trigger without a known context window', () => {
     const msgs: ApiMessage[] = [{ role: 'user', content: 'a'.repeat(4000) }];
-    expect(shouldCompact(msgs, DEFAULT_SETTINGS, { ...model, contextWindow: undefined })).toBe(false);
+    expect(shouldCompact(msgs, DEFAULT_SETTINGS, { ...model, contextWindow: undefined })).toBe(
+      false,
+    );
   });
 });

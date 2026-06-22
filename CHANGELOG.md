@@ -8,33 +8,30 @@ All notable changes to BrowseCortex are documented here. The format is based on
 
 ### Added
 
-
 ## [1.0.5] - 2026-06-21
 
 ### Added
-
 
 ## [1.0.4] - 2026-06-21
 
 ### Added
 
-
 ## [1.0.3] - 2026-06-21
 
 ### Added
-## [1.0.2] - 2026-06-21
-
-### Added
-
 
 ## [1.0.2] - 2026-06-21
 
 ### Added
 
+## [1.0.2] - 2026-06-21
+
+### Added
 
 ## [1.0.1] - 2026-06-21
 
 ### Added
+
 - Monorepo scaffold (extension + relay) with Vite, CRXJS, Preact, Tailwind v4.
 - Streaming agent loop with parallel tool calls, iteration cap, and abort.
 - 100+ browser tools: tabs, navigation, page read/interaction, waits, windows,

@@ -98,7 +98,8 @@ export const setTabZoom: ToolDefinition = {
   timeout: 'tab',
   async execute(args, ctx) {
     const factor = Number(args.factor);
-    if (!Number.isFinite(factor) || factor <= 0) return { error: 'factor must be a positive number.' };
+    if (!Number.isFinite(factor) || factor <= 0)
+      return { error: 'factor must be a positive number.' };
     const id = await activeId(ctx.getActiveTabId, args);
     await chrome.tabs.setZoom(id, factor);
     return { id, factor };
@@ -107,7 +108,8 @@ export const setTabZoom: ToolDefinition = {
 
 export const discardTab: ToolDefinition = {
   name: 'discard_tab',
-  description: 'Discard a tab from memory (stays in the tab strip, reloads on focus). Returns the new tab info in case the tab ID changes.',
+  description:
+    'Discard a tab from memory (stays in the tab strip, reloads on focus). Returns the new tab info in case the tab ID changes.',
   parameters: {
     type: 'object',
     properties: { tab_id: { type: 'number' } },

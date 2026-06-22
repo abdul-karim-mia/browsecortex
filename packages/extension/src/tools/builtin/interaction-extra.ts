@@ -218,10 +218,15 @@ export const getDropdownOptions: ToolDefinition = {
 
 export const pressKey: ToolDefinition = {
   name: 'press_key',
-  description: 'Dispatch a keyboard key (Enter, Tab, Escape, ArrowDown, etc.) to the focused element.',
+  description:
+    'Dispatch a keyboard key (Enter, Tab, Escape, ArrowDown, etc.) to the focused element.',
   parameters: {
     type: 'object',
-    properties: { key: { type: 'string' }, selector: { type: 'string' }, tab_id: { type: 'number' } },
+    properties: {
+      key: { type: 'string' },
+      selector: { type: 'string' },
+      tab_id: { type: 'number' },
+    },
     required: ['key'],
   },
   destructive: false,
@@ -230,7 +235,9 @@ export const pressKey: ToolDefinition = {
     return runInPage(
       await tabId(args, ctx.getActiveTabId),
       (key: string, selector: string | null) => {
-        const el = selector ? document.querySelector<HTMLElement>(selector) : document.activeElement;
+        const el = selector
+          ? document.querySelector<HTMLElement>(selector)
+          : document.activeElement;
         if (!el) return { error: 'No target element.' };
         for (const type of ['keydown', 'keypress', 'keyup']) {
           el.dispatchEvent(new KeyboardEvent(type, { key, bubbles: true }));

@@ -124,7 +124,11 @@ export function McpTab() {
           placeholder="Auth token (optional)"
           class={inputCls}
         />
-        <button type="button" onClick={addAndConnect} class="rounded bg-blue-500 px-4 py-1.5 font-medium text-white">
+        <button
+          type="button"
+          onClick={addAndConnect}
+          class="rounded bg-blue-500 px-4 py-1.5 font-medium text-white"
+        >
           Connect &amp; Save
         </button>
         {status && <p class="text-sm text-gray-500">{status}</p>}
@@ -133,4 +137,5 @@ export function McpTab() {
   );
 }
 
-const inputCls = 'w-full rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800';
+const inputCls =
+  'w-full rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800';

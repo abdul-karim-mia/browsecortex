@@ -37,6 +37,7 @@ export async function notify(event: NotifyEvent, title: string, message: string)
 // Clicking a notification opens the side panel (PLAN §39).
 chrome.notifications?.onClicked.addListener(async (id) => {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (tab?.windowId !== undefined) await chrome.sidePanel.open({ windowId: tab.windowId }).catch(() => {});
+  if (tab?.windowId !== undefined)
+    await chrome.sidePanel.open({ windowId: tab.windowId }).catch(() => {});
   chrome.notifications.clear(id);
 });

@@ -5,7 +5,13 @@
  * runs a named tool with a per-category timeout. Every execution returns a
  * structured result — tools never throw past this boundary (PLAN §11).
  */
-import { TIMEOUTS, toApiTool, type ToolContext, type ToolDefinition, type ToolResult } from './types';
+import {
+  TIMEOUTS,
+  toApiTool,
+  type ToolContext,
+  type ToolDefinition,
+  type ToolResult,
+} from './types';
 import type { ApiToolDefinition } from '@/providers/chat-types';
 import { tabTools } from './builtin/tabs';
 import { navigationTools } from './builtin/navigation';

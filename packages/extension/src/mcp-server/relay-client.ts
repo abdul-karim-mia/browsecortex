@@ -51,7 +51,7 @@ async function handleRpc(method: string, params: Record<string, unknown>): Promi
       function: {
         name: 'use_agent',
         description:
-          'Give a natural-language instruction to BrowseCortex\'s AI agent. It autonomously ' +
+          "Give a natural-language instruction to BrowseCortex's AI agent. It autonomously " +
           'plans and executes using all browser tools and returns the result.',
         parameters: {
           type: 'object',
@@ -142,7 +142,11 @@ async function attemptConnect(): Promise<void> {
       socket?.send(JSON.stringify({ type: 'rpc_result', id: msg.id, result }));
     } catch (e) {
       socket?.send(
-        JSON.stringify({ type: 'rpc_error', id: msg.id, error: e instanceof Error ? e.message : String(e) }),
+        JSON.stringify({
+          type: 'rpc_error',
+          id: msg.id,
+          error: e instanceof Error ? e.message : String(e),
+        }),
       );
     }
   };

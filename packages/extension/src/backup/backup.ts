@@ -81,7 +81,13 @@ const ALL_CATEGORIES: RestoreCategories = {
 export async function previewBackup(
   file: BackupFile,
   password: string,
-): Promise<{ conversations: number; messages: number; memories: number; tasks: number; files: number }> {
+): Promise<{
+  conversations: number;
+  messages: number;
+  memories: number;
+  tasks: number;
+  files: number;
+}> {
   const data = await decryptJson<BackupData>(file.payload, password);
   return {
     conversations: data.conversations.length,
@@ -119,7 +125,11 @@ export async function restoreBackup(
     async () => {
       const restore = async (
         enabled: boolean,
-        table: { clear(): Promise<void>; bulkPut(rows: never[]): Promise<unknown>; bulkAdd(rows: never[]): Promise<unknown> },
+        table: {
+          clear(): Promise<void>;
+          bulkPut(rows: never[]): Promise<unknown>;
+          bulkAdd(rows: never[]): Promise<unknown>;
+        },
         rows: unknown[],
       ) => {
         if (!enabled) return;

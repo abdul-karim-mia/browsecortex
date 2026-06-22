@@ -87,7 +87,8 @@ export const getComputedStyles: ToolDefinition = {
         const s = getComputedStyle(el);
         const keys = ['display', 'color', 'backgroundColor', 'fontSize', 'position', 'visibility'];
         const styles: Record<string, string> = {};
-        for (const k of keys) styles[k] = s.getPropertyValue(k.replace(/[A-Z]/g, (m) => '-' + m.toLowerCase()));
+        for (const k of keys)
+          styles[k] = s.getPropertyValue(k.replace(/[A-Z]/g, (m) => '-' + m.toLowerCase()));
         return { styles };
       },
       [String(args.selector)],
@@ -183,7 +184,11 @@ function storageTool(name: string, area: 'local' | 'session', write: boolean): T
     parameters: write
       ? {
           type: 'object',
-          properties: { key: { type: 'string' }, value: { type: 'string' }, tab_id: { type: 'number' } },
+          properties: {
+            key: { type: 'string' },
+            value: { type: 'string' },
+            tab_id: { type: 'number' },
+          },
           required: ['key', 'value'],
         }
       : { type: 'object', properties: { key: { type: 'string' }, tab_id: { type: 'number' } } },
@@ -246,8 +251,9 @@ export const getNetworkStatus: ToolDefinition = {
   destructive: false,
   timeout: 'instant',
   async execute() {
-    const conn = (navigator as unknown as { connection?: { effectiveType?: string; downlink?: number } })
-      .connection;
+    const conn = (
+      navigator as unknown as { connection?: { effectiveType?: string; downlink?: number } }
+    ).connection;
     return {
       online: navigator.onLine,
       effectiveType: conn?.effectiveType ?? null,

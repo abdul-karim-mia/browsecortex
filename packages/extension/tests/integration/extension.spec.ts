@@ -28,8 +28,7 @@ test.afterAll(async () => {
 
 test('extension loads a background service worker', async () => {
   // The MV3 service worker registers shortly after the context starts.
-  const worker =
-    context.serviceWorkers()[0] ?? (await context.waitForEvent('serviceworker'));
+  const worker = context.serviceWorkers()[0] ?? (await context.waitForEvent('serviceworker'));
   expect(worker.url()).toContain('background');
 });
 

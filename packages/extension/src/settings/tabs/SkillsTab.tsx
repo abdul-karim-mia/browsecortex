@@ -1,11 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
-import {
-  fetchIndex,
-  install,
-  listInstalled,
-  saveInstalled,
-  uninstall,
-} from '@/skills/store';
+import { fetchIndex, install, listInstalled, saveInstalled, uninstall } from '@/skills/store';
 import type { InstalledSkill, SkillIndexEntry } from '@/skills/types';
 
 /** Skills marketplace + local editor (PLAN §19). */
@@ -18,7 +12,9 @@ export function SkillsTab() {
   const refresh = () => listInstalled().then(setInstalled);
   useEffect(() => {
     refresh();
-    fetchIndex().then(setAvailable).catch(() => {});
+    fetchIndex()
+      .then(setAvailable)
+      .catch(() => {});
   }, []);
 
   const installedIds = new Set(installed.map((s) => s.id));
@@ -60,7 +56,11 @@ export function SkillsTab() {
 
   return (
     <div class="space-y-6 text-sm">
-      {status && <div class="rounded border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-800 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-200">{status}</div>}
+      {status && (
+        <div class="rounded border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-800 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-200">
+          {status}
+        </div>
+      )}
       <section>
         <h2 class="mb-2 text-sm font-semibold">Installed skills</h2>
         {installed.length === 0 ? (
@@ -133,11 +133,17 @@ export function SkillsTab() {
         <textarea
           rows={6}
           value={editor.content}
-          onInput={(e) => setEditor({ ...editor, content: (e.target as HTMLTextAreaElement).value })}
+          onInput={(e) =>
+            setEditor({ ...editor, content: (e.target as HTMLTextAreaElement).value })
+          }
           placeholder={'# My Skill\n\n## Instructions\n1. ...'}
           class="w-full rounded border border-gray-300 px-2 py-1 font-mono text-xs dark:border-gray-600 dark:bg-gray-800"
         />
-        <button type="button" onClick={saveCustom} class="rounded bg-blue-500 px-4 py-1.5 font-medium text-white">
+        <button
+          type="button"
+          onClick={saveCustom}
+          class="rounded bg-blue-500 px-4 py-1.5 font-medium text-white"
+        >
           Save skill
         </button>
       </section>

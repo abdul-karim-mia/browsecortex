@@ -809,12 +809,39 @@ body {
   flex-direction: column;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid var(--border);
+  cursor: pointer;
 }
 
 .capability-card:hover {
   border-color: var(--border-active);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.cap-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.cap-toggle-btn {
+  font-family: var(--font-sans);
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  line-height: 1;
+  transition: transform 0.25s ease, color 0.2s;
+  user-select: none;
+}
+
+.capability-card:hover .cap-toggle-btn {
+  color: var(--primary);
+}
+
+.capability-card.expanded .cap-toggle-btn {
+  transform: rotate(45deg);
+  color: var(--accent);
 }
 
 .cap-icon-wrapper {
@@ -827,7 +854,6 @@ body {
   align-items: center;
   justify-content: center;
   color: var(--accent);
-  margin-bottom: 20px;
 }
 
 .cap-title {
@@ -842,6 +868,44 @@ body {
   color: var(--text-muted);
   font-size: 0.88rem;
   line-height: 1.5;
+}
+
+/* Accodion lists */
+.cap-details {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.3s ease-out, opacity 0.25s, margin-top 0.25s;
+}
+
+.capability-card.expanded .cap-details {
+  max-height: 160px;
+  opacity: 1;
+  margin-top: 18px;
+}
+
+.cap-details-list {
+  list-style: none;
+  padding-left: 4px;
+}
+
+.cap-details-list li {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-bottom: 8px;
+  position: relative;
+  padding-left: 16px;
+}
+
+.cap-details-list li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.75rem;
 }
 
 /* --- COMPARISON TABLE --- */

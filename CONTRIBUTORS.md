@@ -6,13 +6,13 @@ BrowseCortex is an open source project and welcomes contributions from everyone.
 
 ## Contribution levels
 
-| Level | Examples |
-|-------|----------|
-| **Translations** | Adding i18n translations, low barrier to entry |
-| **Documentation** | README, guides, API docs, examples |
-| **Tools** | New browser control tools (`src/tools/builtin`) |
-| **Bug fixes** | Fixes to existing functionality |
-| **Core** | Agent loop, memory, storage — requires design review |
+| Level             | Examples                                             |
+| ----------------- | ---------------------------------------------------- |
+| **Translations**  | Adding i18n translations, low barrier to entry       |
+| **Documentation** | README, guides, API docs, examples                   |
+| **Tools**         | New browser control tools (`src/tools/builtin`)      |
+| **Bug fixes**     | Fixes to existing functionality                      |
+| **Core**          | Agent loop, memory, storage — requires design review |
 
 ## Process
 

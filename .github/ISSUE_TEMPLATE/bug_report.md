@@ -10,6 +10,7 @@ A clear and concise description of what went wrong.
 
 **To reproduce**
 Steps to reproduce the behavior:
+
 1. Go to '…'
 2. Ask the agent to '…'
 3. See error
@@ -18,6 +19,7 @@ Steps to reproduce the behavior:
 What you expected to happen.
 
 **Environment**
+
 - Chrome version:
 - BrowseCortex version:
 - AI provider / model:

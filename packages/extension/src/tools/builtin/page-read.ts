@@ -8,10 +8,7 @@ async function tabId(args: Record<string, unknown>, getActive: () => Promise<num
   return typeof args.tab_id === 'number' ? args.tab_id : getActive();
 }
 
-async function inject<T>(
-  id: number,
-  func: () => T,
-): Promise<T | { error: string }> {
+async function inject<T>(id: number, func: () => T): Promise<T | { error: string }> {
   try {
     const [res] = await chrome.scripting.executeScript({ target: { tabId: id }, func });
     return res?.result as T;
@@ -77,7 +74,11 @@ export const getPageMetadata: ToolDefinition = {
       document.querySelectorAll('meta[property], meta[name]').forEach((m) => {
         const key = m.getAttribute('property') || m.getAttribute('name');
         const val = m.getAttribute('content');
-        if (key && val && (key.startsWith('og:') || key.startsWith('twitter:') || key === 'description'))
+        if (
+          key &&
+          val &&
+          (key.startsWith('og:') || key.startsWith('twitter:') || key === 'description')
+        )
           meta[key] = val.slice(0, 300);
       });
       const jsonLd: unknown[] = [];
@@ -126,7 +127,9 @@ export const getPagePerformance: ToolDefinition = {
   timeout: 'page_read',
   async execute(args, ctx) {
     return inject(await tabId(args, ctx.getActiveTabId), () => {
-      const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+      const nav = performance.getEntriesByType('navigation')[0] as
+        | PerformanceNavigationTiming
+        | undefined;
       return {
         loadTimeMs: nav ? Math.round(nav.loadEventEnd - nav.startTime) : null,
         domNodes: document.getElementsByTagName('*').length,

@@ -20,6 +20,7 @@ BrowseCortex gives you a persistent AI chat assistant with autonomous browser co
 ```
 packages/
   extension/   ← Chrome extension (Vite + CRXJS + Preact + TypeScript)
+  landing/     ← Project landing page (Vite + TypeScript + Vanilla CSS)
   relay/       ← npx browsecortex-relay (Node.js SSE server, MCP bridge)
 ```
 

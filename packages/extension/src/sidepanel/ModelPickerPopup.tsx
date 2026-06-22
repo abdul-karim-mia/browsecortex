@@ -68,7 +68,8 @@ export function ModelPickerPopup({ settings, onClose, onChange }: Props) {
 
   const selectedModelInfo = models.find((m) => m.id === settings?.selectedModel);
   const supportsThinking = !!selectedModelInfo?.hasReasoning;
-  const isUnknownCapability = !!selectedModelInfo && selectedModelInfo.capabilitySource === 'unknown';
+  const isUnknownCapability =
+    !!selectedModelInfo && selectedModelInfo.capabilitySource === 'unknown';
 
   // Manual override (PLAN §6) — same as the Models tab's capability checkbox,
   // but reachable inline so an unverified model can be unblocked without a
@@ -76,7 +77,9 @@ export function ModelPickerPopup({ settings, onClose, onChange }: Props) {
   const markReasoningCapable = async () => {
     if (!settings?.selectedProviderId || !selectedModelInfo) return;
     const updated = models.map((m) =>
-      m.id === selectedModelInfo.id ? { ...m, hasReasoning: true, capabilitySource: 'user' as const } : m,
+      m.id === selectedModelInfo.id
+        ? { ...m, hasReasoning: true, capabilitySource: 'user' as const }
+        : m,
     );
     setModels(updated);
     await Storage.models.setForProvider(settings.selectedProviderId, updated);

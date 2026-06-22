@@ -1,14 +1,18 @@
 # Page Summarizer
+
 > Condense any webpage into key takeaways
 
 ## Description
+
 Read the current page and produce a concise, structured summary with key points, actionable items, and follow-up questions.
 
 ## Variables
+
 - `detail` — brief / normal / detailed (default: normal)
 - `format` — bullet / prose / structured (default: bullet)
 
 ## Instructions
+
 1. Read the current page with `read_page_content`.
 2. Identify: main topic, key claims, supporting evidence, and conclusion.
 3. Extract any actionable items, deadlines, or decisions.
@@ -18,5 +22,6 @@ Read the current page and produce a concise, structured summary with key points,
 7. End with 2–3 follow-up questions the reader should consider.
 
 ## Notes
+
 - The page title and URL are included automatically — no need to copy them.
 - Do not include boilerplate (cookies, nav, etc.) in the summary.

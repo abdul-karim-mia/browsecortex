@@ -1,13 +1,17 @@
 # Browser Health Check
+
 > Audit browser tabs, memory, downloads, and performance
 
 ## Description
+
 Run a diagnostic check on the browser: tab count, memory state, recent downloads, page performance, and security status.
 
 ## Variables
+
 - `scope` — quick / full (default: quick)
 
 ## Instructions
+
 1. Count all tabs across all windows with `get_all_windows`.
 2. Check connection security on the active tab with `check_https`.
 3. Get page performance metrics with `get_page_performance`.
@@ -28,6 +32,7 @@ Run a diagnostic check on the browser: tab count, memory state, recent downloads
 10. Flag any concerns (e.g., many discarded tabs, slow page, insecure connection).
 
 ## Notes
+
 - This is read-only — no tabs or data are modified.
 - Performance data is for the active tab only.
 - Report any anomalies but do not take corrective action.

@@ -59,7 +59,12 @@ export function ModelsTab() {
       await persist(
         models.map((m) =>
           m.id === model.id
-            ? { ...m, hasVision: r.hasVision, hasToolCalling: r.hasToolCalling, capabilitySource: 'ping' }
+            ? {
+                ...m,
+                hasVision: r.hasVision,
+                hasToolCalling: r.hasToolCalling,
+                capabilitySource: 'ping',
+              }
             : m,
         ),
       );

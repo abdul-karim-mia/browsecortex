@@ -62,7 +62,8 @@ function main() {
   /** Handle one JSON-RPC message from an MCP agent; push the reply over SSE. */
   async function handleRpc(msg: Json, res: ServerResponse): Promise<void> {
     const id = msg.id ?? null;
-    const reply = (result: Json) => res.write(`data: ${JSON.stringify({ jsonrpc: '2.0', id, result })}\n\n`);
+    const reply = (result: Json) =>
+      res.write(`data: ${JSON.stringify({ jsonrpc: '2.0', id, result })}\n\n`);
     const fail = (code: number, message: string) =>
       res.write(`data: ${JSON.stringify({ jsonrpc: '2.0', id, error: { code, message } })}\n\n`);
 
@@ -95,7 +96,8 @@ function main() {
 
   const server = createServer((req: IncomingMessage, res: ServerResponse) => {
     const url = new URL(req.url ?? '/', `http://localhost:${port}`);
-    const authed = req.headers.authorization === `Bearer ${token}` || url.searchParams.get('token') === token;
+    const authed =
+      req.headers.authorization === `Bearer ${token}` || url.searchParams.get('token') === token;
 
     // MCP SSE transport: agent opens this stream, then POSTs to /messages.
     if (url.pathname === '/sse') {

@@ -58,9 +58,7 @@ export function ProviderRow({ provider, allProviders, onChanged }: Props) {
               title="Hover to reveal last 4"
             >
               <span class="group-hover/key:hidden">●●●●●●●●</span>
-              <span class="hidden group-hover/key:inline">
-                ●●●●{provider.apiKey.slice(-4)}
-              </span>
+              <span class="hidden group-hover/key:inline">●●●●{provider.apiKey.slice(-4)}</span>
             </div>
           )}
         </div>

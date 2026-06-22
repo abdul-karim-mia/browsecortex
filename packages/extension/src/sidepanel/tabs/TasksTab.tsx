@@ -27,7 +27,15 @@ function SubtaskIcon({ done }: { done: boolean }) {
   );
 }
 
-function SubtaskList({ subtasks, depth, forceDone }: { subtasks: Subtask[]; depth: number; forceDone?: boolean }) {
+function SubtaskList({
+  subtasks,
+  depth,
+  forceDone,
+}: {
+  subtasks: Subtask[];
+  depth: number;
+  forceDone?: boolean;
+}) {
   return (
     <ul class="space-y-0.5">
       {subtasks.map((s, i) => {
@@ -67,12 +75,19 @@ export function TasksTab({ conversationId }: Props) {
     const fetch = () => {
       Storage.tasks
         .byConversation(conversationId)
-        .then((t) => { if (mounted) setTasks(t); })
-        .catch(() => { if (mounted) setTasks([]); });
+        .then((t) => {
+          if (mounted) setTasks(t);
+        })
+        .catch(() => {
+          if (mounted) setTasks([]);
+        });
     };
     fetch();
     const id = setInterval(fetch, 3000);
-    return () => { mounted = false; clearInterval(id); };
+    return () => {
+      mounted = false;
+      clearInterval(id);
+    };
   }, [conversationId]);
 
   return (

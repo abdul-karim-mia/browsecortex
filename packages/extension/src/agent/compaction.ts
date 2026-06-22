@@ -15,7 +15,8 @@ export function estimateTokens(messages: ApiMessage[]): number {
   for (const m of messages) {
     if (typeof m.content === 'string') chars += m.content.length;
     if (m.role === 'assistant' && m.tool_calls) {
-      for (const tc of m.tool_calls) chars += tc.function.arguments.length + tc.function.name.length;
+      for (const tc of m.tool_calls)
+        chars += tc.function.arguments.length + tc.function.name.length;
     }
   }
   return Math.ceil(chars / 4);

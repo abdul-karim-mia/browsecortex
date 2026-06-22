@@ -20,7 +20,10 @@ export const clickElement: ToolDefinition = {
     properties: {
       annotation_id: { type: 'number', description: 'The [n] id from a prior annotate_page call.' },
       selector: { type: 'string', description: 'CSS selector of the element.' },
-      text: { type: 'string', description: 'Visible text of the element (alternative to selector).' },
+      text: {
+        type: 'string',
+        description: 'Visible text of the element (alternative to selector).',
+      },
       tab_id: { type: 'number' },
     },
   },
@@ -28,8 +31,7 @@ export const clickElement: ToolDefinition = {
   timeout: 'page_interact',
   async execute(args, ctx) {
     const tabId = await resolveTabId(args, ctx.getActiveTabId);
-    const annotationId =
-      typeof args.annotation_id === 'number' ? args.annotation_id : null;
+    const annotationId = typeof args.annotation_id === 'number' ? args.annotation_id : null;
     const [res] = await chrome.scripting.executeScript({
       target: { tabId },
       func: (annId: number | null, selector: string | null, text: string | null) => {
@@ -46,7 +48,9 @@ export const clickElement: ToolDefinition = {
           }
           if (text) {
             const cands = Array.from(
-              document.querySelectorAll<HTMLElement>('a,button,input,[role="button"],summary,label'),
+              document.querySelectorAll<HTMLElement>(
+                'a,button,input,[role="button"],summary,label',
+              ),
             );
             return (
               cands.find((e) => (e.innerText || e.getAttribute('value') || '').trim() === text) ||
@@ -67,7 +71,8 @@ export const clickElement: ToolDefinition = {
       args: [annotationId, (args.selector as string) ?? null, (args.text as string) ?? null],
     });
     const data = res?.result as { found: boolean; tag?: string; text?: string } | undefined;
-    if (!data?.found) return { error: 'Element not found (annotation may be stale — re-run annotate_page).' };
+    if (!data?.found)
+      return { error: 'Element not found (annotation may be stale — re-run annotate_page).' };
     return { clicked: true, tag: data.tag, text: data.text };
   },
 };
@@ -91,7 +96,10 @@ export const fillInput: ToolDefinition = {
     const [res] = await chrome.scripting.executeScript({
       target: { tabId },
       func: (selector: string, value: string) => {
-        const el = document.querySelector(selector) as HTMLInputElement | HTMLTextAreaElement | null;
+        const el = document.querySelector(selector) as
+          | HTMLInputElement
+          | HTMLTextAreaElement
+          | null;
         if (!el) return { found: false };
         el.focus();
         el.value = value;
@@ -162,7 +170,9 @@ export const submitForm: ToolDefinition = {
       target: { tabId },
       func: (selector: string) => {
         const el = document.querySelector(selector);
-        const form = (el instanceof HTMLFormElement ? el : el?.closest('form')) as HTMLFormElement | null;
+        const form = (
+          el instanceof HTMLFormElement ? el : el?.closest('form')
+        ) as HTMLFormElement | null;
         if (!form) return { found: false };
         form.requestSubmit();
         return { found: true };
@@ -202,10 +212,4 @@ export const findTextOnPage: ToolDefinition = {
   },
 };
 
-export const interactionTools = [
-  clickElement,
-  fillInput,
-  scrollPage,
-  submitForm,
-  findTextOnPage,
-];
+export const interactionTools = [clickElement, fillInput, scrollPage, submitForm, findTextOnPage];

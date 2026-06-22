@@ -35,7 +35,11 @@ export async function pingCapabilities(provider: Provider, modelId: string): Pro
       tools: [
         {
           type: 'function',
-          function: { name: 'ping', description: 'Returns pong.', parameters: { type: 'object', properties: {} } },
+          function: {
+            name: 'ping',
+            description: 'Returns pong.',
+            parameters: { type: 'object', properties: {} },
+          },
         },
       ],
       tool_choice: 'auto',

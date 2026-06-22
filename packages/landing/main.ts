@@ -14,7 +14,7 @@ async function fetchGithubStats() {
 
   const starsPill = document.getElementById('github-stars-pill');
   const releaseTag = document.getElementById('github-release-tag');
-  
+
   // Bento card fields
   const bentoStars = document.getElementById('bento-stats-stars');
   const bentoForks = document.getElementById('bento-stats-forks');
@@ -25,7 +25,7 @@ async function fetchGithubStats() {
     const response = await fetch(repoUrl);
     if (!response.ok) throw new Error('GitHub API Limit or Offline');
     const data = await response.json();
-    
+
     // Stars
     if (starsPill && typeof data.stargazers_count === 'number') {
       starsPill.textContent = `${data.stargazers_count} Stars`;
@@ -33,12 +33,12 @@ async function fetchGithubStats() {
     if (bentoStars && typeof data.stargazers_count === 'number') {
       bentoStars.textContent = String(data.stargazers_count);
     }
-    
+
     // Forks
     if (bentoForks && typeof data.forks_count === 'number') {
       bentoForks.textContent = String(data.forks_count);
     }
-    
+
     // Open Issues
     if (bentoIssues && typeof data.open_issues_count === 'number') {
       bentoIssues.textContent = String(data.open_issues_count);
@@ -69,11 +69,10 @@ async function fetchGithubStats() {
     const response = await fetch(contributorsUrl);
     if (!response.ok) throw new Error('Contributors fetch rate limited');
     const list: Contributor[] = await response.json();
-    
+
     if (contributorsGrid && Array.isArray(list)) {
       contributorsGrid.innerHTML = ''; // clear loading state
-      
-      // Take top 12 contributors
+
       list.slice(0, 12).forEach((c) => {
         const item = document.createElement('a');
         item.className = 'contributor-item animate-fade-in';
@@ -81,7 +80,7 @@ async function fetchGithubStats() {
         item.target = '_blank';
         item.rel = 'noopener noreferrer';
         item.title = `${c.login} (${c.contributions} contributions)`;
-        
+
         item.innerHTML = `
           <img src="${c.avatar_url}" alt="${c.login}" class="contributor-avatar" loading="lazy" />
           <span class="contributor-name">${c.login}</span>
@@ -92,7 +91,6 @@ async function fetchGithubStats() {
   } catch (e) {
     console.warn('[GitHub Contributors] Using fallback creator attribution:', e);
     if (contributorsGrid) {
-      // Fallback: Show the creator primarily
       contributorsGrid.innerHTML = `
         <a href="https://github.com/abdul-karim-mia" target="_blank" rel="noopener noreferrer" class="contributor-item animate-fade-in" title="Abdul karim mia">
           <img src="https://github.com/abdul-karim-mia.png" alt="Abdul karim mia" class="contributor-avatar" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=abdul'" />
@@ -333,8 +331,19 @@ tabBrowser?.addEventListener('click', () => {
   switchTab('browser');
 });
 
+// --- CAPABILITY ACCORDIONS LOGIC ---
+function initCapabilities() {
+  const cards = document.querySelectorAll('.capability-card');
+  cards.forEach((card) => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('expanded');
+    });
+  });
+}
+
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
   fetchGithubStats();
+  initCapabilities();
   runSimulationStep();
 });

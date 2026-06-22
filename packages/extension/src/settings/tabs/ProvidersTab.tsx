@@ -57,7 +57,6 @@ export function ProvidersTab() {
     await refresh();
   };
 
-
   return (
     <div class="space-y-6 text-sm">
       {/* Existing providers */}

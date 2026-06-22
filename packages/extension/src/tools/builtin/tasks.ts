@@ -97,8 +97,7 @@ export const createTask: ToolDefinition = {
 
 export const updateTask: ToolDefinition = {
   name: 'update_task',
-  description:
-    'Update a task: mark nested subtasks as done by dot-separated path, or set notes.',
+  description: 'Update a task: mark nested subtasks as done by dot-separated path, or set notes.',
   parameters: {
     type: 'object',
     properties: {

@@ -78,7 +78,9 @@ export const getRecentlyClosed: ToolDefinition = {
     return {
       sessions: sessions.map((s) => ({
         tab: s.tab ? { title: s.tab.title, url: s.tab.url, sessionId: s.tab.sessionId } : undefined,
-        window: s.window ? { sessionId: s.window.sessionId, tabs: s.window.tabs?.length } : undefined,
+        window: s.window
+          ? { sessionId: s.window.sessionId, tabs: s.window.tabs?.length }
+          : undefined,
       })),
     };
   },
@@ -112,7 +114,8 @@ export const addToReadingList: ToolDefinition = {
   destructive: false,
   timeout: 'history',
   async execute(args) {
-    const rl = (chrome as unknown as { readingList?: { addEntry(e: object): Promise<void> } }).readingList;
+    const rl = (chrome as unknown as { readingList?: { addEntry(e: object): Promise<void> } })
+      .readingList;
     if (!rl) return { error: 'Reading list API unavailable (Chrome 120+).' };
     await rl.addEntry({ url: String(args.url), title: String(args.title), hasBeenRead: false });
     return { added: String(args.url) };
@@ -126,7 +129,8 @@ export const getReadingList: ToolDefinition = {
   destructive: false,
   timeout: 'history',
   async execute() {
-    const rl = (chrome as unknown as { readingList?: { query(q: object): Promise<unknown[]> } }).readingList;
+    const rl = (chrome as unknown as { readingList?: { query(q: object): Promise<unknown[]> } })
+      .readingList;
     if (!rl) return { error: 'Reading list API unavailable (Chrome 120+).' };
     return { entries: await rl.query({}) };
   },

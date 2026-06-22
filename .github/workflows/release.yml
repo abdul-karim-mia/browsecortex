@@ -76,6 +76,26 @@ jobs:
           npm version $NEW_VERSION --no-git-tag-version
           cd ../..
 
+          # Update extension package + manifest (manifest.version is what Chrome displays)
+          cd packages/extension
+          npm version $NEW_VERSION --no-git-tag-version --allow-same-version
+          jq --arg v "$NEW_VERSION" '.version = $v' manifest.json > manifest.tmp && mv manifest.tmp manifest.json
+          # The dist was built earlier (before the bump), so patch its manifest too
+          # to keep the packaged zip in sync without a full rebuild.
+          jq --arg v "$NEW_VERSION" '.version = $v' dist/manifest.json > dist/manifest.tmp && mv dist/manifest.tmp dist/manifest.json
+          cd ../..
+
+      - name: Package extension zip
+        run: |
+          NEW_VERSION="${{ steps.bump.outputs.version }}"
+          # Zip the contents of dist/ (manifest.json at the zip root) so the
+          # archive can be loaded unpacked or uploaded straight to the Web Store.
+          cd packages/extension/dist
+          zip -r "$GITHUB_WORKSPACE/browsecortex-extension-v${NEW_VERSION}.zip" . -x '*.map'
+          cd "$GITHUB_WORKSPACE"
+          echo "=== Packaged extension ==="
+          ls -lh "browsecortex-extension-v${NEW_VERSION}.zip"
+
       - name: Update CHANGELOG.md
         run: |
           NEW_VERSION="${{ steps.bump.outputs.version }}"
@@ -120,7 +140,7 @@ jobs:
             exit 0
           fi
 
-          git add package.json packages/*/package.json CHANGELOG.md
+          git add package.json packages/*/package.json packages/extension/manifest.json CHANGELOG.md
           git commit -m "chore(release): v$NEW_VERSION"
           git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
 
@@ -150,7 +170,8 @@ jobs:
           gh release create v${{ steps.bump.outputs.version }} \
             --title "Release v${{ steps.bump.outputs.version }}" \
             --notes "${{ steps.release_notes.outputs.notes }}" \
-            --target main
+            --target main \
+            "browsecortex-extension-v${{ steps.bump.outputs.version }}.zip#BrowseCortex Extension (load unpacked / Web Store zip)"
 
       - name: Publish to npm
         if: success()

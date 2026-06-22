@@ -84,8 +84,7 @@ export function BackupTab() {
     }
   };
 
-  const toggleCat = (k: keyof RestoreCategories) =>
-    setCategories((c) => ({ ...c, [k]: !c[k] }));
+  const toggleCat = (k: keyof RestoreCategories) => setCategories((c) => ({ ...c, [k]: !c[k] }));
 
   return (
     <div class="space-y-6 text-sm">
@@ -104,7 +103,11 @@ export function BackupTab() {
           placeholder="Optional password hint"
           class={inputCls}
         />
-        <button type="button" onClick={doExport} class="rounded bg-blue-500 px-4 py-1.5 font-medium text-white">
+        <button
+          type="button"
+          onClick={doExport}
+          class="rounded bg-blue-500 px-4 py-1.5 font-medium text-white"
+        >
           Export encrypted backup
         </button>
       </section>
@@ -192,4 +195,5 @@ export function BackupTab() {
   );
 }
 
-const inputCls = 'w-full rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800';
+const inputCls =
+  'w-full rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800';

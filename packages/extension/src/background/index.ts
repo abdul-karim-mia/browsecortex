@@ -15,7 +15,12 @@ import { ensureOffscreen } from './offscreen-manager';
 import { runAgentLoop } from '@/agent/loop';
 import { resolveActive } from '@/agent/resolve';
 import { Storage } from '@/storage';
-import { ensureConversation, getApiHistory, getMessages, persistNewTurns } from '@/conversations/manager';
+import {
+  ensureConversation,
+  getApiHistory,
+  getMessages,
+  persistNewTurns,
+} from '@/conversations/manager';
 import { autoName } from '@/conversations/naming';
 import { notify, setBadge } from './notify';
 import { clearCheckpoint, getCheckpoint, saveCheckpoint } from './checkpoint';
@@ -206,7 +211,11 @@ chrome.runtime.onConnect.addListener((port) => {
         console.log('[chat:bg] history loaded, turns:', history.length);
 
         console.log('[chat:bg] starting agent loop…');
-        const { messages: updated, outcome, toolRounds } = await runAgentLoop({
+        const {
+          messages: updated,
+          outcome,
+          toolRounds,
+        } = await runAgentLoop({
           provider: resolved.provider,
           model: resolved.model,
           settings,
@@ -246,9 +255,13 @@ chrome.runtime.onConnect.addListener((port) => {
           const lastAssistant = [...updated].reverse().find((m) => m.role === 'assistant');
           const assistantText =
             lastAssistant && typeof lastAssistant.content === 'string' ? lastAssistant.content : '';
-          autoName(msg.conversationId, resolved.provider, resolved.model, msg.content, assistantText).catch(
-            (e) => console.error('[chat:bg] autoName failed', e),
-          );
+          autoName(
+            msg.conversationId,
+            resolved.provider,
+            resolved.model,
+            msg.content,
+            assistantText,
+          ).catch((e) => console.error('[chat:bg] autoName failed', e));
         }
 
         // Report status accurately (PLAN §39). Don't notify on abort, and only

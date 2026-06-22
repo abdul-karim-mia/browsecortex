@@ -12,6 +12,7 @@ This guide helps you set up branch protection rules on GitHub.
 4. Enable the following:
 
 #### Required Checks
+
 - ✅ **Require a pull request before merging**
   - Require approvals: **1**
   - Dismiss stale pull request approvals when new commits are pushed: **✓**
@@ -24,11 +25,13 @@ This guide helps you set up branch protection rules on GitHub.
     - `e2e` (integration tests)
 
 #### Additional Protection
+
 - ✅ **Require a conversation resolution before merging**
 - ✅ **Include administrators** (enforce rules on yourself too)
 - ✅ **Restrict who can push to matching branches** (optional)
 
 #### Merge Settings
+
 - Allow merge commits: **✓**
 - Allow squash merging: **✓**
 - Allow rebase merging: **✓**
@@ -40,14 +43,14 @@ This guide helps you set up branch protection rules on GitHub.
 
 ## Why These Settings?
 
-| Setting | Why |
-|---------|-----|
-| Require 1 approval | Catch issues before merge |
-| Require status checks | Ensure CI passes (typecheck, tests, build) |
-| Dismiss stale approvals | Re-approval required after new commits |
-| Code owner reviews | Core changes require maintainer approval |
-| Up-to-date branches | Prevent merging with outdated main |
-| Delete head branch | Cleanup after merge |
+| Setting                 | Why                                        |
+| ----------------------- | ------------------------------------------ |
+| Require 1 approval      | Catch issues before merge                  |
+| Require status checks   | Ensure CI passes (typecheck, tests, build) |
+| Dismiss stale approvals | Re-approval required after new commits     |
+| Code owner reviews      | Core changes require maintainer approval   |
+| Up-to-date branches     | Prevent merging with outdated main         |
+| Delete head branch      | Cleanup after merge                        |
 
 ---
 

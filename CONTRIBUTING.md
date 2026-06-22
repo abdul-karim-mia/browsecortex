@@ -48,13 +48,13 @@ Within the extension, the key areas:
 
 ## Contribution areas
 
-| Area | Barrier |
-|------|---------|
-| Translations (`src/i18n`) | Low — add one JSON file |
-| Documentation | Low |
-| New browser tools (`src/tools/builtin`) | Medium |
-| Bug fixes | Medium |
-| Agent loop / memory / storage | Core review required |
+| Area                                    | Barrier                 |
+| --------------------------------------- | ----------------------- |
+| Translations (`src/i18n`)               | Low — add one JSON file |
+| Documentation                           | Low                     |
+| New browser tools (`src/tools/builtin`) | Medium                  |
+| Bug fixes                               | Medium                  |
+| Agent loop / memory / storage           | Core review required    |
 
 ## Adding a tool
 

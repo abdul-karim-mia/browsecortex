@@ -5,9 +5,11 @@
 🔒 **Please do not open public GitHub issues for security vulnerabilities.**
 
 Instead, please report security issues by emailing:
+
 - **akmia51@gmail.com**
 
 Include:
+
 - Description of the vulnerability
 - Steps to reproduce
 - Potential impact
@@ -35,6 +37,7 @@ BrowseCortex follows these security principles:
 ## Browser Permissions
 
 The extension requests specific Chrome permissions:
+
 - `scripting` — Execute scripts in web pages
 - `tabs` — Read tab information
 - `webNavigation` — Monitor navigation events

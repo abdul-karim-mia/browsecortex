@@ -3,9 +3,9 @@ import { substituteVars } from '@/skills/substitute';
 
 describe('substituteVars', () => {
   it('replaces known placeholders', () => {
-    expect(substituteVars('Research {{topic}} at {{depth}} depth', { topic: 'AI', depth: 'deep' })).toBe(
-      'Research AI at deep depth',
-    );
+    expect(
+      substituteVars('Research {{topic}} at {{depth}} depth', { topic: 'AI', depth: 'deep' }),
+    ).toBe('Research AI at deep depth');
   });
 
   it('tolerates whitespace inside braces', () => {

@@ -41,7 +41,10 @@ export function MessageBubble({ line, onPin, onDelete }: Props) {
         {isUser ? (
           <span class="whitespace-pre-wrap break-words">{line.content || '…'}</span>
         ) : (
-          <div class="md" dangerouslySetInnerHTML={{ __html: renderMarkdown(line.content || '…') }} />
+          <div
+            class="md"
+            dangerouslySetInnerHTML={{ __html: renderMarkdown(line.content || '…') }}
+          />
         )}
       </div>
       {line.content && (

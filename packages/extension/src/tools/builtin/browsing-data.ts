@@ -37,7 +37,9 @@ export const getRecentHistory: ToolDefinition = {
       maxResults: Math.min(Number(args.max_results) || 20, 20),
       startTime: Date.now() - 7 * 24 * 60 * 60 * 1000,
     });
-    return { entries: items.map((i) => ({ title: i.title, url: i.url, lastVisit: i.lastVisitTime })) };
+    return {
+      entries: items.map((i) => ({ title: i.title, url: i.url, lastVisit: i.lastVisitTime })),
+    };
   },
 };
 
@@ -138,7 +140,7 @@ export const deleteBookmark: ToolDefinition = {
 
 export const downloadFile: ToolDefinition = {
   name: 'download_file',
-  description: 'Download a file from a URL to the user\'s downloads folder.',
+  description: "Download a file from a URL to the user's downloads folder.",
   parameters: {
     type: 'object',
     properties: { url: { type: 'string' }, filename: { type: 'string' } },

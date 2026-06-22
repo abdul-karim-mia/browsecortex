@@ -25,7 +25,11 @@ async function resolveTabId(args: Record<string, unknown>, getActive: () => Prom
  * usually still 'complete' from *before* the navigation starts, which used to
  * make this resolve instantly with the stale URL.
  */
-async function waitForNavigation(tabId: number, beforeUrl: string | undefined, timeoutMs = 10_000): Promise<ToolResult> {
+async function waitForNavigation(
+  tabId: number,
+  beforeUrl: string | undefined,
+  timeoutMs = 10_000,
+): Promise<ToolResult> {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
     const tab = await chrome.tabs.get(tabId);
@@ -47,7 +51,10 @@ async function waitForNavigation(tabId: number, beforeUrl: string | undefined, t
  * racy and used to report success against the *previous* page (the same bug
  * class fixed in waitForNavigation above).
  */
-export async function waitForLoad(tabId: number, timeoutMs = 12_000): Promise<{ complete: boolean; url?: string }> {
+export async function waitForLoad(
+  tabId: number,
+  timeoutMs = 12_000,
+): Promise<{ complete: boolean; url?: string }> {
   await new Promise((r) => setTimeout(r, 150));
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
@@ -81,7 +88,9 @@ export const navigateTo: ToolDefinition = {
       tab_id: tabId,
       loaded: complete,
       url: url ?? String(args.url),
-      ...(complete ? {} : { note: 'Tab update was sent but the page had not finished loading by the timeout.' }),
+      ...(complete
+        ? {}
+        : { note: 'Tab update was sent but the page had not finished loading by the timeout.' }),
     };
   },
 };

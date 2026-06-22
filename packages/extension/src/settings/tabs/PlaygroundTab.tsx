@@ -13,7 +13,10 @@ export function PlaygroundTab() {
   const [ms, setMs] = useState<number | null>(null);
 
   const tool = tools.find((t) => t.name === name);
-  const props = (tool?.parameters?.properties ?? {}) as Record<string, { type?: string; description?: string }>;
+  const props = (tool?.parameters?.properties ?? {}) as Record<
+    string,
+    { type?: string; description?: string }
+  >;
 
   const run = async () => {
     setOutput('Running…');
@@ -23,8 +26,7 @@ export function PlaygroundTab() {
     for (const [key, val] of Object.entries(args)) {
       if (val === '') continue;
       const type = props[key]?.type;
-      parsed[key] =
-        type === 'number' ? Number(val) : type === 'boolean' ? val === 'true' : val;
+      parsed[key] = type === 'number' ? Number(val) : type === 'boolean' ? val === 'true' : val;
     }
     try {
       const res = await chrome.runtime.sendMessage({ type: 'playground_run', name, args: parsed });
@@ -67,7 +69,9 @@ export function PlaygroundTab() {
             </span>
             <input
               value={args[key] ?? ''}
-              onInput={(e) => setArgs((a) => ({ ...a, [key]: (e.target as HTMLInputElement).value }))}
+              onInput={(e) =>
+                setArgs((a) => ({ ...a, [key]: (e.target as HTMLInputElement).value }))
+              }
               placeholder={schema.description}
               class="mt-0.5 w-full rounded border border-gray-300 px-2 py-1 text-xs dark:border-gray-600 dark:bg-gray-800"
             />
@@ -75,7 +79,11 @@ export function PlaygroundTab() {
         ))}
       </div>
 
-      <button type="button" onClick={run} class="rounded bg-blue-500 px-4 py-1.5 font-medium text-white">
+      <button
+        type="button"
+        onClick={run}
+        class="rounded bg-blue-500 px-4 py-1.5 font-medium text-white"
+      >
         ▶ Execute
       </button>
 

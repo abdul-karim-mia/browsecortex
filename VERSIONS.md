@@ -5,6 +5,7 @@ BrowseCortex follows [Semantic Versioning](https://semver.org/).
 ## Release Timeline
 
 ### v1.0.0 (Initial Release)
+
 - **Date:** TBD
 - **Status:** In Development
 - **Features:**

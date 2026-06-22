@@ -39,7 +39,9 @@ export function toApiMessage(m: Message): ApiMessage | null {
 }
 
 export function buildApiHistory(messages: Message[]): ApiMessage[] {
-  return repairOrphanedToolCalls(messages.map(toApiMessage).filter((m): m is ApiMessage => m !== null));
+  return repairOrphanedToolCalls(
+    messages.map(toApiMessage).filter((m): m is ApiMessage => m !== null),
+  );
 }
 
 /**
@@ -66,7 +68,13 @@ function repairOrphanedToolCalls(messages: ApiMessage[]): ApiMessage[] {
     result.push(m);
     if (m.role !== 'assistant' || !m.tool_calls?.length) continue;
     for (const tc of m.tool_calls) {
-      result.push(toolById.get(tc.id) ?? { role: 'tool', tool_call_id: tc.id, content: '[no result recorded]' });
+      result.push(
+        toolById.get(tc.id) ?? {
+          role: 'tool',
+          tool_call_id: tc.id,
+          content: '[no result recorded]',
+        },
+      );
     }
   }
   return result;
@@ -101,9 +109,7 @@ export function fromApiMessage(
         content:
           typeof m.content === 'string'
             ? m.content
-            : m.content
-                .map((p) => (p.type === 'text' ? p.text : '[image attached]'))
-                .join('\n'),
+            : m.content.map((p) => (p.type === 'text' ? p.text : '[image attached]')).join('\n'),
       };
     case 'assistant': {
       const toolCalls: ToolCall[] | undefined = m.tool_calls?.map((tc) => ({

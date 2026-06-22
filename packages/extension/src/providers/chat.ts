@@ -81,7 +81,16 @@ interface DeltaChunk {
  */
 export async function* streamChat(opts: ChatOptions): AsyncGenerator<ChatStreamEvent> {
   const url = joinUrl(opts.provider.baseUrl, '/chat/completions');
-  console.log('[chat:http] POST', url, 'model:', opts.model.id, 'messages:', opts.messages.length, 'tools:', opts.tools?.length ?? 0);
+  console.log(
+    '[chat:http] POST',
+    url,
+    'model:',
+    opts.model.id,
+    'messages:',
+    opts.messages.length,
+    'tools:',
+    opts.tools?.length ?? 0,
+  );
   let res: Response;
   try {
     res = await fetch(url, {
@@ -117,7 +126,9 @@ export async function* streamChat(opts: ChatOptions): AsyncGenerator<ChatStreamE
   while (true) {
     const { done, value } = await reader.read();
     if (done) {
-      console.log(`[chat:http] stream done after ${chunkCount} chunks, finishReason=${finishReason}`);
+      console.log(
+        `[chat:http] stream done after ${chunkCount} chunks, finishReason=${finishReason}`,
+      );
       break;
     }
     chunkCount++;

@@ -35,6 +35,7 @@ git push origin v1.0.1
 ```
 
 Or use GitHub Actions workflow:
+
 1. Go to **Actions** → **Release**
 2. Click **Run workflow**
 3. Select bump type and run
@@ -50,6 +51,7 @@ npm info browsecortex-relay@latest
 ```
 
 Or install and test:
+
 ```bash
 npm install -g browsecortex-relay
 browsecortex-relay --version
@@ -57,16 +59,17 @@ browsecortex-relay --version
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| 403 Forbidden | NPM_TOKEN is invalid or expired |
-| 404 Not Found | Package name is wrong |
-| Already published | Can't republish same version |
-| Token too old | Regenerate new automation token |
+| Issue             | Solution                        |
+| ----------------- | ------------------------------- |
+| 403 Forbidden     | NPM_TOKEN is invalid or expired |
+| 404 Not Found     | Package name is wrong           |
+| Already published | Can't republish same version    |
+| Token too old     | Regenerate new automation token |
 
 ## Scope & Permissions
 
 The automation token should have:
+
 - ✅ **Publish** permission
 - ✅ **Automation** scope
 - ✅ Access to `browsecortex-relay` package

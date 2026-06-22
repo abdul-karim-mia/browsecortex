@@ -14,18 +14,25 @@
     <!-- Canonical Link -->
     <link rel="canonical" href="https://browsecortex.goakm.in" />
     
+    <!-- Favicons & App Icons -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/icon-48.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/icon-128.png" />
+    <link rel="apple-touch-icon" href="/icon-128.png" />
+    
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://browsecortex.goakm.in" />
     <meta property="og:title" content="BrowseCortex — Open Source AI Browser Assistant" />
     <meta property="og:description" content="Give an AI full autonomous control of your browser. Private, open source, and works with any OpenAI-compatible API (Ollama, Groq, OpenAI). Created by Abdul karim mia." />
-    <meta property="og:image" content="https://raw.githubusercontent.com/abdul-karim-mia/browsecortex/main/packages/extension/src/assets/icons/icon-128.png" />
+    <meta property="og:image" content="https://browsecortex.goakm.in/icon-128.png" />
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://browsecortex.goakm.in" />
     <meta property="twitter:title" content="BrowseCortex — Open Source AI Browser Assistant" />
     <meta property="twitter:description" content="Give an AI full autonomous control of your browser. Private, open source, and works with any OpenAI-compatible API." />
+    <meta property="twitter:image" content="https://browsecortex.goakm.in/icon-128.png" />
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -352,86 +359,146 @@
         <div class="container">
           <div class="section-header-center">
             <h2 class="section-title">Advanced Core Capabilities</h2>
-            <p class="section-subtitle">A closer look at the advanced extension mechanics running under the hood.</p>
+            <p class="section-subtitle">A closer look at the advanced extension mechanics running under the hood. (Click to expand details)</p>
           </div>
 
           <div class="capabilities-grid">
             <!-- Cap 1: MCP -->
-            <div class="capability-card glass">
-              <div class="cap-icon-wrapper">
-                <!-- Lucide sparkle icon -->
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 2c.4 2.6 1 4.6 2.2 5.8S17.4 9.6 20 10c-2.6.4-4.6 1-5.8 2.2S12.4 15.4 12 18c-.4-2.6-1-4.6-2.2-5.8S6.6 10.4 4 10c2.6-.4 4.6-1 5.8-2.2S11.6 4.6 12 2Z" />
-                </svg>
+            <div class="capability-card glass" data-cap="mcp">
+              <div class="cap-header-row">
+                <div class="cap-icon-wrapper">
+                  <!-- Lucide sparkle icon -->
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2c.4 2.6 1 4.6 2.2 5.8S17.4 9.6 20 10c-2.6.4-4.6 1-5.8 2.2S12.4 15.4 12 18c-.4-2.6-1-4.6-2.2-5.8S6.6 10.4 4 10c2.6-.4 4.6-1 5.8-2.2S11.6 4.6 12 2Z" />
+                  </svg>
+                </div>
+                <span class="cap-toggle-btn">+</span>
               </div>
               <h3 class="cap-title">Model Context Protocol (MCP)</h3>
               <p class="cap-text">Integrate local and remote MCP servers directly. BrowseCortex dynamically consumes external server schemas, injecting custom tool capabilities directly into the active agent loop.</p>
+              <div class="cap-details">
+                <ul class="cap-details-list">
+                  <li>Connects local stdio/SSE servers via the Node.js WebSocket relay</li>
+                  <li>Supports remote HTTPS/SSE MCP tool integrations</li>
+                  <li>Autoloads schemas and injects tools dynamically into LLM prompts</li>
+                </ul>
+              </div>
             </div>
 
             <!-- Cap 2: Smart Failovers -->
-            <div class="capability-card glass">
-              <div class="cap-icon-wrapper">
-                <!-- Lucide alert icon -->
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
-                  <path d="M12 9v4" />
-                  <path d="M12 17h.01" />
-                </svg>
+            <div class="capability-card glass" data-cap="failover">
+              <div class="cap-header-row">
+                <div class="cap-icon-wrapper">
+                  <!-- Lucide alert icon -->
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                    <path d="M12 9v4" />
+                    <path d="M12 17h.01" />
+                  </svg>
+                </div>
+                <span class="cap-toggle-btn">+</span>
               </div>
               <h3 class="cap-title">Smart Cooldowns & Failovers</h3>
               <p class="cap-text">Automatic rate-limiting failover routing. If a provider returns a 429 backoff error, the agent places that endpoint on cooldown and automatically routes execution to alternative APIs.</p>
+              <div class="cap-details">
+                <ul class="cap-details-list">
+                  <li>Detects HTTP 429 and rate-limiting responses immediately</li>
+                  <li>Applies exponential cooldown backoff times (up to 5 minutes)</li>
+                  <li>Intelligently fails over to secondary user-configured models</li>
+                </ul>
+              </div>
             </div>
 
             <!-- Cap 3: Vision Fallback -->
-            <div class="capability-card glass">
-              <div class="cap-icon-wrapper">
-                <!-- Lucide eye icon -->
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
+            <div class="capability-card glass" data-cap="vision">
+              <div class="cap-header-row">
+                <div class="cap-icon-wrapper">
+                  <!-- Lucide eye icon -->
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                </div>
+                <span class="cap-toggle-btn">+</span>
               </div>
               <h3 class="cap-title">Intelligent Vision Fallbacks</h3>
               <p class="cap-text">If a configured text model lacks native vision (like Llama-70b), BrowseCortex intelligently routes page screenshot analysis tasks to a secondary designated vision model (like GPT-4o).</p>
+              <div class="cap-details">
+                <ul class="cap-details-list">
+                  <li>Checks model compatibility tags from the LiteLLM database</li>
+                  <li>Captures tab viewports natively using Chrome extension APIs</li>
+                  <li>Transports base64 frames to secondary vision models automatically</li>
+                </ul>
+              </div>
             </div>
 
             <!-- Cap 4: Tasks Checklist -->
-            <div class="capability-card glass">
-              <div class="cap-icon-wrapper">
-                <!-- Lucide tasks icon -->
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M9 11l3 3L22 4" />
-                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2 2V5a2 2 0 0 1 2-2h11" />
-                </svg>
+            <div class="capability-card glass" data-cap="tasks">
+              <div class="cap-header-row">
+                <div class="cap-icon-wrapper">
+                  <!-- Lucide tasks icon -->
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 11l3 3L22 4" />
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2 2V5a2 2 0 0 1 2-2h11" />
+                  </svg>
+                </div>
+                <span class="cap-toggle-btn">+</span>
               </div>
               <h3 class="cap-title">Subtask & Checklist Manager</h3>
               <p class="cap-text">Organizes agent commands into checklists. The AI creates, updates, and completes subtasks dynamically, displaying visual progress bars in the extension's dedicated Tasks tab.</p>
+              <div class="cap-details">
+                <ul class="cap-details-list">
+                  <li>AI self-manages tasks using task creation and updating tools</li>
+                  <li>Stores status configurations in a local IndexedDB store</li>
+                  <li>Features real-time checklist renders directly in the Side Panel UI</li>
+                </ul>
+              </div>
             </div>
 
             <!-- Cap 5: Local Encrypted Backups -->
-            <div class="capability-card glass">
-              <div class="cap-icon-wrapper">
-                <!-- Lucide download icon -->
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <path d="M7 10l5 5 5-5" />
-                  <path d="M12 15V3" />
-                </svg>
+            <div class="capability-card glass" data-cap="backups">
+              <div class="cap-header-row">
+                <div class="cap-icon-wrapper">
+                  <!-- Lucide download icon -->
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <path d="M7 10l5 5 5-5" />
+                    <path d="M12 15V3" />
+                  </svg>
+                </div>
+                <span class="cap-toggle-btn">+</span>
               </div>
               <h3 class="cap-title">AES-256-GCM Secure Backups</h3>
               <p class="cap-text">All extension configurations, conversations, files, and histories can be encrypted using local Web Crypto APIs and backed up/restored in a single click.</p>
+              <div class="cap-details">
+                <ul class="cap-details-list">
+                  <li>Uses Web Crypto API to generate local cryptographic keys</li>
+                  <li>Encrypted ZIP files stored locally; no cloud upload required</li>
+                  <li>Features daily auto-backup snapshot alarms</li>
+                </ul>
+              </div>
             </div>
 
             <!-- Cap 6: Custom System Prompts -->
-            <div class="capability-card glass">
-              <div class="cap-icon-wrapper">
-                <!-- Lucide chat icon -->
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
+            <div class="capability-card glass" data-cap="prompts">
+              <div class="cap-header-row">
+                <div class="cap-icon-wrapper">
+                  <!-- Lucide chat icon -->
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                  </svg>
+                </div>
+                <span class="cap-toggle-btn">+</span>
               </div>
               <h3 class="cap-title">Personalized Prompt Additions</h3>
               <p class="cap-text">Inject customized rules and guidelines globally. Guide the agent's tone, focus area, coding standards, or behavior boundaries on every conversation loop.</p>
+              <div class="cap-details">
+                <ul class="cap-details-list">
+                  <li>Injects custom directives directly into system prompt layers</li>
+                  <li>Applies preferences across all configurations and providers</li>
+                  <li>Provides tone matching, coding styles, or output guidelines</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>

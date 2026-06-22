@@ -36,7 +36,9 @@ export const annotatePage: ToolDefinition = {
         const els = Array.from(document.querySelectorAll<HTMLElement>(selector)).filter((el) => {
           const r = el.getBoundingClientRect();
           const style = getComputedStyle(el);
-          return r.width > 0 && r.height > 0 && style.visibility !== 'hidden' && style.display !== 'none';
+          return (
+            r.width > 0 && r.height > 0 && style.visibility !== 'hidden' && style.display !== 'none'
+          );
         });
 
         w.__bmAnnotations = els;

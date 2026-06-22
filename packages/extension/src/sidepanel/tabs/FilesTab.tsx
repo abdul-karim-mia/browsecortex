@@ -17,7 +17,9 @@ export function FilesTab({ conversationId }: Props) {
   const [query, setQuery] = useState('');
 
   const refresh = () =>
-    Storage.files.byConversation(conversationId).then((f) => setFiles(f.filter((x) => !x.isFolder)));
+    Storage.files
+      .byConversation(conversationId)
+      .then((f) => setFiles(f.filter((x) => !x.isFolder)));
   useEffect(() => {
     refresh();
     getStorageEstimate().then((e) => setPercent(e.percent));
@@ -26,9 +28,15 @@ export function FilesTab({ conversationId }: Props) {
   // Storage pressure banner (PLAN §41): soft >70%, strong >85%.
   const banner =
     percent > 85
-      ? { cls: 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200', msg: `Storage ${percent.toFixed(0)}% full — export and delete large files.` }
+      ? {
+          cls: 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200',
+          msg: `Storage ${percent.toFixed(0)}% full — export and delete large files.`,
+        }
       : percent > 70
-        ? { cls: 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200', msg: `Storage ${percent.toFixed(0)}% full.` }
+        ? {
+            cls: 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200',
+            msg: `Storage ${percent.toFixed(0)}% full.`,
+          }
         : null;
 
   const del = async (file: VFile) => {
@@ -71,26 +79,31 @@ export function FilesTab({ conversationId }: Props) {
             {files
               .filter((f) => f.path.toLowerCase().includes(query.toLowerCase()))
               .map((f) => (
-              <li key={f.id} class="flex items-center justify-between gap-2">
-                <button
-                  type="button"
-                  onClick={() => setSelected(f)}
-                  class="flex flex-1 items-center gap-1.5 truncate text-left hover:underline"
-                  title={f.path}
-                >
-                  <Icon name="file" size={14} class="shrink-0 text-gray-400" />
-                  <span class="truncate">{f.path}</span>
-                </button>
-                <span class="flex shrink-0 items-center gap-2 text-gray-500">
-                  <button type="button" onClick={() => exportFile(f)} title="Download">
-                    <Icon name="download" size={14} />
+                <li key={f.id} class="flex items-center justify-between gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelected(f)}
+                    class="flex flex-1 items-center gap-1.5 truncate text-left hover:underline"
+                    title={f.path}
+                  >
+                    <Icon name="file" size={14} class="shrink-0 text-gray-400" />
+                    <span class="truncate">{f.path}</span>
                   </button>
-                  <button type="button" onClick={() => del(f)} class="text-red-500" title="Delete">
-                    <Icon name="trash" size={14} />
-                  </button>
-                </span>
-              </li>
-            ))}
+                  <span class="flex shrink-0 items-center gap-2 text-gray-500">
+                    <button type="button" onClick={() => exportFile(f)} title="Download">
+                      <Icon name="download" size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => del(f)}
+                      class="text-red-500"
+                      title="Delete"
+                    >
+                      <Icon name="trash" size={14} />
+                    </button>
+                  </span>
+                </li>
+              ))}
           </ul>
         )}
       </div>
