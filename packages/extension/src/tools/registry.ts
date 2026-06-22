@@ -67,8 +67,9 @@ export function getTool(name: string): ToolDefinition | undefined {
 }
 
 /** Whether a tool mutates state and may need confirmation (PLAN §34). */
-export function isDestructive(name: string): boolean {
-  return registry.get(name)?.destructive ?? false;
+export function isDestructive(name: string, args: Record<string, unknown> = {}): boolean {
+  const destructive = registry.get(name)?.destructive ?? false;
+  return typeof destructive === 'function' ? destructive(args) : destructive;
 }
 
 /** Whether a tool reads untrusted external content (PLAN §28). */

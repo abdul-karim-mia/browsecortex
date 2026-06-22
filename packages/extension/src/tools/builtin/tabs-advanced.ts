@@ -97,9 +97,11 @@ export const setTabZoom: ToolDefinition = {
   destructive: false,
   timeout: 'tab',
   async execute(args, ctx) {
+    const factor = Number(args.factor);
+    if (!Number.isFinite(factor) || factor <= 0) return { error: 'factor must be a positive number.' };
     const id = await activeId(ctx.getActiveTabId, args);
-    await chrome.tabs.setZoom(id, Number(args.factor));
-    return { id, factor: Number(args.factor) };
+    await chrome.tabs.setZoom(id, factor);
+    return { id, factor };
   },
 };
 

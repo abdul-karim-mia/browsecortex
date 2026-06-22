@@ -6,7 +6,7 @@
  *
  * External agents reach these through the relay's MCP SSE endpoint.
  */
-import { getApiTools, executeTool, getTool } from '@/tools/registry';
+import { getApiTools, executeTool, getTool, isDestructive } from '@/tools/registry';
 import type { ToolContext } from '@/tools/types';
 import { getConfig } from './config';
 import { runUseAgent } from './use-agent';
@@ -14,15 +14,23 @@ import { runUseAgent } from './use-agent';
 let socket: WebSocket | null = null;
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 let connected = false;
+// Backs off after repeated failures (no relay server running) instead of
+// retrying every 5s forever, which just spams the console with connection
+// errors. Resets whenever `connect()` is called explicitly (e.g. the user
+// toggles the setting, changes the port, or reopens the panel).
+let failedAttempts = 0;
+const MAX_BACKOFF_MS = 5 * 60_000;
 
 const SAFE_BLOCKLIST = new Set(['run_javascript']);
 
 function isToolAllowed(name: string, access: string, custom: string[]): boolean {
   if (access === 'all') return true;
   if (access === 'custom') return custom.includes(name);
-  // 'safe' — exclude destructive tools and run_javascript.
+  // 'safe' — exclude destructive tools and run_javascript. No call args are
+  // known when just listing/filtering tools, so per-call exemptions (e.g.
+  // close_tab on an agent-opened tab) conservatively still count as destructive.
   const def = getTool(name);
-  return !!def && !def.destructive && !SAFE_BLOCKLIST.has(name);
+  return !!def && !isDestructive(name) && !SAFE_BLOCKLIST.has(name);
 }
 
 const ctx: ToolContext = {
@@ -94,6 +102,11 @@ export function disconnect(): void {
 
 /** Connect (or reconnect) to the relay using the stored config. */
 export async function connect(): Promise<void> {
+  failedAttempts = 0; // explicit connect (toggle/port change/panel open) — start fresh
+  return attemptConnect();
+}
+
+async function attemptConnect(): Promise<void> {
   const cfg = await getConfig();
   if (!cfg.enabled) return disconnect();
 
@@ -108,9 +121,11 @@ export async function connect(): Promise<void> {
 
   socket.onopen = () => {
     connected = true;
+    failedAttempts = 0;
   };
   socket.onclose = () => {
     connected = false;
+    failedAttempts++;
     scheduleReconnect();
   };
   socket.onerror = () => socket?.close();
@@ -135,9 +150,11 @@ export async function connect(): Promise<void> {
 
 function scheduleReconnect(): void {
   if (reconnectTimer) return;
-  reconnectTimer = setTimeout(async () => {
+  // Exponential backoff (5s, 10s, 20s, ... capped at 5min) so a relay that
+  // isn't running doesn't retry-and-log every 5s indefinitely.
+  const delay = Math.min(5000 * 2 ** failedAttempts, MAX_BACKOFF_MS);
+  reconnectTimer = setTimeout(() => {
     reconnectTimer = null;
-    const cfg = await getConfig();
-    if (cfg.enabled) connect();
-  }, 5000);
+    attemptConnect();
+  }, delay);
 }

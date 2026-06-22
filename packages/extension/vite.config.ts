@@ -25,6 +25,7 @@ export default defineConfig({
         settings: 'src/settings/index.html',
         onboarding: 'src/onboarding/index.html',
         offscreen: 'src/offscreen/index.html',
+        'mic-permission': 'src/mic-permission/index.html',
       },
     },
   },

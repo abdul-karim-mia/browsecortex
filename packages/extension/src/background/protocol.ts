@@ -25,6 +25,7 @@ export type ClientMessage =
 /** Worker → side panel. */
 export type ServerMessage =
   | { type: 'token'; content: string }
+  | { type: 'reasoning'; content: string }
   | { type: 'tool_call'; call: ToolCall }
   | { type: 'tool_result'; toolCallId: string; content: string; isError?: boolean }
   | { type: 'ask_user'; questions: unknown }

@@ -1,8 +1,18 @@
 import { describe, it, expect, vi } from 'vitest';
-import { executeTool, getApiTools, getTool } from '@/tools/registry';
+import { executeTool, getApiTools, getTool, isDestructive } from '@/tools/registry';
 import type { ToolContext, ToolDefinition } from '@/tools/types';
 
 const ctx: ToolContext = { getActiveTabId: async () => 1 };
+
+// Minimal chrome.tabs stub so open_tab's executor can run under node (no real
+// chrome global in this test environment).
+let nextTabId = 1000;
+(globalThis as { chrome?: unknown }).chrome = {
+  tabs: {
+    create: async (opts: { url: string }) => ({ id: nextTabId++, url: opts.url }),
+    onRemoved: { addListener: () => {} },
+  },
+};
 
 describe('tool registry', () => {
   it('exposes API tool schemas for every registered tool', () => {
@@ -16,8 +26,20 @@ describe('tool registry', () => {
   });
 
   it('marks close_tab as destructive and get_all_tabs as safe', () => {
-    expect(getTool('close_tab')?.destructive).toBe(true);
+    // close_tab's destructiveness depends on whether the agent opened that tab
+    // (PLAN §34 exemption), so it's a function rather than a fixed boolean —
+    // assert through isDestructive() with a tab_id that was never AI-opened.
+    expect(isDestructive('close_tab', { tab_id: 999 })).toBe(true);
     expect(getTool('get_all_tabs')?.destructive).toBe(false);
+  });
+
+  it('exempts close_tab from confirmation for a tab the agent opened itself', async () => {
+    const opened = (await executeTool('open_tab', { url: 'https://example.com' }, ctx)) as {
+      id: number;
+    };
+    expect(isDestructive('close_tab', { tab_id: opened.id })).toBe(false);
+    // A tab the agent never opened still requires confirmation.
+    expect(isDestructive('close_tab', { tab_id: opened.id + 12345 })).toBe(true);
   });
 });
 

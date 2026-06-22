@@ -88,3 +88,45 @@ body {
   padding: 0;
   font-size: 0.85em;
 }
+
+/* "AI is working" brain indicator (ChatTab) */
+@keyframes brain-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+@keyframes brain-glow {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.25);
+  }
+}
+@keyframes synapse-flash {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.brain-pulse {
+  animation: brain-pulse 1.4s ease-in-out infinite;
+}
+.brain-glow {
+  animation: brain-glow 1.4s ease-in-out infinite;
+}
+.synapse-dot {
+  animation: synapse-flash 1.2s ease-in-out infinite;
+}

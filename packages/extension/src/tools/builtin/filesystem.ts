@@ -139,7 +139,7 @@ export const fsExport: ToolDefinition = {
   name: 'fs_export',
   description: 'Export a workspace file to the user\'s real Downloads folder.',
   parameters: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] },
-  destructive: false,
+  destructive: true,
   timeout: 'file',
   execute: (args, ctx) =>
     scoped(ctx, async (cid) => {
@@ -161,7 +161,7 @@ export const fsCreateZip: ToolDefinition = {
       filename: { type: 'string' },
     },
   },
-  destructive: false,
+  destructive: true,
   timeout: 'file',
   execute: (args, ctx) =>
     scoped(ctx, async (cid) => {

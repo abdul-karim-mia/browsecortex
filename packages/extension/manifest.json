@@ -37,7 +37,8 @@
     "sessions",
     "search",
     "readingList",
-    "alarms"
+    "alarms",
+    "declarativeNetRequest"
   ],
   "optional_permissions": ["clipboardRead", "cookies"],
   "host_permissions": ["<all_urls>", "http://localhost/*", "http://127.0.0.1/*"],

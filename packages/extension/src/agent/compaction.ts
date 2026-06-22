@@ -43,8 +43,16 @@ export async function compact(
   if (firstUserIdx < 0) return messages;
 
   const head = messages.slice(0, firstUserIdx + 1);
-  const tail = messages.slice(Math.max(firstUserIdx + 1, messages.length - KEEP_RECENT));
-  const rawMiddle = messages.slice(firstUserIdx + 1, messages.length - KEEP_RECENT);
+  // A raw count-based cut can land on a 'tool' message, orphaning it from its
+  // assistant tool_calls message if that assistant turn ends up summarized —
+  // providers (e.g. DeepSeek) reject a 'tool' message with no preceding
+  // tool_calls. Walk the boundary back over any leading tool messages so a
+  // result always stays paired with its assistant call.
+  let tailStart = Math.max(firstUserIdx + 1, messages.length - KEEP_RECENT);
+  while (tailStart > firstUserIdx + 1 && messages[tailStart].role === 'tool') tailStart--;
+
+  const tail = messages.slice(tailStart);
+  const rawMiddle = messages.slice(firstUserIdx + 1, tailStart);
   // Never compact pinned messages (PLAN §31) — preserve them verbatim.
   const pinned = new Set(pinnedContents);
   const preserved = rawMiddle.filter((m) => typeof m.content === 'string' && pinned.has(m.content));

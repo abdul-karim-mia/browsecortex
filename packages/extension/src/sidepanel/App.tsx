@@ -3,20 +3,24 @@ import { t } from '@/i18n';
 import { ChatTab } from './tabs/ChatTab';
 import { TasksTab } from './tabs/TasksTab';
 import { FilesTab } from './tabs/FilesTab';
-import { SelectorBar } from './SelectorBar';
 import { ConversationDrawer } from './ConversationDrawer';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Icon, type IconName } from '@/components/Icon';
+import { Logo } from './Logo';
 import { Storage } from '@/storage';
 import { checkDbHealth } from '@/db';
 
 type Tab = 'chat' | 'tasks' | 'files';
 
-const TABS: { id: Tab; key: string; icon: IconName }[] = [
+const ALL_TABS: { id: Tab; key: string; icon: IconName }[] = [
   { id: 'chat', key: 'tab_chat', icon: 'chat' },
   { id: 'tasks', key: 'tab_tasks', icon: 'tasks' },
   { id: 'files', key: 'tab_files', icon: 'files' },
 ];
+
+/** How often to poll for newly-created tasks/files while a conversation is
+ * active, so their tabs can appear without the user needing to reload (PLAN §7). */
+const TAB_VISIBILITY_POLL_MS = 3000;
 
 export function App() {
   const [tab, setTab] = useState<Tab>('chat');
@@ -24,6 +28,10 @@ export function App() {
   const [conversationId, setConversationId] = useState<string>(() => crypto.randomUUID());
   const [density, setDensity] = useState<string>('comfortable');
   const [dbError, setDbError] = useState<string | null>(null);
+  // Tasks/Files tabs only appear once the conversation actually has content
+  // for them (PLAN §7) — no point showing an always-empty tab.
+  const [hasTasks, setHasTasks] = useState(false);
+  const [hasFiles, setHasFiles] = useState(false);
 
   const newChat = () => {
     setConversationId(crypto.randomUUID());
@@ -49,6 +57,40 @@ export function App() {
     return () => chrome.runtime?.onMessage?.removeListener(onMsg);
   }, []);
 
+  // Detect whether this conversation has tasks/files yet, so their tabs can
+  // fade in only once they're actually used. Polled while mounted since tool
+  // calls can create tasks/files at any point during a run.
+  useEffect(() => {
+    let cancelled = false;
+    const refresh = () => {
+      Storage.tasks.byConversation(conversationId).then((t) => {
+        if (!cancelled) setHasTasks(t.length > 0);
+      });
+      Storage.files.byConversation(conversationId).then((f) => {
+        if (!cancelled) setHasFiles(f.some((x) => !x.isFolder));
+      });
+    };
+    refresh();
+    const interval = setInterval(refresh, TAB_VISIBILITY_POLL_MS);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [conversationId]);
+
+  // Don't strand the user on a tab that just disappeared (e.g. tasks cleared).
+  useEffect(() => {
+    if (tab === 'tasks' && !hasTasks) setTab('chat');
+    if (tab === 'files' && !hasFiles) setTab('chat');
+  }, [tab, hasTasks, hasFiles]);
+
+  const visibleTabs = ALL_TABS.filter(
+    (tEntry) =>
+      tEntry.id === 'chat' ||
+      (tEntry.id === 'tasks' && hasTasks) ||
+      (tEntry.id === 'files' && hasFiles),
+  );
+
   const openSettings = () => chrome.runtime?.openOptionsPage?.();
 
   return (
@@ -67,7 +109,7 @@ export function App() {
             <Icon name="menu" />
           </button>
           <span class="flex items-center gap-1.5 font-semibold">
-            <Icon name="brain" size={20} class="text-blue-500" />
+            <Logo size={20} />
             {t('app_name')}
           </span>
         </div>
@@ -88,27 +130,26 @@ export function App() {
         </div>
       )}
 
-      {/* Provider/model selector */}
-      <SelectorBar />
-
-      {/* Tabs */}
-      <nav class="flex border-b border-gray-200 dark:border-gray-700">
-        {TABS.map((tEntry) => (
-          <button
-            key={tEntry.id}
-            type="button"
-            onClick={() => setTab(tEntry.id)}
-            class={`flex flex-1 items-center justify-center gap-1.5 py-2 text-sm font-medium ${
-              tab === tEntry.id
-                ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
-                : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
-            }`}
-          >
-            <Icon name={tEntry.icon} size={16} />
-            {t(tEntry.key)}
-          </button>
-        ))}
-      </nav>
+      {/* Tabs — hidden entirely until a conversation actually has tasks/files */}
+      {visibleTabs.length > 1 && (
+        <nav class="flex border-b border-gray-200 dark:border-gray-700">
+          {visibleTabs.map((tEntry) => (
+            <button
+              key={tEntry.id}
+              type="button"
+              onClick={() => setTab(tEntry.id)}
+              class={`flex flex-1 items-center justify-center gap-1.5 py-2 text-sm font-medium ${
+                tab === tEntry.id
+                  ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
+                  : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+              }`}
+            >
+              <Icon name={tEntry.icon} size={16} />
+              {t(tEntry.key)}
+            </button>
+          ))}
+        </nav>
+      )}
 
       {/* Active tab */}
       <main class="min-h-0 flex-1">

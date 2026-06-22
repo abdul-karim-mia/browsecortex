@@ -83,8 +83,14 @@ export async function persistNewTurns(
   // fullApiMessages[0] is the system message; skip it.
   const withoutSystem = fullApiMessages.filter((m) => m.role !== 'system');
   const newTurns = withoutSystem.slice(priorTurnCount);
-  for (const apiMsg of newTurns) {
-    const stored = fromApiMessage(apiMsg, conversationId);
+  // Assign strictly increasing timestamps so byConversation's createdAt sort
+  // can't tie-break same-millisecond turns by random id order (see
+  // fromApiMessage's doc comment) — that reordering is what corrupts a
+  // conversation's tool_calls/tool-result pairing for the API.
+  const baseMs = Date.now();
+  for (let i = 0; i < newTurns.length; i++) {
+    const createdAt = new Date(baseMs + i).toISOString();
+    const stored = fromApiMessage(newTurns[i], conversationId, createdAt);
     if (stored) await addMessage(stored);
   }
 }

@@ -28,7 +28,10 @@ export type IconName =
   | 'file'
   | 'folder'
   | 'eye'
-  | 'eye-off';
+  | 'eye-off'
+  | 'mic'
+  | 'chevron-down'
+  | 'sparkle';
 
 const PATHS: Record<IconName, JSX.Element> = {
   brain: (
@@ -144,6 +147,18 @@ const PATHS: Record<IconName, JSX.Element> = {
       <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
       <path d="m2 2 20 20" />
     </>
+  ),
+  mic: (
+    <>
+      <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3Z" />
+      <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+      <path d="M12 19v4" />
+      <path d="M8 23h8" />
+    </>
+  ),
+  'chevron-down': <path d="m6 9 6 6 6-6" />,
+  sparkle: (
+    <path d="M12 2c.4 2.6 1 4.6 2.2 5.8S17.4 9.6 20 10c-2.6.4-4.6 1-5.8 2.2S12.4 15.4 12 18c-.4-2.6-1-4.6-2.2-5.8S6.6 10.4 4 10c2.6-.4 4.6-1 5.8-2.2S11.6 4.6 12 2Z" />
   ),
 };
 

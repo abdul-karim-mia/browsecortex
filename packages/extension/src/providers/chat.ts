@@ -34,10 +34,11 @@ interface ChatOptions {
   messages: ApiMessage[];
   tools?: ApiToolDefinition[];
   signal?: AbortSignal;
+  reasoningEffort?: 'low' | 'medium' | 'high';
 }
 
 function buildRequest(opts: ChatOptions): ChatRequest {
-  const { model, messages, tools } = opts;
+  const { model, messages, tools, reasoningEffort } = opts;
   const req: ChatRequest = {
     model: model.id,
     messages,
@@ -50,6 +51,7 @@ function buildRequest(opts: ChatOptions): ChatRequest {
   // Reasoning models swap parameter names and omit temperature (PLAN §6).
   if (model.hasReasoning) {
     if (model.maxOutputTokens) req.max_completion_tokens = model.maxOutputTokens;
+    if (reasoningEffort) req.reasoning_effort = reasoningEffort;
   } else {
     if (model.maxOutputTokens) req.max_tokens = model.maxOutputTokens;
     req.temperature = 0.7;
@@ -78,19 +80,32 @@ interface DeltaChunk {
  * Tool calls are emitted once, at the end, fully assembled.
  */
 export async function* streamChat(opts: ChatOptions): AsyncGenerator<ChatStreamEvent> {
-  const res = await fetch(joinUrl(opts.provider.baseUrl, '/chat/completions'), {
-    method: 'POST',
-    headers: authHeaders(opts.provider),
-    body: JSON.stringify(buildRequest(opts)),
-    signal: opts.signal,
-  });
+  const url = joinUrl(opts.provider.baseUrl, '/chat/completions');
+  console.log('[chat:http] POST', url, 'model:', opts.model.id, 'messages:', opts.messages.length, 'tools:', opts.tools?.length ?? 0);
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      headers: authHeaders(opts.provider),
+      body: JSON.stringify(buildRequest(opts)),
+      signal: opts.signal,
+    });
+  } catch (e) {
+    console.error('[chat:http] fetch threw (network error / CORS / offline?)', e);
+    throw e;
+  }
+  console.log('[chat:http] response status', res.status, res.statusText);
 
   if (!res.ok) {
     const retryAfter = parseRetryAfter(res.headers.get('retry-after'));
     const body = await res.text().catch(() => '');
+    console.error('[chat:http] non-OK response', res.status, body);
     throw new ChatHttpError(res.status, retryAfter, body || `${res.status} ${res.statusText}`);
   }
-  if (!res.body) throw new Error('No response body from provider.');
+  if (!res.body) {
+    console.error('[chat:http] response had no body');
+    throw new Error('No response body from provider.');
+  }
 
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
@@ -98,9 +113,14 @@ export async function* streamChat(opts: ChatOptions): AsyncGenerator<ChatStreamE
   let finishReason: string | null = null;
   let buffer = '';
 
+  let chunkCount = 0;
   while (true) {
     const { done, value } = await reader.read();
-    if (done) break;
+    if (done) {
+      console.log(`[chat:http] stream done after ${chunkCount} chunks, finishReason=${finishReason}`);
+      break;
+    }
+    chunkCount++;
     buffer += decoder.decode(value, { stream: true });
 
     const lines = buffer.split('\n');

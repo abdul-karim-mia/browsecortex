@@ -32,6 +32,11 @@ export const waitForPageLoad: ToolDefinition = {
   timeout: 'navigation',
   async execute(args, ctx) {
     const id = await tabId(args, ctx.getActiveTabId);
+    // Brief grace period before the first check: if a navigation was just
+    // triggered (e.g. right after navigate_to), the tab can still report the
+    // *previous* page's 'complete' status for a moment — checking instantly
+    // would falsely report success against the stale page.
+    await new Promise((r) => setTimeout(r, 150));
     const deadline = Date.now() + (Number(args.timeout_ms) || 12_000);
     while (Date.now() < deadline) {
       const tab = await chrome.tabs.get(id);

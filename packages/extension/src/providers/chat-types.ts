@@ -41,6 +41,8 @@ export interface ChatRequest {
   /** Reasoning models use this instead of max_tokens (PLAN §6). */
   max_completion_tokens?: number;
   temperature?: number;
+  /** Reasoning effort for reasoning-capable models (PLAN §6). */
+  reasoning_effort?: 'low' | 'medium' | 'high';
 }
 
 /** Partial tool call accumulated across stream deltas. */

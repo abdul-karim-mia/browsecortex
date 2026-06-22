@@ -18,7 +18,7 @@ export const createBackupTool: ToolDefinition = {
     },
     required: ['password'],
   },
-  destructive: false,
+  destructive: true,
   timeout: 'file',
   async execute(args) {
     const password = String(args.password ?? '');

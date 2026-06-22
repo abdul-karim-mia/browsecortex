@@ -6,20 +6,25 @@ import { Storage } from '@/storage';
 import { messagesToLines, type ChatLine } from '../displayLines';
 import { AskUserWidget, type AskUserPayload } from '../AskUserWidget';
 import { MessageBubble } from '../MessageBubble';
-import { ToolCallGroup } from '../ToolCallGroup';
+import { WorkingBlock } from '../WorkingBlock';
+import { BrainPulse } from '../BrainPulse';
 import { Icon } from '@/components/Icon';
 import type { Attachment } from '@/background/protocol';
+import type { Settings } from '@/types';
+import { ModelPickerPopup } from '../ModelPickerPopup';
 
-type Block = { kind: 'tools'; lines: ChatLine[] } | { kind: 'message'; line: ChatLine };
+type Block = { kind: 'working'; lines: ChatLine[] } | { kind: 'message'; line: ChatLine };
 
-/** Collapse consecutive tool lines into a single group block (PLAN §7). */
+/** Group consecutive tool/thinking lines into one "working" block (PLAN §7),
+ * so reasoning and tool calls before the final reply render as a single
+ * collapsible section instead of separate disjoint boxes. */
 function groupLines(lines: ChatLine[]): Block[] {
   const blocks: Block[] = [];
   for (const line of lines) {
-    if (line.role === 'tool') {
+    if (line.role === 'tool' || line.role === 'thinking') {
       const last = blocks[blocks.length - 1];
-      if (last?.kind === 'tools') last.lines.push(line);
-      else blocks.push({ kind: 'tools', lines: [line] });
+      if (last?.kind === 'working') last.lines.push(line);
+      else blocks.push({ kind: 'working', lines: [line] });
     } else {
       blocks.push({ kind: 'message', line });
     }
@@ -46,7 +51,7 @@ function readFileAsAttachment(file: File): Promise<Attachment> {
 }
 
 const EXAMPLE_PROMPTS = [
-  'Summarize the page I\'m on',
+  "Summarize the page I'm on",
   'Open Hacker News in a new tab',
   'List all my open tabs',
 ];
@@ -61,25 +66,48 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
   const [lines, setLines] = useState<ChatLine[]>([]);
   const [input, setInput] = useState('');
   const [running, setRunning] = useState(false);
+  /** True while waiting on the provider with nothing visible yet (no tokens, no tool row). */
+  const [thinking, setThinking] = useState(false);
   const [ask, setAsk] = useState<AskUserPayload | null>(null);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [contextWindow, setContextWindow] = useState<number | null>(null);
+  const [settings, setSettings] = useState<Settings | null>(null);
+  const [modelSupportsThinking, setModelSupportsThinking] = useState(false);
+  const [showModelPicker, setShowModelPicker] = useState(false);
+  const [listening, setListening] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   /** Whether the trailing assistant line is still receiving tokens. */
   const openRef = useRef(false);
+  /** Whether the trailing thinking line is still receiving reasoning tokens. */
+  const openThinkingRef = useRef(false);
   /** Tracks if a new send was issued during the 'done' storage reload (avoids race). */
   const submittedRef = useRef(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Load the selected model's context window for the usage meter (PLAN §31).
+  // Re-runs whenever settings change elsewhere (e.g. model switched in the
+  // Settings tab while this chat is open) so the meter stays in sync.
   useEffect(() => {
-    (async () => {
-      const settings = await Storage.settings.get();
-      if (!settings.selectedProviderId || !settings.selectedModel) return;
-      const m = (await Storage.models.listByProvider(settings.selectedProviderId)).find(
-        (x) => x.id === settings.selectedModel,
+    const loadContextWindow = async () => {
+      const s = await Storage.settings.get();
+      setSettings(s);
+      if (!s.selectedProviderId || !s.selectedModel) {
+        setContextWindow(null);
+        setModelSupportsThinking(false);
+        return;
+      }
+      const m = (await Storage.models.listByProvider(s.selectedProviderId)).find(
+        (x) => x.id === s.selectedModel,
       );
       setContextWindow(m?.contextWindow ?? null);
-    })();
+      setModelSupportsThinking(!!m?.hasReasoning);
+    };
+    loadContextWindow();
+    const listener = (changes: Record<string, chrome.storage.StorageChange>, area: string) => {
+      if (area === 'local' && changes.settings) loadContextWindow();
+    };
+    chrome.storage.onChanged.addListener(listener);
+    return () => chrome.storage.onChanged.removeListener(listener);
   }, [conversationId]);
 
   // Rough token estimate (~4 chars/token) of the visible conversation.
@@ -96,10 +124,25 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
   useEffect(() => {
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, [lines, ask]);
+  }, [lines, ask, thinking]);
 
   const onServerMessage = (msg: ServerMessage) => {
-    if (msg.type === 'token') {
+    if (msg.type === 'reasoning') {
+      setThinking(false);
+      setLines((prev) => {
+        const next = [...prev];
+        const last = next[next.length - 1];
+        if (openThinkingRef.current && last?.role === 'thinking') {
+          next[next.length - 1] = { ...last, content: last.content + msg.content };
+        } else {
+          next.push({ role: 'thinking', content: msg.content, streaming: true });
+          openThinkingRef.current = true;
+        }
+        return next;
+      });
+    } else if (msg.type === 'token') {
+      setThinking(false);
+      closeThinkingLine();
       setLines((prev) => {
         const next = [...prev];
         const last = next[next.length - 1];
@@ -113,6 +156,8 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
       });
     } else if (msg.type === 'tool_call') {
       openRef.current = false;
+      setThinking(false);
+      closeThinkingLine();
       setLines((prev) => [
         ...prev,
         {
@@ -137,23 +182,65 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
         }
         return next;
       });
+      // The model needs another round-trip after this result lands — show the
+      // waiting indicator again until its next token or tool call arrives.
+      setThinking(true);
     } else if (msg.type === 'ask_user') {
       openRef.current = false;
+      setThinking(false);
+      closeThinkingLine();
       setAsk(msg.questions as AskUserPayload);
     } else if (msg.type === 'done') {
       setRunning(false);
+      setThinking(false);
       openRef.current = false;
+      closeThinkingLine();
       submittedRef.current = false;
       // Reload from storage so persisted messages carry ids (enables pin/delete).
       // Guard with submittedRef so a quick second submit doesn't get overwritten.
       Storage.messages.byConversation(conversationId).then((m) => {
-        if (m.length && !submittedRef.current) setLines(messagesToLines(m));
+        if (!m.length || submittedRef.current) return;
+        setLines((prev) => {
+          const reloaded = messagesToLines(m);
+          // Reasoning content isn't persisted (PLAN §8 stores only user/
+          // assistant/tool turns), so the reload above drops any thinking
+          // lines shown during this run. Splice them back in, just before
+          // the final reply, instead of letting them disappear.
+          const thinkingLines = prev.filter((l) => l.role === 'thinking');
+          if (thinkingLines.length) {
+            const lastAssistantIdx = reloaded.map((l) => l.role).lastIndexOf('assistant');
+            const insertAt = lastAssistantIdx === -1 ? reloaded.length : lastAssistantIdx;
+            reloaded.splice(insertAt, 0, ...thinkingLines);
+          }
+          return reloaded;
+        });
       });
     } else if (msg.type === 'error') {
       setRunning(false);
+      setThinking(false);
       openRef.current = false;
+      closeThinkingLine();
+      // The background's abortController can get stuck non-null (e.g. the
+      // service worker died mid-run) with no UI affordance to recover, since
+      // this panel's own `running` is false so the Stop button never shows.
+      // Self-heal by aborting on the background's behalf so the next send works.
+      if (msg.message === 'An agent is already running. Stop it first.') {
+        send({ type: 'abort' });
+      }
       setLines((prev) => [...prev, { role: 'assistant', content: `⚠️ ${msg.message}` }]);
     }
+  };
+
+  /** Marks the trailing thinking line as finished, if one is still open. */
+  const closeThinkingLine = () => {
+    if (!openThinkingRef.current) return;
+    openThinkingRef.current = false;
+    setLines((prev) => {
+      const next = [...prev];
+      const last = next[next.length - 1];
+      if (last?.role === 'thinking') next[next.length - 1] = { ...last, streaming: false };
+      return next;
+    });
   };
 
   const { send, connected } = usePort(onServerMessage);
@@ -164,18 +251,142 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
     setAttachments((prev) => [...prev, ...read].slice(0, 10));
   };
 
-  const submit = () => {
-    const content = input.trim();
+  const reportDictationError = (message: string) =>
+    setLines((prev) => [...prev, { role: 'assistant', content: `⚠️ ${message}` }]);
+
+  /**
+   * Chrome auto-dismisses the getUserMedia prompt inside side panels/popups,
+   * so a direct request there fails even on a fresh profile. Falling back to
+   * a real tab lets the prompt show; the granted permission is per-origin so
+   * the side panel can use the mic afterward too.
+   */
+  const ensureMicPermission = async (): Promise<boolean> => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach((track) => track.stop());
+      return true;
+    } catch {
+      // fall through to the tab-based prompt
+    }
+    const tab = await chrome.tabs.create({
+      url: chrome.runtime.getURL('src/mic-permission/index.html'),
+    });
+    return new Promise((resolve) => {
+      const timeout = setTimeout(() => {
+        chrome.runtime.onMessage.removeListener(listener);
+        resolve(false);
+      }, 30_000);
+      function listener(msg: any, sender: chrome.runtime.MessageSender) {
+        if (msg?.type === 'mic_permission_result' && sender.tab?.id === tab.id) {
+          clearTimeout(timeout);
+          chrome.runtime.onMessage.removeListener(listener);
+          resolve(!!msg.granted);
+        }
+      }
+      chrome.runtime.onMessage.addListener(listener);
+    });
+  };
+
+  const SILENCE_TIMEOUT_MS = 4000;
+
+  /** Replace spoken punctuation words and capitalize sentence starts. */
+  const punctuate = (raw: string): string => {
+    let text = raw
+      .replace(/\s*\bcomma\b\s*/gi, ', ')
+      .replace(/\s*\b(full stop|period)\b\s*/gi, '. ')
+      .replace(/\s*\bquestion mark\b\s*/gi, '? ')
+      .replace(/\s*\bexclamation (mark|point)\b\s*/gi, '! ')
+      .replace(/\s*\bnew line\b\s*/gi, '\n')
+      .replace(/\s+([.,?!])/g, '$1')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+    text = text.replace(/(^\s*\w|[.!?]\s+\w)/g, (m) => m.toUpperCase());
+    return text;
+  };
+
+  const toggleDictation = async () => {
+    if (listening) {
+      recognitionRef.current?.stop();
+      return;
+    }
+    const SpeechRecognitionCtor =
+      (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognitionCtor) {
+      reportDictationError('Voice input is not supported in this browser.');
+      return;
+    }
+    const granted = await ensureMicPermission();
+    if (!granted) {
+      reportDictationError('Microphone access was not granted.');
+      return;
+    }
+    const recognition: SpeechRecognition = new SpeechRecognitionCtor();
+    recognition.lang = navigator.language || 'en-US';
+    recognition.interimResults = true;
+    recognition.continuous = true;
+    const baseInput = input;
+    let silenceTimer: ReturnType<typeof setTimeout> | null = null;
+    // recognition.stop() is async — results already buffered keep firing
+    // onresult afterward, and "send" stays at the end of the transcript
+    // across several of those events. Guard so submit() fires only once.
+    let sendTriggered = false;
+    const resetSilenceTimer = () => {
+      if (silenceTimer) clearTimeout(silenceTimer);
+      silenceTimer = setTimeout(() => recognition.stop(), SILENCE_TIMEOUT_MS);
+    };
+    recognition.onresult = (e: SpeechRecognitionEvent) => {
+      if (sendTriggered) return;
+      resetSilenceTimer();
+      let transcript = '';
+      for (let i = 0; i < e.results.length; i++) transcript += e.results[i][0].transcript + ' ';
+      const formatted = punctuate(transcript);
+      const sendRequested = /\bsend\b[.!]?$/i.test(formatted);
+      const finalText = sendRequested ? formatted.replace(/\bsend\b[.!]?$/i, '').trim() : formatted;
+      const combined = (baseInput ? `${baseInput} ` : '') + finalText;
+      setInput(combined);
+      if (sendRequested) {
+        sendTriggered = true;
+        recognition.stop();
+        if (silenceTimer) clearTimeout(silenceTimer);
+        submit(combined);
+      }
+    };
+    recognition.onerror = (e: any) => {
+      setListening(false);
+      if (silenceTimer) clearTimeout(silenceTimer);
+      reportDictationError(`Voice input error: ${e?.error ?? 'unknown error'}`);
+    };
+    recognition.onend = () => {
+      setListening(false);
+      if (silenceTimer) clearTimeout(silenceTimer);
+    };
+    recognitionRef.current = recognition;
+    setListening(true);
+    resetSilenceTimer();
+    recognition.start();
+  };
+
+  const submit = (override?: string) => {
+    const content = (override ?? input).trim();
     if ((!content && attachments.length === 0) || running) return;
     if (!connected) {
-      setLines((prev) => [...prev, { role: 'assistant', content: '⚠️ Not connected to background. Try closing and reopening the panel.' }]);
+      setLines((prev) => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: '⚠️ Not connected to background. Try closing and reopening the panel.',
+        },
+      ]);
       return;
     }
     const atts = attachments;
-    const displayed = atts.length ? `${content}\n📎 ${atts.map((a) => a.name).join(', ')}` : content;
+    const displayed = atts.length
+      ? `${content}\n📎 ${atts.map((a) => a.name).join(', ')}`
+      : content;
     setInput('');
     setAttachments([]);
     setRunning(true);
+    setThinking(true);
     openRef.current = false;
     submittedRef.current = true;
     setLines((prev) => [...prev, { role: 'user', content: displayed }]);
@@ -185,6 +396,15 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
   const stop = () => {
     send({ type: 'abort' });
     setRunning(false);
+    setThinking(false);
+  };
+
+  const bypassPermissions = settings?.agentMode === 'full_auto';
+  const toggleBypassPermissions = async () => {
+    const next = await Storage.settings.update({
+      agentMode: bypassPermissions ? 'confirm_destructive' : 'full_auto',
+    });
+    setSettings(next);
   };
 
   const newChat = () => {
@@ -225,10 +445,7 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
 
   const submitAnswers = (answers: Record<string, unknown>) => {
     setAsk(null);
-    setLines((prev) => [
-      ...prev,
-      { role: 'user', content: `↳ ${JSON.stringify(answers)}` },
-    ]);
+    setLines((prev) => [...prev, { role: 'user', content: `↳ ${JSON.stringify(answers)}` }]);
     send({ type: 'ask_user_response', answers });
   };
 
@@ -269,7 +486,8 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
       </div>
       {ctxPercent >= 80 && (
         <div class="bg-amber-100 px-3 py-1 text-xs text-amber-800 dark:bg-amber-950 dark:text-amber-200">
-          Context window {ctxPercent.toFixed(0)}% full — older turns will be compacted automatically.
+          Context window {ctxPercent.toFixed(0)}% full — older turns will be compacted
+          automatically.
         </div>
       )}
 
@@ -299,8 +517,8 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
           </div>
         )}
         {groupLines(lines).map((block, i) =>
-          block.kind === 'tools' ? (
-            <ToolCallGroup key={`g${i}`} tools={block.lines} />
+          block.kind === 'working' ? (
+            <WorkingBlock key={`g${i}`} items={block.lines} />
           ) : (
             <MessageBubble
               key={block.line.messageId ?? `m${i}`}
@@ -309,6 +527,12 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
               onDelete={deleteMessage}
             />
           ),
+        )}
+        {thinking && (
+          <div class="flex max-w-[88%] items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-400 dark:bg-gray-800">
+            <BrainPulse size={18} />
+            Thinking…
+          </div>
         )}
         {ask && <AskUserWidget payload={ask} onSubmit={submitAnswers} />}
       </div>
@@ -335,23 +559,7 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
             ))}
           </div>
         )}
-        <div class="flex gap-2">
-          <label
-            class="flex cursor-pointer items-center rounded border border-gray-300 px-2 text-gray-500 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-800"
-            title="Attach files"
-          >
-            <Icon name="plus" size={16} />
-            <input
-              type="file"
-              multiple
-              accept="image/*,.txt,.md,.csv,.json"
-              class="hidden"
-              onChange={(e) => {
-                addFiles((e.target as HTMLInputElement).files);
-                (e.target as HTMLInputElement).value = '';
-              }}
-            />
-          </label>
+        <div class="rounded-2xl border border-gray-300 bg-white px-3 py-2 dark:border-gray-600 dark:bg-gray-900">
           <textarea
             value={input}
             onInput={(e) => setInput((e.target as HTMLTextAreaElement).value)}
@@ -373,27 +581,91 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
             }}
             placeholder={t('type_a_message')}
             rows={2}
-            class="min-h-[44px] flex-1 resize-none rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800"
+            class="min-h-[40px] w-full resize-none border-none bg-transparent p-0 text-sm focus:outline-none"
           />
-          {running ? (
-            <button
-              type="button"
-              onClick={stop}
-              class="flex items-center gap-1 rounded bg-red-500 px-3 text-sm font-medium text-white"
-              title={t('stop')}
-            >
-              <Icon name="stop" size={16} />
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={submit}
-              class="flex items-center rounded bg-blue-500 px-3 text-sm font-medium text-white disabled:opacity-50"
-              title={t('send_message')}
-            >
-              <Icon name="send" size={16} />
-            </button>
-          )}
+          <div class="mt-2 flex items-center justify-between">
+            <div class="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={toggleBypassPermissions}
+                title="Toggle agent confirmation prompts"
+                class={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                  bypassPermissions
+                    ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400'
+                    : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
+                }`}
+              >
+                Bypass permissions
+              </button>
+              <label
+                class="flex cursor-pointer items-center rounded p-1.5 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
+                title="Attach files"
+              >
+                <Icon name="plus" size={16} />
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*,.txt,.md,.csv,.json"
+                  class="hidden"
+                  onChange={(e) => {
+                    addFiles((e.target as HTMLInputElement).files);
+                    (e.target as HTMLInputElement).value = '';
+                  }}
+                />
+              </label>
+              <button
+                type="button"
+                onClick={toggleDictation}
+                title={listening ? 'Stop dictation' : 'Dictate message'}
+                class={`flex items-center rounded p-1.5 ${
+                  listening
+                    ? 'text-red-500'
+                    : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800'
+                }`}
+              >
+                <Icon name="mic" size={16} />
+              </button>
+            </div>
+            <div class="relative flex items-center gap-2 text-xs text-gray-400">
+              <button
+                type="button"
+                onClick={() => setShowModelPicker((v) => !v)}
+                class="flex items-center gap-1 rounded px-1.5 py-1 hover:bg-gray-100 dark:hover:bg-gray-800"
+              >
+                {settings?.selectedModel && <span>{settings.selectedModel}</span>}
+                {modelSupportsThinking && (
+                  <span class="capitalize">{settings?.reasoningEffort ?? 'medium'}</span>
+                )}
+                <Icon name="chevron-down" size={14} />
+              </button>
+              {showModelPicker && (
+                <ModelPickerPopup
+                  settings={settings}
+                  onClose={() => setShowModelPicker(false)}
+                  onChange={setSettings}
+                />
+              )}
+              {running ? (
+                <button
+                  type="button"
+                  onClick={stop}
+                  class="flex items-center rounded-full bg-red-500 p-1.5 text-white"
+                  title={t('stop')}
+                >
+                  <Icon name="stop" size={14} />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => submit()}
+                  class="flex items-center rounded-full bg-blue-500 p-1.5 text-white disabled:opacity-50"
+                  title={t('send_message')}
+                >
+                  <Icon name="send" size={14} />
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

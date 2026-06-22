@@ -5,6 +5,20 @@ import type { ToolDefinition } from '../types';
 
 const MAX_TABS = 50;
 
+// Tabs the agent opened itself (PLAN §34 exemption) — closing one of these
+// doesn't need destructive confirmation, since the agent isn't taking away
+// something the user had open. Lives only in memory: if the service worker
+// restarts mid-conversation, these tabs just fall back to requiring
+// confirmation like any other (safe default, not a correctness issue).
+const aiOpenedTabIds = new Set<number>();
+if (typeof chrome !== 'undefined' && chrome.tabs) {
+  chrome.tabs.onRemoved.addListener((tabId) => aiOpenedTabIds.delete(tabId));
+}
+
+export function isAiOpenedTab(tabId: number): boolean {
+  return aiOpenedTabIds.has(tabId);
+}
+
 export const getActiveTab: ToolDefinition = {
   name: 'get_active_tab',
   description: 'Get the currently active tab (id, title, URL).',
@@ -50,6 +64,7 @@ export const openTab: ToolDefinition = {
       url: String(args.url),
       active: args.active !== false,
     });
+    if (tab.id !== undefined) aiOpenedTabIds.add(tab.id);
     return { id: tab.id, url: tab.url };
   },
 };
@@ -62,7 +77,8 @@ export const closeTab: ToolDefinition = {
     properties: { tab_id: { type: 'number', description: 'The id of the tab to close.' } },
     required: ['tab_id'],
   },
-  destructive: true,
+  // Skip confirmation for tabs the agent opened itself this conversation.
+  destructive: (args) => !isAiOpenedTab(Number(args.tab_id)),
   timeout: 'tab',
   async execute(args) {
     const id = Number(args.tab_id);

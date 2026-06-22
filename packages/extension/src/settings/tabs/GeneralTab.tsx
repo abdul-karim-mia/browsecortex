@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'preact/hooks';
 import { Storage } from '@/storage';
-import { DEFAULT_SETTINGS, type AgentMode, type Provider, type Settings } from '@/types';
+import {
+  DEFAULT_SETTINGS,
+  type AgentMode,
+  type Provider,
+  type ReasoningEffort,
+  type Settings,
+} from '@/types';
 
 /** General settings (PLAN §10, §17, §34, §35, §45). */
 export function GeneralTab() {
@@ -28,6 +34,20 @@ export function GeneralTab() {
           <option value="full_auto">Full Auto</option>
           <option value="notify_only">Notify Only</option>
           <option value="confirm_destructive">Confirm Destructive</option>
+        </select>
+      </Field>
+
+      <Field label="Reasoning effort">
+        <select
+          value={settings.reasoningEffort}
+          onChange={(e) =>
+            update({ reasoningEffort: (e.target as HTMLSelectElement).value as ReasoningEffort })
+          }
+          class={selectCls}
+        >
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
         </select>
       </Field>
 

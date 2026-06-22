@@ -33,8 +33,21 @@ export async function autoName(
     ];
     let title = '';
     const controller = new AbortController();
-    for await (const ev of streamChat({ provider, model, messages: prompt, signal: controller.signal })) {
-      if (ev.type === 'token') title += ev.content;
+    // Bound this call — it runs after the visible reply is already done, so a
+    // stalled provider stream here must not hang the background handler and
+    // leave it permanently "running" for the rest of the panel session.
+    const timeout = setTimeout(() => controller.abort(), 10_000);
+    try {
+      for await (const ev of streamChat({
+        provider,
+        model,
+        messages: prompt,
+        signal: controller.signal,
+      })) {
+        if (ev.type === 'token') title += ev.content;
+      }
+    } finally {
+      clearTimeout(timeout);
     }
     const trimmed = title.trim().replace(/^["']|["']$/g, '');
     if (trimmed) name = trimmed.slice(0, 60);

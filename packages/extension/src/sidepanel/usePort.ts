@@ -19,22 +19,32 @@ export function usePort(onMessage: (msg: ServerMessage) => void) {
     let port: chrome.runtime.Port | null = null;
 
     function connect() {
-      if (typeof chrome === 'undefined' || !chrome.runtime?.connect) return;
+      if (typeof chrome === 'undefined' || !chrome.runtime?.connect) {
+        console.error('[chat:port] chrome.runtime.connect unavailable');
+        return;
+      }
       try {
+        console.log('[chat:port] connecting…');
         port = chrome.runtime.connect({ name: PORT_NAME });
         portRef.current = port;
         setConnected(true);
+        console.log('[chat:port] connected');
 
-        const listener = (msg: ServerMessage) => handlerRef.current(msg);
+        const listener = (msg: ServerMessage) => {
+          console.log('[chat:port] recv', msg.type, msg);
+          handlerRef.current(msg);
+        };
         port.onMessage.addListener(listener);
         port.onDisconnect.addListener(() => {
+          console.warn('[chat:port] disconnected', chrome.runtime.lastError);
           setConnected(false);
           portRef.current = null;
           port = null;
           // MV3 may terminate the SW after idle; retry so future sends work.
           if (!cancelled) setTimeout(connect, 500);
         });
-      } catch {
+      } catch (e) {
+        console.error('[chat:port] connect threw', e);
         setConnected(false);
         portRef.current = null;
         if (!cancelled) setTimeout(connect, 1000);
@@ -53,7 +63,18 @@ export function usePort(onMessage: (msg: ServerMessage) => void) {
     };
   }, []);
 
-  const send = (msg: ClientMessage) => portRef.current?.postMessage(msg);
+  const send = (msg: ClientMessage) => {
+    console.log('[chat:port] send', msg.type, msg);
+    if (!portRef.current) {
+      console.error('[chat:port] send failed — no active port', msg);
+      return;
+    }
+    try {
+      portRef.current.postMessage(msg);
+    } catch (e) {
+      console.error('[chat:port] postMessage threw', e, msg);
+    }
+  };
 
   return { send, connected };
 }

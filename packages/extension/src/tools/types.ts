@@ -46,7 +46,13 @@ export interface ToolDefinition {
   name: string;
   description: string;
   parameters: Record<string, unknown>;
-  destructive: boolean;
+  /**
+   * Whether this call needs destructive confirmation (PLAN §34). Most tools
+   * use a fixed boolean; a few (e.g. close_tab) need to decide per-call —
+   * e.g. closing a tab the agent itself opened earlier in this conversation
+   * doesn't need confirmation, closing one the user had open does.
+   */
+  destructive: boolean | ((args: Record<string, unknown>) => boolean);
   timeout: TimeoutCategory;
   /** Reads untrusted external content → triggers injection guard (PLAN §28). */
   readsExternal?: boolean;

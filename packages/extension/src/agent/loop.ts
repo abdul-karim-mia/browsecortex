@@ -111,15 +111,23 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
   let externalContentRead = false;
 
   for (let iteration = 0; iteration < maxLoops; iteration++) {
-    if (signal.aborted) return { messages, outcome: 'aborted', toolRounds };
+    console.log(`[chat:loop] iteration ${iteration}/${maxLoops}, messages: ${messages.length}`);
+    if (signal.aborted) {
+      console.warn('[chat:loop] aborted before iteration', iteration);
+      return { messages, outcome: 'aborted', toolRounds };
+    }
 
     // Compact older turns if we're approaching the context limit (PLAN §31).
     const body = messages.slice(1); // exclude system
     if (shouldCompact(body, settings, model)) {
+      console.log('[chat:loop] compacting context — estimated over threshold');
       const compacted = await compact(body, provider, model, signal, args.pinnedContents);
       if (compacted.length < body.length) {
+        console.log(`[chat:loop] compacted ${body.length} -> ${compacted.length} messages`);
         messages.splice(1, body.length, ...compacted);
         emit({ type: 'token', content: '\n_[Context compacted]_\n' });
+      } else {
+        console.log('[chat:loop] compaction skipped/no-op');
       }
     }
 
@@ -131,16 +139,31 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
       // nothing has streamed yet, to avoid duplicating output (PLAN §30).
       for (let attempt = 0; ; attempt++) {
         let streamed = false;
+        console.log(
+          `[chat:loop] calling streamChat (attempt ${attempt}), provider=${provider.id} model=${model.id}`,
+        );
         try {
-          for await (const event of streamChat({ provider, model, messages, tools, signal })) {
+          for await (const event of streamChat({
+            provider,
+            model,
+            messages,
+            tools,
+            signal,
+            reasoningEffort: settings.reasoningEffort,
+          })) {
             if (event.type === 'token') {
               streamed = true;
               assistantText += event.content;
               emit({ type: 'token', content: event.content });
             } else if (event.type === 'reasoning') {
-              if (settings.showReasoningTokens) emit({ type: 'token', content: event.content });
+              streamed = true;
+              if (settings.showReasoningTokens) emit({ type: 'reasoning', content: event.content });
             } else if (event.type === 'tool_calls') {
               streamed = true;
+              console.log(
+                '[chat:loop] tool_calls received:',
+                event.calls.map((c) => c.name),
+              );
               toolCalls = event.calls.map((c) => ({
                 id: c.id || crypto.randomUUID(),
                 type: 'function',
@@ -148,11 +171,15 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
               }));
             }
           }
+          console.log(
+            `[chat:loop] streamChat completed (attempt ${attempt}), textLen=${assistantText.length}, toolCalls=${toolCalls.length}`,
+          );
           break;
         } catch (err) {
-          const transient =
-            !(err instanceof ChatHttpError) || err.status >= 500;
+          console.error(`[chat:loop] streamChat threw (attempt ${attempt})`, err);
+          const transient = !(err instanceof ChatHttpError) || err.status >= 500;
           if (attempt === 0 && transient && !streamed && !signal.aborted) {
+            console.log('[chat:loop] retrying after transient failure in 1s');
             await new Promise((r) => setTimeout(r, 1000));
             assistantText = '';
             toolCalls = [];
@@ -162,19 +189,24 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
         }
       }
     } catch (e) {
+      console.error('[chat:loop] streamChat failed permanently', e);
       if (signal.aborted) return { messages, outcome: 'aborted', toolRounds };
       // Put the provider into cooldown on a 429 so the next request can route
       // to a fallback or wait (PLAN §40).
       if (e instanceof ChatHttpError && e.status === 429) {
+        console.warn('[chat:loop] 429 — recording rate limit cooldown for', provider.id);
         await recordRateLimit(provider.id, e.retryAfter);
       }
-      emit({ type: 'error', message: describeError(e) });
+      const message = describeError(e);
+      console.error('[chat:loop] emitting error to panel:', message);
+      emit({ type: 'error', message });
       return { messages, outcome: 'error', toolRounds };
     }
 
     // No tool calls → final answer, loop terminates (PLAN §24). 'done' is sent
     // by the caller after persistence, so the UI can safely reload from storage.
     if (toolCalls.length === 0) {
+      console.log('[chat:loop] no tool calls — final answer, completing');
       messages.push({ role: 'assistant', content: assistantText });
       return { messages, outcome: 'completed', toolRounds };
     }
@@ -185,7 +217,9 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
     // Destructive-action confirmation (PLAN §28, §34). Confirm once for the
     // batch when the agent mode requires it, or after external content was read
     // this conversation (prompt-injection guard — overrides the mode).
-    const destructiveCalls = toolCalls.filter((tc) => isDestructive(tc.function.name));
+    const destructiveCalls = toolCalls.filter((tc) =>
+      isDestructive(tc.function.name, parseArgs(tc.function.arguments)),
+    );
     const needsConfirm =
       destructiveCalls.length > 0 &&
       (settings.agentMode === 'confirm_destructive' || externalContentRead);
@@ -198,23 +232,44 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
       });
       confirmedDestructive = answer.ok === true;
     } else if (settings.agentMode === 'notify_only' && destructiveCalls.length > 0) {
-      emit({ type: 'token', content: `\n_Running: ${destructiveCalls.map((c) => c.function.name).join(', ')}_\n` });
+      emit({
+        type: 'token',
+        content: `\n_Running: ${destructiveCalls.map((c) => c.function.name).join(', ')}_\n`,
+      });
     }
 
     // Execute all tool calls in parallel (PLAN §24).
     toolRounds++;
+    console.log(
+      `[chat:loop] executing tool round ${toolRounds}:`,
+      toolCalls.map((c) => c.function.name),
+    );
     const results = await Promise.all(
       toolCalls.map(async (tc) => {
         const callArgs = parseArgs(tc.function.arguments);
-        emit({ type: 'tool_call', call: { id: tc.id, name: tc.function.name, arguments: callArgs } });
+        emit({
+          type: 'tool_call',
+          call: { id: tc.id, name: tc.function.name, arguments: callArgs },
+        });
         let result;
-        if (isDestructive(tc.function.name) && !confirmedDestructive) {
-          result = { error: 'User declined this action.' };
-        } else if (isMcpTool(tc.function.name)) {
-          result = await executeMcpTool(tc.function.name, callArgs);
-        } else {
-          result = await executeTool(tc.function.name, callArgs, ctx, settings.toolTimeoutMultiplier);
+        try {
+          if (isDestructive(tc.function.name, callArgs) && !confirmedDestructive) {
+            result = { error: 'User declined this action.' };
+          } else if (isMcpTool(tc.function.name)) {
+            result = await executeMcpTool(tc.function.name, callArgs);
+          } else {
+            result = await executeTool(
+              tc.function.name,
+              callArgs,
+              ctx,
+              settings.toolTimeoutMultiplier,
+            );
+          }
+        } catch (e) {
+          console.error(`[chat:loop] tool '${tc.function.name}' threw uncaught`, e);
+          result = { error: e instanceof Error ? e.message : String(e) };
         }
+        console.log(`[chat:loop] tool '${tc.function.name}' result:`, result);
         if (readsExternal(tc.function.name) && !('error' in result)) externalContentRead = true;
         const content = truncate(JSON.stringify(result));
         const isError = 'error' in result;
@@ -231,6 +286,7 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
     args.onCheckpoint?.(messages);
   }
 
+  console.warn(`[chat:loop] hit max iterations (${maxLoops})`);
   // Iteration cap reached (PLAN §10). 'done' is sent by the caller after persist.
   emit({
     type: 'token',

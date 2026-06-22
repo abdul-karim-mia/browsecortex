@@ -144,7 +144,7 @@ export const downloadFile: ToolDefinition = {
     properties: { url: { type: 'string' }, filename: { type: 'string' } },
     required: ['url'],
   },
-  destructive: false,
+  destructive: true,
   timeout: 'history',
   async execute(args) {
     const id = await chrome.downloads.download({

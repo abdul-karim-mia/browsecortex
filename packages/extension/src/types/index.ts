@@ -131,10 +131,14 @@ export interface VFile {
 
 export type AgentMode = 'full_auto' | 'notify_only' | 'confirm_destructive';
 
+export type ReasoningEffort = 'low' | 'medium' | 'high';
+
 export interface Settings {
   selectedProviderId: string | null;
   selectedModel: string | null;
   agentMode: AgentMode;
+  /** Reasoning effort passed to reasoning-capable models (PLAN §6). */
+  reasoningEffort: ReasoningEffort;
   maxToolCallLoops: number;
   compactionThreshold: 0.5 | 0.7 | 0.8;
   compactionEnabled: boolean;
@@ -164,6 +168,7 @@ export const DEFAULT_SETTINGS: Settings = {
   selectedProviderId: null,
   selectedModel: null,
   agentMode: 'full_auto',
+  reasoningEffort: 'medium',
   maxToolCallLoops: 15,
   compactionThreshold: 0.7,
   compactionEnabled: true,

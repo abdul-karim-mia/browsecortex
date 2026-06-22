@@ -23,9 +23,14 @@ import { connect as connectRelay } from '@/mcp-server/relay-client';
 import { writeRecoverySnapshot } from '@/backup/backup';
 import { runMigrationSafety } from '@/db/migration';
 import { executeTool } from '@/tools/registry';
+import { registerLocalOriginFix } from '@/providers/local-origin-fix';
 
 // Snapshot data on version change before further use (PLAN §42).
 runMigrationSafety();
+
+// Local providers (Ollama, LM Studio, etc.) 403 on the extension's Origin
+// header — strip it so they treat us like any other local client.
+registerLocalOriginFix();
 
 // Auto-backup recovery snapshot on a daily alarm (PLAN §32).
 chrome.alarms?.create('auto-backup', { periodInMinutes: 60 * 24 });
@@ -119,8 +124,16 @@ async function getActiveTabUrl(): Promise<string | undefined> {
 // Long-lived chat port (PLAN §23). One agent runs at a time per port (PLAN §48).
 chrome.runtime.onConnect.addListener((port) => {
   if (port.name !== PORT_NAME) return;
+  console.log('[chat:bg] port connected');
 
-  const send = (msg: ServerMessage) => port.postMessage(msg);
+  const send = (msg: ServerMessage) => {
+    console.log('[chat:bg] send', msg.type, msg);
+    try {
+      port.postMessage(msg);
+    } catch (e) {
+      console.error('[chat:bg] postMessage threw (port likely disconnected)', e, msg);
+    }
+  };
   setBadge('clear'); // panel is open — clear any pending indicator (PLAN §39)
   let abortController: AbortController | null = null;
   // Pending ask_user resolver — set while the loop waits for an answer (PLAN §18).
@@ -136,110 +149,145 @@ chrome.runtime.onConnect.addListener((port) => {
   };
 
   port.onMessage.addListener(async (msg: ClientMessage) => {
-    if (msg.type === 'abort') {
-      abortController?.abort();
-      pendingAsk?.({}); // unblock a waiting ask_user so the loop can wind down
-      pendingAsk = null;
-      return;
-    }
-    if (msg.type === 'ask_user_response') {
-      pendingAsk?.(msg.answers);
-      pendingAsk = null;
-      return;
-    }
-    if (msg.type !== 'send') return;
-
-    if (abortController) {
-      send({ type: 'error', message: 'An agent is already running. Stop it first.' });
-      return;
-    }
-
-    // Set before any await to prevent concurrent runs from double-submit.
-    abortController = new AbortController();
-    setBadge('running');
-
-    const resolved = await resolveActive();
-    if ('error' in resolved) {
-      send({ type: 'error', message: resolved.error });
-      send({ type: 'done' });
-      abortController = null;
-      return;
-    }
-    // Surface fallback routing to the user (PLAN §40).
-    if (resolved.note) send({ type: 'token', content: `_${resolved.note}_\n\n` });
-
-    await ensureOffscreen();
-    const stopKeepAlive = startKeepAlive();
-    const settings = await Storage.settings.get();
-
+    console.log('[chat:bg] recv', msg.type, msg);
     try {
-      await ensureConversation(msg.conversationId, resolved.provider, resolved.model.id);
-      const existing = await getMessages(msg.conversationId);
-      const isFirstExchange = existing.length === 0;
-      const pinnedContents = existing.filter((m) => m.pinned).map((m) => m.content);
-      // Rebuild history from IndexedDB so chats survive panel reloads (PLAN §8).
-      const history = await getApiHistory(msg.conversationId);
+      if (msg.type === 'abort') {
+        console.log('[chat:bg] abort requested');
+        abortController?.abort();
+        pendingAsk?.({}); // unblock a waiting ask_user so the loop can wind down
+        pendingAsk = null;
+        return;
+      }
+      if (msg.type === 'ask_user_response') {
+        console.log('[chat:bg] ask_user_response', msg.answers);
+        pendingAsk?.(msg.answers);
+        pendingAsk = null;
+        return;
+      }
+      if (msg.type !== 'send') return;
 
-      const { messages: updated, outcome, toolRounds } = await runAgentLoop({
-        provider: resolved.provider,
-        model: resolved.model,
-        settings,
-        history,
-        userContent: msg.content,
-        attachments: msg.attachments,
-        pinnedContents,
-        conversationId: msg.conversationId,
-        activeTabUrl: await getActiveTabUrl(),
-        signal: abortController.signal,
-        emit: send,
-        askUser,
-        onCheckpoint: (messages) =>
-          saveCheckpoint({
-            conversationId: msg.conversationId,
-            priorTurnCount: history.length,
-            messages,
-            updatedAt: Date.now(),
-          }),
-      });
-
-      // Persist the user message + every new assistant/tool turn this run added,
-      // THEN signal done — so the panel's reload-from-storage sees a complete
-      // history (avoids a race that dropped the latest turn).
-      await persistNewTurns(msg.conversationId, updated, history.length);
-      await clearCheckpoint();
-      send({ type: 'done' });
-
-      // Auto-name after the first exchange (PLAN §8).
-      if (isFirstExchange) {
-        const lastAssistant = [...updated].reverse().find((m) => m.role === 'assistant');
-        const assistantText =
-          lastAssistant && typeof lastAssistant.content === 'string' ? lastAssistant.content : '';
-        await autoName(msg.conversationId, resolved.provider, resolved.model, msg.content, assistantText);
+      if (abortController) {
+        console.warn('[chat:bg] rejected send — agent already running');
+        send({ type: 'error', message: 'An agent is already running. Stop it first.' });
+        return;
       }
 
-      // Report status accurately (PLAN §39). Don't notify on abort, and only
-      // notify on completion when the run actually did tool work (avoid spam).
-      if (outcome === 'error') {
+      // Set before any await to prevent concurrent runs from double-submit.
+      abortController = new AbortController();
+      setBadge('running');
+
+      console.log('[chat:bg] resolving active provider/model…');
+      const resolved = await resolveActive();
+      console.log('[chat:bg] resolveActive ->', resolved);
+      if ('error' in resolved) {
+        console.error('[chat:bg] resolveActive failed', resolved.error);
+        send({ type: 'error', message: resolved.error });
+        send({ type: 'done' });
+        abortController = null;
+        return;
+      }
+      // Surface fallback routing to the user (PLAN §40).
+      if (resolved.note) send({ type: 'token', content: `_${resolved.note}_\n\n` });
+
+      console.log('[chat:bg] ensuring offscreen doc…');
+      await ensureOffscreen();
+      console.log('[chat:bg] offscreen ready');
+      const stopKeepAlive = startKeepAlive();
+      const settings = await Storage.settings.get();
+      console.log('[chat:bg] settings loaded');
+
+      try {
+        await ensureConversation(msg.conversationId, resolved.provider, resolved.model.id);
+        const existing = await getMessages(msg.conversationId);
+        const isFirstExchange = existing.length === 0;
+        const pinnedContents = existing.filter((m) => m.pinned).map((m) => m.content);
+        // Rebuild history from IndexedDB so chats survive panel reloads (PLAN §8).
+        const history = await getApiHistory(msg.conversationId);
+        console.log('[chat:bg] history loaded, turns:', history.length);
+
+        console.log('[chat:bg] starting agent loop…');
+        const { messages: updated, outcome, toolRounds } = await runAgentLoop({
+          provider: resolved.provider,
+          model: resolved.model,
+          settings,
+          history,
+          userContent: msg.content,
+          attachments: msg.attachments,
+          pinnedContents,
+          conversationId: msg.conversationId,
+          activeTabUrl: await getActiveTabUrl(),
+          signal: abortController.signal,
+          emit: send,
+          askUser,
+          onCheckpoint: (messages) =>
+            saveCheckpoint({
+              conversationId: msg.conversationId,
+              priorTurnCount: history.length,
+              messages,
+              updatedAt: Date.now(),
+            }),
+        });
+        console.log('[chat:bg] agent loop finished — outcome:', outcome, 'toolRounds:', toolRounds);
+
+        // Persist the user message + every new assistant/tool turn this run added,
+        // THEN signal done — so the panel's reload-from-storage sees a complete
+        // history (avoids a race that dropped the latest turn).
+        await persistNewTurns(msg.conversationId, updated, history.length);
+        console.log('[chat:bg] persisted new turns');
+        await clearCheckpoint();
+        send({ type: 'done' });
+
+        // Auto-name after the first exchange (PLAN §8). Fire-and-forget: naming
+        // is best-effort housekeeping that happens after the visible reply is
+        // already done, so it must not hold the "agent running" state (and
+        // thus block every subsequent send) if the title-generation call
+        // stalls or the provider is slow.
+        if (isFirstExchange) {
+          const lastAssistant = [...updated].reverse().find((m) => m.role === 'assistant');
+          const assistantText =
+            lastAssistant && typeof lastAssistant.content === 'string' ? lastAssistant.content : '';
+          autoName(msg.conversationId, resolved.provider, resolved.model, msg.content, assistantText).catch(
+            (e) => console.error('[chat:bg] autoName failed', e),
+          );
+        }
+
+        // Report status accurately (PLAN §39). Don't notify on abort, and only
+        // notify on completion when the run actually did tool work (avoid spam).
+        if (outcome === 'error') {
+          setBadge('error');
+          notify('taskFailed', 'BrowseCortex', 'Task failed.');
+        } else if (outcome === 'aborted') {
+          setBadge('clear');
+        } else {
+          setBadge('done');
+          if (toolRounds > 0) notify('taskCompleted', 'BrowseCortex', 'Task completed.');
+        }
+      } catch (e) {
+        console.error('[chat:bg] agent loop threw', e);
         setBadge('error');
         notify('taskFailed', 'BrowseCortex', 'Task failed.');
-      } else if (outcome === 'aborted') {
-        setBadge('clear');
-      } else {
-        setBadge('done');
-        if (toolRounds > 0) notify('taskCompleted', 'BrowseCortex', 'Task completed.');
+        send({ type: 'error', message: e instanceof Error ? e.message : String(e) });
+        send({ type: 'done' });
+      } finally {
+        stopKeepAlive();
+        abortController = null;
       }
     } catch (e) {
-      setBadge('error');
-      notify('taskFailed', 'BrowseCortex', 'Task failed.');
-      send({ type: 'error', message: e instanceof Error ? e.message : String(e) });
-      send({ type: 'done' });
-    } finally {
-      stopKeepAlive();
+      // Catches anything thrown before/outside the inner try (e.g. resolveActive,
+      // ensureOffscreen, Storage.settings.get) so a failure here is never silent.
+      console.error('[chat:bg] onMessage handler threw outside inner try', e);
+      try {
+        send({ type: 'error', message: e instanceof Error ? e.message : String(e) });
+        send({ type: 'done' });
+      } catch (sendErr) {
+        console.error('[chat:bg] failed to report outer error to panel', sendErr);
+      }
       abortController = null;
     }
   });
 
   port.onDisconnect.addListener(() => {
+    console.warn('[chat:bg] port disconnected', chrome.runtime.lastError);
     abortController?.abort();
     abortController = null;
   });
