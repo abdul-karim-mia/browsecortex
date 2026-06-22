@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "BrowseCortex",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "AI browser assistant with full browser control. Bring your own AI provider.",
   "minimum_chrome_version": "116",
   "icons": {
@@ -40,15 +40,28 @@
     "alarms",
     "declarativeNetRequest"
   ],
-  "optional_permissions": ["clipboardRead", "cookies"],
-  "host_permissions": ["<all_urls>", "http://localhost/*", "http://127.0.0.1/*"],
+  "optional_permissions": [
+    "clipboardRead",
+    "cookies"
+  ],
+  "host_permissions": [
+    "<all_urls>",
+    "http://localhost/*",
+    "http://127.0.0.1/*"
+  ],
   "commands": {
     "toggle-panel": {
-      "suggested_key": { "default": "Ctrl+Shift+B", "mac": "Command+Shift+B" },
+      "suggested_key": {
+        "default": "Ctrl+Shift+B",
+        "mac": "Command+Shift+B"
+      },
       "description": "Open or close BrowseCortex"
     },
     "new-conversation": {
-      "suggested_key": { "default": "Ctrl+Shift+N", "mac": "Command+Shift+N" },
+      "suggested_key": {
+        "default": "Ctrl+Shift+N",
+        "mac": "Command+Shift+N"
+      },
       "description": "Start a new conversation"
     }
   },
