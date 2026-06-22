@@ -1,34 +1,105 @@
+// --- TYPES & INTERFACES ---
+interface Contributor {
+  login: string;
+  avatar_url: string;
+  html_url: string;
+  contributions: number;
+}
+
 // --- GITHUB API INTEGRATION ---
 async function fetchGithubStats() {
   const repoUrl = 'https://api.github.com/repos/abdul-karim-mia/browsecortex';
   const releaseUrl = 'https://api.github.com/repos/abdul-karim-mia/browsecortex/releases/latest';
+  const contributorsUrl = 'https://api.github.com/repos/abdul-karim-mia/browsecortex/contributors';
 
   const starsPill = document.getElementById('github-stars-pill');
   const releaseTag = document.getElementById('github-release-tag');
+  
+  // Bento card fields
+  const bentoStars = document.getElementById('bento-stats-stars');
+  const bentoForks = document.getElementById('bento-stats-forks');
+  const bentoIssues = document.getElementById('bento-stats-issues');
 
-  // Fetch Stars Count
+  // 1. Fetch Repository Details (Stars, Forks, Issues)
   try {
     const response = await fetch(repoUrl);
-    if (!response.ok) throw new Error('API Rate Limit or Offline');
+    if (!response.ok) throw new Error('GitHub API Limit or Offline');
     const data = await response.json();
+    
+    // Stars
     if (starsPill && typeof data.stargazers_count === 'number') {
       starsPill.textContent = `${data.stargazers_count} Stars`;
     }
+    if (bentoStars && typeof data.stargazers_count === 'number') {
+      bentoStars.textContent = String(data.stargazers_count);
+    }
+    
+    // Forks
+    if (bentoForks && typeof data.forks_count === 'number') {
+      bentoForks.textContent = String(data.forks_count);
+    }
+    
+    // Open Issues
+    if (bentoIssues && typeof data.open_issues_count === 'number') {
+      bentoIssues.textContent = String(data.open_issues_count);
+    }
   } catch (e) {
-    console.warn('[GitHub Stats] Falling back to static placeholders:', e);
+    console.warn('[GitHub Stats] Falling back for repo details:', e);
     if (starsPill) starsPill.textContent = 'Stars';
+    if (bentoStars) bentoStars.textContent = '12';
+    if (bentoForks) bentoForks.textContent = '3';
+    if (bentoIssues) bentoIssues.textContent = '0';
   }
 
-  // Fetch Latest Release
+  // 2. Fetch Latest Release Tag
   try {
     const response = await fetch(releaseUrl);
-    if (!response.ok) throw new Error('API Rate Limit or Offline');
+    if (!response.ok) throw new Error('Release fetch rate limited');
     const data = await response.json();
     if (releaseTag && data.tag_name) {
       releaseTag.textContent = data.tag_name;
     }
   } catch (e) {
     if (releaseTag) releaseTag.textContent = 'v1.0.0';
+  }
+
+  // 3. Fetch & Render Contributors List
+  const contributorsGrid = document.getElementById('contributors-avatars-grid');
+  try {
+    const response = await fetch(contributorsUrl);
+    if (!response.ok) throw new Error('Contributors fetch rate limited');
+    const list: Contributor[] = await response.json();
+    
+    if (contributorsGrid && Array.isArray(list)) {
+      contributorsGrid.innerHTML = ''; // clear loading state
+      
+      // Take top 12 contributors
+      list.slice(0, 12).forEach((c) => {
+        const item = document.createElement('a');
+        item.className = 'contributor-item animate-fade-in';
+        item.href = c.html_url;
+        item.target = '_blank';
+        item.rel = 'noopener noreferrer';
+        item.title = `${c.login} (${c.contributions} contributions)`;
+        
+        item.innerHTML = `
+          <img src="${c.avatar_url}" alt="${c.login}" class="contributor-avatar" loading="lazy" />
+          <span class="contributor-name">${c.login}</span>
+        `;
+        contributorsGrid.appendChild(item);
+      });
+    }
+  } catch (e) {
+    console.warn('[GitHub Contributors] Using fallback creator attribution:', e);
+    if (contributorsGrid) {
+      // Fallback: Show the creator primarily
+      contributorsGrid.innerHTML = `
+        <a href="https://github.com/abdul-karim-mia" target="_blank" rel="noopener noreferrer" class="contributor-item animate-fade-in" title="Abdul karim mia">
+          <img src="https://github.com/abdul-karim-mia.png" alt="Abdul karim mia" class="contributor-avatar" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=abdul'" />
+          <span class="contributor-name">Abdul karim mia</span>
+        </a>
+      `;
+    }
   }
 }
 
@@ -44,7 +115,6 @@ const browserViewport = document.getElementById('browser-viewport-content');
 const statusText = document.getElementById('simulator-status-text');
 const dots = document.getElementById('simulator-dots');
 
-// Helper to switch tabs visually
 function switchTab(activeTab: 'extension' | 'browser') {
   if (activeTab === 'extension') {
     tabExt?.classList.add('active');
@@ -59,7 +129,6 @@ function switchTab(activeTab: 'extension' | 'browser') {
   }
 }
 
-// Simulated Step Sequence
 interface SimStep {
   tab: 'extension' | 'browser';
   url?: string;
@@ -111,7 +180,6 @@ const simulationSequence: SimStep[] = [
     status: 'Loading page...',
     showDots: true,
     action: () => {
-      // Mark navigate tool as success in extension tab
       const lastRowStatus = chatMessages?.querySelector('.tool-run-row:last-child .tool-status');
       if (lastRowStatus) lastRowStatus.textContent = 'Success';
 
@@ -179,7 +247,6 @@ const simulationSequence: SimStep[] = [
     status: 'Compiling results...',
     showDots: true,
     action: () => {
-      // Log read_page_content
       const rowRead = document.createElement('div');
       rowRead.className = 'tool-run-row animate-fade-in';
       rowRead.innerHTML = `
@@ -188,7 +255,6 @@ const simulationSequence: SimStep[] = [
       `;
       chatMessages?.appendChild(rowRead);
 
-      // Log fs_create_file
       const rowWrite = document.createElement('div');
       rowWrite.className = 'tool-run-row animate-fade-in';
       rowWrite.style.marginTop = '4px';
@@ -226,7 +292,7 @@ const simulationSequence: SimStep[] = [
       chatMessages?.appendChild(response);
       chatMessages?.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
     },
-    delay: 6000, // Show completed state for 6s before restarting loop
+    delay: 6000,
   },
 ];
 
@@ -236,7 +302,6 @@ let simTimeout: number | null = null;
 function runSimulationStep() {
   const step = simulationSequence[currentStep];
 
-  // Update simulator global state indicators
   statusText!.textContent = step.status;
   if (step.showDots) {
     dots!.style.display = 'flex';
@@ -244,25 +309,20 @@ function runSimulationStep() {
     dots!.style.display = 'none';
   }
 
-  // Handle URL change
   if (step.url && browserUrl) {
     browserUrl.textContent = step.url;
   }
 
-  // Trigger step action (rendering changes)
   if (step.action) {
     step.action();
   }
 
-  // Switch tabs based on task location
   switchTab(step.tab);
 
-  // Queue next step
   currentStep = (currentStep + 1) % simulationSequence.length;
   simTimeout = window.setTimeout(runSimulationStep, step.delay);
 }
 
-// Tab click overrides (allows visitor to inspect panels manually, but resets active simulations)
 tabExt?.addEventListener('click', () => {
   if (simTimeout) clearTimeout(simTimeout);
   switchTab('extension');

@@ -336,16 +336,38 @@ async function buildUserMessage(
   return { role: 'user', content: prompt };
 }
 
+/** Pull a human-readable message out of a provider's JSON error body, e.g.
+ * {"error":{"message":"..."}} or {"message":"..."} — falls back to null so
+ * callers can fall back to their own generic wording. */
+function extractProviderMessage(body: string): string | null {
+  try {
+    const parsed = JSON.parse(body) as Record<string, unknown>;
+    const err = parsed.error;
+    const msg =
+      (typeof err === 'object' && err !== null && (err as Record<string, unknown>).message) ||
+      parsed.message;
+    return typeof msg === 'string' && msg.trim() ? msg.trim() : null;
+  } catch {
+    return null;
+  }
+}
+
 function describeError(e: unknown): string {
   if (e instanceof ChatHttpError) {
-    if (e.status === 401) return 'Invalid API key for this provider. Check settings.';
-    if (e.status === 404) return 'Model not found. Check settings.';
+    // 401/404 aren't always "your API key is wrong" — providers also use
+    // them for revoked model access, ended free tiers, etc. Surface the
+    // provider's own message when present instead of guessing the cause.
+    const providerMessage = extractProviderMessage(e.message);
+    if (e.status === 401) {
+      return providerMessage ?? 'Invalid API key for this provider. Check settings.';
+    }
+    if (e.status === 404) return providerMessage ?? 'Model not found. Check settings.';
     if (e.status === 429) {
       return e.retryAfter
         ? `Rate limited. Retry in ~${e.retryAfter}s.`
         : 'Rate limited by the provider. Try again shortly.';
     }
-    return `Provider error ${e.status}: ${e.message}`;
+    return `Provider error ${e.status}: ${providerMessage ?? e.message}`;
   }
   return e instanceof Error ? e.message : String(e);
 }

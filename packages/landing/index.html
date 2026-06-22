@@ -2,22 +2,28 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>BrowseCortex — Open Source AI Browser Assistant</title>
     
     <!-- SEO Meta Tags -->
     <meta name="description" content="BrowseCortex is an open-source AI browser assistant Chrome extension. Bring your own AI provider (OpenAI, Groq, Ollama) and let the agent control your browser autonomously." />
-    <meta name="keywords" content="AI browser assistant, autonomous agent, Chrome extension, open source, bring your own API key, Web automation, Groq, OpenAI, Ollama" />
-    <meta name="author" content="Abdul Karim Mia" />
+    <meta name="keywords" content="AI browser assistant, autonomous agent, Chrome extension, open source, bring your own API key, Web automation, Groq, OpenAI, Ollama, Abdul karim mia" />
+    <meta name="author" content="Abdul karim mia" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Canonical Link -->
+    <link rel="canonical" href="https://browsecortex.goakm.in" />
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://browsecortex.goakm.in" />
     <meta property="og:title" content="BrowseCortex — Open Source AI Browser Assistant" />
-    <meta property="og:description" content="Give an AI full autonomous control of your browser. Private, open source, and works with any OpenAI-compatible API (Ollama, Groq, OpenAI)." />
+    <meta property="og:description" content="Give an AI full autonomous control of your browser. Private, open source, and works with any OpenAI-compatible API (Ollama, Groq, OpenAI). Created by Abdul karim mia." />
     <meta property="og:image" content="https://raw.githubusercontent.com/abdul-karim-mia/browsecortex/main/packages/extension/src/assets/icons/icon-128.png" />
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://browsecortex.goakm.in" />
     <meta property="twitter:title" content="BrowseCortex — Open Source AI Browser Assistant" />
     <meta property="twitter:description" content="Give an AI full autonomous control of your browser. Private, open source, and works with any OpenAI-compatible API." />
 
@@ -44,6 +50,11 @@
         },
         "description": "Open source AI browser assistant extension. Bring your own AI provider and give the AI full control over your browser.",
         "softwareVersion": "1.0.0",
+        "author": {
+          "@type": "Person",
+          "name": "Abdul karim mia",
+          "url": "https://abdulkarimmia.in"
+        },
         "license": "https://opensource.org/licenses/MIT"
       }
     </script>
@@ -53,8 +64,24 @@
     <header class="navbar">
       <div class="container navbar-container">
         <a href="#" class="brand" id="nav-home">
-          <svg class="brand-logo" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" fill="currentColor"/>
+          <!-- Filled Brain Glyph Logo -->
+          <svg viewBox="0 0 128 128" width="32" height="32" class="brand-logo rounded-logo">
+            <defs>
+              <linearGradient id="logo-bg-nav" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#4f7df3" />
+                <stop offset="100%" stop-color="#2e5ce0" />
+              </linearGradient>
+            </defs>
+            <rect width="128" height="128" rx="28" fill="url(#logo-bg-nav)" />
+            <g fill="#ffffff">
+              <path d="M64 36c-8 0-14 5-16 12-7 1-12 7-12 14 0 4 1.5 7.5 4 10-2 2.5-3 5.5-3 9 0 7.5 6 13 13 13 2.5 0 5-.8 7-2.2 2 2 5 3.2 7 3.2V36z" />
+              <path d="M64 36c8 0 14 5 16 12 7 1 12 7 12 14 0 4-1.5 7.5-4 10 2 2.5 3 5.5 3 9 0 7.5-6 13-13 13-2.5 0-5-.8-7-2.2-2 2-5 3.2-7 3.2V36z" />
+            </g>
+            <g stroke="#2e5ce0" stroke-width="5" stroke-linecap="round" fill="none">
+              <path d="M64 40v52" />
+              <path d="M46 56q6 4 0 10" />
+              <path d="M82 56q-6 4 0 10" />
+            </g>
           </svg>
           <span class="brand-name">BrowseCortex</span>
         </a>
@@ -66,12 +93,19 @@
         </nav>
         <div class="nav-actions">
           <a href="https://github.com/abdul-karim-mia/browsecortex" class="btn btn-secondary nav-btn" target="_blank" rel="noopener noreferrer" id="nav-btn-github">
-            <svg class="icon-github" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-              <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/>
+            <!-- Lucide star icon -->
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" />
             </svg>
             GitHub <span id="github-stars-pill" class="stars-pill">Loading...</span>
           </a>
           <a href="#" class="btn btn-primary nav-btn" id="nav-btn-download">
+            <!-- Lucide download icon -->
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <path d="M7 10l5 5 5-5" />
+              <path d="M12 15V3" />
+            </svg>
             Install Extension
           </a>
         </div>
@@ -86,38 +120,54 @@
           <div class="hero-text-content">
             <div class="badge-container">
               <span class="hero-badge">🚀 Latest: <span id="github-release-tag">v1.0.0</span></span>
+              <a href="https://abdulkarimmia.in" target="_blank" rel="noopener noreferrer" class="creator-badge-link">
+                <span class="creator-badge">By Abdul karim mia</span>
+              </a>
             </div>
             <h1 class="hero-title">
               Your Web Browser. <br />
               <span class="text-gradient">Driven by AI.</span>
             </h1>
             <p class="hero-subtitle">
-              BrowseCortex is an open-source Chrome extension that gives you a persistent AI companion with autonomous browser control. Bring your own AI provider and watch it navigate, complete tasks, and manage files.
+              BrowseCortex is an open-source Chrome extension giving you a persistent AI companion with autonomous browser control. Bring your own AI provider and watch it navigate, complete tasks, and manage files.
             </p>
             <div class="hero-actions">
               <a href="#" class="btn btn-primary btn-lg" id="hero-btn-download">
+                <!-- Lucide download icon -->
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <path d="M7 10l5 5 5-5" />
+                  <path d="M12 15V3" />
+                </svg>
                 Install for Chrome
               </a>
               <a href="https://github.com/abdul-karim-mia/browsecortex" class="btn btn-secondary btn-lg" target="_blank" rel="noopener noreferrer" id="hero-btn-github">
-                View Code Base
+                <!-- Lucide github icon path -->
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+                </svg>
+                View Repository
               </a>
             </div>
             <div class="hero-bullets">
               <div class="bullet-item">
-                <svg class="bullet-icon" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                <!-- Lucide check icon -->
+                <svg class="bullet-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 5 12" />
                 </svg>
                 <span>No Vendor Lock-in</span>
               </div>
               <div class="bullet-item">
-                <svg class="bullet-icon" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                <!-- Lucide check icon -->
+                <svg class="bullet-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 5 12" />
                 </svg>
                 <span>Local & Private</span>
               </div>
               <div class="bullet-item">
-                <svg class="bullet-icon" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                <!-- Lucide check icon -->
+                <svg class="bullet-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 5 12" />
                 </svg>
                 <span>MCP Connected</span>
               </div>
@@ -155,11 +205,16 @@
                       <div class="avatar">U</div>
                       <div class="msg-body">Find the best tech events in San Francisco happening this week and compile them into a text file.</div>
                     </div>
-                    <!-- Tool and response containers driven by main.ts -->
                   </div>
                   <div class="input-toolbar-mock">
                     <div class="toolbar-left">
-                      <span class="mock-btn-tool">🎯 Skills</span>
+                      <span class="mock-btn-tool">
+                        <!-- Lucide sparkle icon -->
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M12 2c.4 2.6 1 4.6 2.2 5.8S17.4 9.6 20 10c-2.6.4-4.6 1-5.8 2.2S12.4 15.4 12 18c-.4-2.6-1-4.6-2.2-5.8S6.6 10.4 4 10c2.6-.4 4.6-1 5.8-2.2S11.6 4.6 12 2Z" />
+                        </svg>
+                        Skills
+                      </span>
                       <span class="mock-btn-tool">📎 Attach</span>
                     </div>
                     <div class="mock-input-field">
@@ -206,77 +261,177 @@
             <!-- Feature 1: BYO AI -->
             <div class="bento-card bento-w-2 glass hover-glow">
               <div class="card-icon-wrapper">
+                <!-- Lucide settings icon -->
                 <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                  <line x1="12" y1="22.08" x2="12" y2="12"/>
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />
                 </svg>
               </div>
-              <h3 class="card-title">Bring Your Own Provider</h3>
-              <p class="card-text">Connect to Groq, OpenAI, Mistral, Together AI, OpenRouter, or local setups like Ollama and LM Studio. Zero vendor lock-in, zero monthly subscriptions. You only pay for the tokens you actually consume.</p>
+              <h3 class="card-title">Bring Your Own Provider & Model Tuning</h3>
+              <p class="card-text">Connect to Groq, OpenAI, Mistral, Together AI, or local engines like Ollama. Tune parameters directly: choose your preferred agent mode (Full Auto, Notify Only, Confirm Destructive), adjust reasoning effort (Low/Medium/High), and set custom safety loop caps.</p>
             </div>
 
             <!-- Feature 2: Browser Control -->
             <div class="bento-card glass hover-glow">
               <div class="card-icon-wrapper">
+                <!-- Lucide tool icon -->
                 <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                  <line x1="2" y1="10" x2="22" y2="10"/>
-                  <path d="M8 21h8"/>
-                  <path d="M12 17v4"/>
+                  <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
                 </svg>
               </div>
-              <h3 class="card-title">Full Browser Control</h3>
-              <p class="card-text">The AI agent manages tabs, navigates links, submits forms, clicks elements, scroll viewports, and captures page screenshots natively.</p>
+              <h3 class="card-title">Advanced Browser Tools</h3>
+              <p class="card-text">Equipped with 55+ browser tools including tab group management, session controls, cookies reading/deletion, clipboard read/write, history searches, and bookmarks manipulation.</p>
             </div>
 
             <!-- Feature 3: Virtual Sandboxed FS -->
             <div class="bento-card glass hover-glow">
               <div class="card-icon-wrapper">
+                <!-- Lucide files icon -->
                 <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
                 </svg>
               </div>
               <h3 class="card-title">Virtual Sandboxed Filesystem</h3>
-              <p class="card-text">A local workspace built on top of IndexedDB. The agent can write reports, aggregate data, compile files, and export them directly to your native downloads folder.</p>
+              <p class="card-text">A secure workspace built on top of IndexedDB. The agent can write files, create folders, pack data into zip structures locally, and export directly to your downloads directory.</p>
             </div>
 
             <!-- Feature 4: DOM Annotation -->
             <div class="bento-card bento-w-2 glass hover-glow">
               <div class="card-icon-wrapper">
+                <!-- Lucide brain icon -->
                 <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <line x1="22" y1="12" x2="18" y2="12"/>
-                  <line x1="6" y1="12" x2="2" y2="12"/>
-                  <line x1="12" y1="6" x2="12" y2="2"/>
-                  <line x1="12" y1="22" x2="12" y2="18"/>
+                  <path d="M12 5a3 3 0 0 0-5.6-1.5A2.5 2.5 0 0 0 4 6.5 2.5 2.5 0 0 0 4 11a2.5 2.5 0 0 0 2.5 2.5A3 3 0 0 0 12 12V5Zm0 0a3 3 0 0 1 5.6-1.5A2.5 2.5 0 0 1 20 6.5 2.5 2.5 0 0 1 20 11a2.5 2.5 0 0 1-2.5 2.5A3 3 0 0 1 12 12" />
                 </svg>
               </div>
-              <h3 class="card-title">DOM Annotation Targeting</h3>
-              <p class="card-text">Instead of feeding large, expensive raw HTML payloads to the LLM, BrowseCortex annotates the DOM with numeric badges next to interactive components. The agent targets elements instantly and reliably, reducing token overhead by up to 80%.</p>
+              <h3 class="card-title">Context Compaction & Annotation</h3>
+              <p class="card-text">Features automatic context compaction that tokenizes and summarizes older turns to save context window space. Complemented by DOM Annotation overlays that assign numbered visual identifiers to interactable elements, avoiding expensive raw HTML payloads.</p>
             </div>
 
-            <!-- Feature 5: Absolute Privacy -->
-            <div class="bento-card glass hover-glow">
-              <div class="card-icon-wrapper">
-                <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                </svg>
+            <!-- Feature 5: Dynamic Repository Stats -->
+            <div class="bento-card glass hover-glow github-stats-card">
+              <h3 class="card-title">Repository Health</h3>
+              <p class="card-text mb-4">BrowseCortex is actively developed and updated by the open-source community. Key repository stats:</p>
+              <div class="github-stats-bento">
+                <div class="stat-bento-item">
+                  <span class="stat-bento-val" id="bento-stats-stars">--</span>
+                  <span class="stat-bento-lbl">Stars</span>
+                </div>
+                <div class="stat-bento-item">
+                  <span class="stat-bento-val" id="bento-stats-forks">--</span>
+                  <span class="stat-bento-lbl">Forks</span>
+                </div>
+                <div class="stat-bento-item">
+                  <span class="stat-bento-val" id="bento-stats-issues">--</span>
+                  <span class="stat-bento-lbl">Open Issues</span>
+                </div>
               </div>
-              <h3 class="card-title">Absolute Privacy</h3>
-              <p class="card-text">All credentials, virtual files, memories, and conversations are stored locally in Chrome extension databases. Your data never touches a middleman server.</p>
             </div>
 
-            <!-- Feature 6: Fuzzy Memory -->
-            <div class="bento-card glass hover-glow">
-              <div class="card-icon-wrapper">
+            <!-- Feature 6: Creator Attribution Card -->
+            <div class="bento-card glass hover-glow creator-card-bento">
+              <div class="card-icon-wrapper creator-icon-wrap">
+                <!-- Lucide sparkle icon -->
                 <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="M12 2c.4 2.6 1 4.6 2.2 5.8S17.4 9.6 20 10c-2.6.4-4.6 1-5.8 2.2S12.4 15.4 12 18c-.4-2.6-1-4.6-2.2-5.8S6.6 10.4 4 10c2.6-.4 4.6-1 5.8-2.2S11.6 4.6 12 2Z" />
                 </svg>
               </div>
-              <h3 class="card-title">Local Long-term Memory</h3>
-              <p class="card-text">Integrated Fuse.js fuzzy text search recalls preferences, previous commands, and project context on-demand without bloating your prompt history.</p>
+              <h3 class="card-title">Creator & Maintainer</h3>
+              <p class="card-text">
+                BrowseCortex was designed and built by developer <strong>Abdul karim mia</strong>. You can check his full work, developer portfolio, and other active projects at:
+              </p>
+              <a href="https://abdulkarimmia.in" target="_blank" rel="noopener noreferrer" class="creator-portfolio-link">
+                abdulkarimmia.in &rarr;
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Advanced Capabilities Grid Section -->
+      <section class="section-capabilities">
+        <div class="container">
+          <div class="section-header-center">
+            <h2 class="section-title">Advanced Core Capabilities</h2>
+            <p class="section-subtitle">A closer look at the advanced extension mechanics running under the hood.</p>
+          </div>
+
+          <div class="capabilities-grid">
+            <!-- Cap 1: MCP -->
+            <div class="capability-card glass">
+              <div class="cap-icon-wrapper">
+                <!-- Lucide sparkle icon -->
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2c.4 2.6 1 4.6 2.2 5.8S17.4 9.6 20 10c-2.6.4-4.6 1-5.8 2.2S12.4 15.4 12 18c-.4-2.6-1-4.6-2.2-5.8S6.6 10.4 4 10c2.6-.4 4.6-1 5.8-2.2S11.6 4.6 12 2Z" />
+                </svg>
+              </div>
+              <h3 class="cap-title">Model Context Protocol (MCP)</h3>
+              <p class="cap-text">Integrate local and remote MCP servers directly. BrowseCortex dynamically consumes external server schemas, injecting custom tool capabilities directly into the active agent loop.</p>
+            </div>
+
+            <!-- Cap 2: Smart Failovers -->
+            <div class="capability-card glass">
+              <div class="cap-icon-wrapper">
+                <!-- Lucide alert icon -->
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                  <path d="M12 9v4" />
+                  <path d="M12 17h.01" />
+                </svg>
+              </div>
+              <h3 class="cap-title">Smart Cooldowns & Failovers</h3>
+              <p class="cap-text">Automatic rate-limiting failover routing. If a provider returns a 429 backoff error, the agent places that endpoint on cooldown and automatically routes execution to alternative APIs.</p>
+            </div>
+
+            <!-- Cap 3: Vision Fallback -->
+            <div class="capability-card glass">
+              <div class="cap-icon-wrapper">
+                <!-- Lucide eye icon -->
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </div>
+              <h3 class="cap-title">Intelligent Vision Fallbacks</h3>
+              <p class="cap-text">If a configured text model lacks native vision (like Llama-70b), BrowseCortex intelligently routes page screenshot analysis tasks to a secondary designated vision model (like GPT-4o).</p>
+            </div>
+
+            <!-- Cap 4: Tasks Checklist -->
+            <div class="capability-card glass">
+              <div class="cap-icon-wrapper">
+                <!-- Lucide tasks icon -->
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 11l3 3L22 4" />
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2 2V5a2 2 0 0 1 2-2h11" />
+                </svg>
+              </div>
+              <h3 class="cap-title">Subtask & Checklist Manager</h3>
+              <p class="cap-text">Organizes agent commands into checklists. The AI creates, updates, and completes subtasks dynamically, displaying visual progress bars in the extension's dedicated Tasks tab.</p>
+            </div>
+
+            <!-- Cap 5: Local Encrypted Backups -->
+            <div class="capability-card glass">
+              <div class="cap-icon-wrapper">
+                <!-- Lucide download icon -->
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <path d="M7 10l5 5 5-5" />
+                  <path d="M12 15V3" />
+                </svg>
+              </div>
+              <h3 class="cap-title">AES-256-GCM Secure Backups</h3>
+              <p class="cap-text">All extension configurations, conversations, files, and histories can be encrypted using local Web Crypto APIs and backed up/restored in a single click.</p>
+            </div>
+
+            <!-- Cap 6: Custom System Prompts -->
+            <div class="capability-card glass">
+              <div class="cap-icon-wrapper">
+                <!-- Lucide chat icon -->
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+              </div>
+              <h3 class="cap-title">Personalized Prompt Additions</h3>
+              <p class="cap-text">Inject customized rules and guidelines globally. Guide the agent's tone, focus area, coding standards, or behavior boundaries on every conversation loop.</p>
             </div>
           </div>
         </div>
@@ -410,6 +565,20 @@
         </div>
       </section>
 
+      <!-- Contributors Section -->
+      <section class="section-contributors">
+        <div class="container">
+          <div class="section-header-center">
+            <h2 class="section-title">Open Source Contributors</h2>
+            <p class="section-subtitle">Thanks to the developers who have contributed to the BrowseCortex core and tools.</p>
+          </div>
+          <div id="contributors-avatars-grid" class="contributors-grid animate-fade-in">
+            <!-- Avatars dynamically populated by main.ts -->
+            <div class="contributors-loading">Fetching contributors list...</div>
+          </div>
+        </div>
+      </section>
+
       <!-- FAQ Section -->
       <section id="faq" class="section-faq">
         <div class="container faq-container">
@@ -459,8 +628,24 @@
     <footer class="footer">
       <div class="container footer-container">
         <div class="footer-left">
-          <span class="footer-logo-text">🧠 BrowseCortex</span>
+          <div class="brand footer-brand">
+            <!-- Filled Brain Glyph Logo -->
+            <svg viewBox="0 0 128 128" width="24" height="24" class="brand-logo rounded-logo">
+              <rect width="128" height="128" rx="28" fill="url(#logo-bg-nav)" />
+              <g fill="#ffffff">
+                <path d="M64 36c-8 0-14 5-16 12-7 1-12 7-12 14 0 4 1.5 7.5 4 10-2 2.5-3 5.5-3 9 0 7.5 6 13 13 13 2.5 0 5-.8 7-2.2 2 2 5 3.2 7 3.2V36z" />
+                <path d="M64 36c8 0 14 5 16 12 7 1 12 7 12 14 0 4-1.5 7.5-4 10 2 2.5 3 5.5 3 9 0 7.5-6 13-13 13-2.5 0-5-.8-7-2.2-2 2-5 3.2-7 3.2V36z" />
+              </g>
+              <g stroke="#2e5ce0" stroke-width="5" stroke-linecap="round" fill="none">
+                <path d="M64 40v52" />
+                <path d="M46 56q6 4 0 10" />
+                <path d="M82 56q-6 4 0 10" />
+              </g>
+            </svg>
+            <span class="footer-logo-text">BrowseCortex</span>
+          </div>
           <p class="footer-copyright">&copy; 2026 BrowseCortex. Released under the MIT License.</p>
+          <p class="footer-creator-text">Created with 🧠 by <a href="https://abdulkarimmia.in" target="_blank" rel="noopener noreferrer" class="creator-link">Abdul karim mia</a></p>
         </div>
         <div class="footer-right">
           <a href="https://github.com/abdul-karim-mia/browsecortex" target="_blank" rel="noopener noreferrer">GitHub</a>
