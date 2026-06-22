@@ -175,7 +175,7 @@ export const DEFAULT_SETTINGS: Settings = {
   selectedModel: null,
   agentMode: 'full_auto',
   reasoningEffort: 'medium',
-  maxToolCallLoops: 15,
+  maxToolCallLoops: 100,
   compactionThreshold: 0.7,
   compactionEnabled: true,
   runJavascriptEnabled: false,
