@@ -276,11 +276,12 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
         chrome.runtime.onMessage.removeListener(listener);
         resolve(false);
       }, 30_000);
-      function listener(msg: any, sender: chrome.runtime.MessageSender) {
-        if (msg?.type === 'mic_permission_result' && sender.tab?.id === tab.id) {
+      function listener(msg: unknown, sender: chrome.runtime.MessageSender) {
+        const result = msg as { type?: string; granted?: boolean } | null;
+        if (result?.type === 'mic_permission_result' && sender.tab?.id === tab.id) {
           clearTimeout(timeout);
           chrome.runtime.onMessage.removeListener(listener);
-          resolve(!!msg.granted);
+          resolve(!!result.granted);
         }
       }
       chrome.runtime.onMessage.addListener(listener);
@@ -309,8 +310,7 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
       recognitionRef.current?.stop();
       return;
     }
-    const SpeechRecognitionCtor =
-      (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
+    const SpeechRecognitionCtor = window.SpeechRecognition ?? window.webkitSpeechRecognition;
     if (!SpeechRecognitionCtor) {
       reportDictationError('Voice input is not supported in this browser.');
       return;
@@ -351,10 +351,10 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
         submit(combined);
       }
     };
-    recognition.onerror = (e: any) => {
+    recognition.onerror = (e: SpeechRecognitionErrorEvent) => {
       setListening(false);
       if (silenceTimer) clearTimeout(silenceTimer);
-      reportDictationError(`Voice input error: ${e?.error ?? 'unknown error'}`);
+      reportDictationError(`Voice input error: ${e.error || 'unknown error'}`);
     };
     recognition.onend = () => {
       setListening(false);

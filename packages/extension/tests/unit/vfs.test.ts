@@ -1,14 +1,15 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import type { VFile } from '@/types';
 
 // In-memory stand-in for the Storage.files layer the vfs builds on.
-const store = new Map<string, any>();
+const store = new Map<string, VFile>();
 vi.mock('@/storage', () => ({
   Storage: {
     files: {
       byConversation: async (cid: string) =>
         [...store.values()].filter((f) => f.conversationId === cid),
       get: async (id: string) => store.get(id),
-      save: async (f: any) => void store.set(f.id, f),
+      save: async (f: VFile) => void store.set(f.id, f),
       remove: async (id: string) => void store.delete(id),
     },
   },
