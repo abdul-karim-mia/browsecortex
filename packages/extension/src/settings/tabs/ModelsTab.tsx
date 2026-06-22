@@ -10,6 +10,7 @@ export function ModelsTab() {
   const [models, setModels] = useState<Model[]>([]);
   const [providerId, setProviderId] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
+  const [testingModelId, setTestingModelId] = useState<string | null>(null);
 
   useEffect(() => {
     Storage.providers.list().then((provs) => {
@@ -45,7 +46,7 @@ export function ModelsTab() {
     persist(models.map((m) => (m.id === id ? { ...m, enabled: !m.enabled } : m)));
 
   // Manual capability override (PLAN §6) — flips a flag and marks source 'user'.
-  const override = (id: string, key: 'hasVision' | 'hasToolCalling' | 'hasReasoning') =>
+  const override = (id: string, key: 'hasVision' | 'hasToolCalling' | 'hasReasoning' | 'hasToolChoice') =>
     persist(
       models.map((m) => (m.id === id ? { ...m, [key]: !m[key], capabilitySource: 'user' } : m)),
     );
@@ -54,6 +55,7 @@ export function ModelsTab() {
     const provider = providers.find((p) => p.id === providerId);
     if (!provider) return;
     setStatus(`Testing ${model.id}…`);
+    setTestingModelId(model.id);
     try {
       const r = await pingCapabilities(provider, model.id);
       await persist(
@@ -63,22 +65,27 @@ export function ModelsTab() {
                 ...m,
                 hasVision: r.hasVision,
                 hasToolCalling: r.hasToolCalling,
+                hasToolChoice: r.hasToolChoice,
+                hasReasoning: r.hasReasoning,
                 capabilitySource: 'ping',
               }
             : m,
         ),
       );
       setStatus(
-        `${model.id}: vision ${r.hasVision ? '✓' : '✗'}, tools ${r.hasToolCalling ? '✓' : '✗'}, streaming ${r.streaming ? '✓' : '✗'}`,
+        `${model.id}: vision ${r.hasVision ? '✓' : '✗'}, tools ${r.hasToolCalling ? '✓' : '✗'}, tool choice ${r.hasToolChoice ? '✓' : '✗'}, reasoning ${r.hasReasoning ? '✓' : '✗'}, streaming ${r.streaming ? '✓' : '✗'}`,
       );
     } catch (e) {
       setStatus(`Test failed: ${e instanceof Error ? e.message : String(e)}`);
+    } finally {
+      setTestingModelId(null);
     }
   };
 
   const cap = (m: Model) =>
     [
       m.hasToolCalling ? 'tools' : null,
+      m.hasToolChoice ? 'tool choice' : null,
       m.hasVision ? 'vision' : null,
       m.hasReasoning ? 'reasoning' : null,
       m.contextWindow ? `${Math.round(m.contextWindow / 1000)}k ctx` : null,
@@ -111,8 +118,18 @@ export function ModelsTab() {
         >
           Refresh from API
         </button>
-        {status && <span class="text-sm text-gray-500">{status}</span>}
       </div>
+
+      {status && (
+        <div class="rounded border border-gray-200 bg-gray-50 p-2.5 dark:border-gray-700 dark:bg-gray-800/50">
+          <div class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+            Status / Test Results
+          </div>
+          <div class="mt-1 font-mono text-xs text-gray-600 dark:text-gray-300">
+            {status}
+          </div>
+        </div>
+      )}
 
       {models.length === 0 ? (
         <p class="text-sm text-gray-400">No models yet — click "Refresh from API".</p>
@@ -133,18 +150,19 @@ export function ModelsTab() {
                 </label>
               </div>
               <div class="mt-1 flex flex-wrap items-center gap-3 text-xs text-gray-500">
-                {(['hasToolCalling', 'hasVision', 'hasReasoning'] as const).map((k) => (
+                {(['hasToolCalling', 'hasToolChoice', 'hasVision', 'hasReasoning'] as const).map((k) => (
                   <label key={k} class="flex items-center gap-1">
                     <input type="checkbox" checked={!!m[k]} onChange={() => override(m.id, k)} />
-                    {k === 'hasToolCalling' ? 'tools' : k === 'hasVision' ? 'vision' : 'reasoning'}
+                    {k === 'hasToolCalling' ? 'tools' : k === 'hasToolChoice' ? 'tool choice' : k === 'hasVision' ? 'vision' : 'reasoning'}
                   </label>
                 ))}
                 <button
                   type="button"
+                  disabled={testingModelId !== null}
                   onClick={() => testCapabilities(m)}
-                  class="text-blue-500 hover:underline"
+                  class={`text-blue-500 hover:underline ${testingModelId !== null ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  Test capabilities
+                  {testingModelId === m.id ? 'Testing…' : 'Test capabilities'}
                 </button>
               </div>
             </li>

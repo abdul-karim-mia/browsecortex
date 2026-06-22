@@ -13,6 +13,8 @@ const TINY_PNG =
 export interface PingResult {
   hasVision: boolean;
   hasToolCalling: boolean;
+  hasToolChoice: boolean;
+  hasReasoning: boolean;
   streaming: boolean;
 }
 
@@ -24,13 +26,11 @@ async function post(provider: Provider, body: unknown): Promise<Response> {
   });
 }
 
-export async function pingCapabilities(provider: Provider, modelId: string): Promise<PingResult> {
-  // Tool calling — send a trivial tool and a prompt that should invoke it.
-  let hasToolCalling = false;
+async function probeToolCalling(provider: Provider, modelId: string): Promise<boolean> {
   try {
     const res = await post(provider, {
       model: modelId,
-      max_tokens: 20,
+      max_tokens: 10,
       messages: [{ role: 'user', content: 'Call the ping tool.' }],
       tools: [
         {
@@ -44,13 +44,13 @@ export async function pingCapabilities(provider: Provider, modelId: string): Pro
       ],
       tool_choice: 'auto',
     });
-    hasToolCalling = res.ok;
+    return res.ok;
   } catch {
-    /* leave false */
+    return false;
   }
+}
 
-  // Vision — send a tiny image; success (non-4xx) implies acceptance.
-  let hasVision = false;
+async function probeVision(provider: Provider, modelId: string): Promise<boolean> {
   try {
     const res = await post(provider, {
       model: modelId,
@@ -65,25 +65,59 @@ export async function pingCapabilities(provider: Provider, modelId: string): Pro
         },
       ],
     });
-    hasVision = res.ok;
+    return res.ok;
   } catch {
-    /* leave false */
+    return false;
   }
+}
 
-  // Streaming — verify a stream response opens.
-  let streaming = false;
+async function probeStreaming(provider: Provider, modelId: string): Promise<{ streaming: boolean; hasReasoning: boolean }> {
   try {
     const res = await post(provider, {
       model: modelId,
-      max_tokens: 5,
+      max_tokens: 15,
       stream: true,
       messages: [{ role: 'user', content: 'hi' }],
     });
-    streaming = res.ok && !!res.body;
-    res.body?.cancel().catch(() => {});
-  } catch {
-    /* leave false */
-  }
+    if (!res.ok || !res.body) {
+      return { streaming: false, hasReasoning: false };
+    }
 
-  return { hasVision, hasToolCalling, streaming };
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    const streaming = true;
+    let hasReasoning = false;
+    let buffer = '';
+
+    // Read a few chunks to detect reasoning tokens
+    for (let i = 0; i < 8; i++) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      if (buffer.includes('reasoning_content') || buffer.includes('"reasoning"')) {
+        hasReasoning = true;
+        break;
+      }
+    }
+    reader.cancel().catch(() => {});
+    return { streaming, hasReasoning };
+  } catch {
+    return { streaming: false, hasReasoning: false };
+  }
+}
+
+export async function pingCapabilities(provider: Provider, modelId: string): Promise<PingResult> {
+  const [hasToolCalling, hasVision, streamResult] = await Promise.all([
+    probeToolCalling(provider, modelId),
+    probeVision(provider, modelId),
+    probeStreaming(provider, modelId),
+  ]);
+
+  return {
+    hasVision,
+    hasToolCalling,
+    hasToolChoice: hasToolCalling, // If tool calling succeeds, tool choice is supported
+    hasReasoning: streamResult.hasReasoning,
+    streaming: streamResult.streaming,
+  };
 }

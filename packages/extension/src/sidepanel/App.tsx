@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 import { t } from '@/i18n';
-import { ChatTab } from './tabs/ChatTab';
+import { ChatTab, type ChatControls } from './tabs/ChatTab';
 import { TasksTab } from './tabs/TasksTab';
 import { FilesTab } from './tabs/FilesTab';
 import { ConversationDrawer } from './ConversationDrawer';
@@ -32,6 +32,8 @@ export function App() {
   // for them (PLAN §7) — no point showing an always-empty tab.
   const [hasTasks, setHasTasks] = useState(false);
   const [hasFiles, setHasFiles] = useState(false);
+  // Clear/new controls live in the header but are owned by ChatTab (PLAN §7).
+  const [chatControls, setChatControls] = useState<ChatControls | null>(null);
 
   const newChat = () => {
     setConversationId(crypto.randomUUID());
@@ -113,14 +115,38 @@ export function App() {
             {t('app_name')}
           </span>
         </div>
-        <button
-          type="button"
-          onClick={openSettings}
-          class="rounded p-1.5 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
-          title={t('settings')}
-        >
-          <Icon name="settings" />
-        </button>
+        <div class="flex items-center gap-1">
+          {tab === 'chat' && (
+            <>
+              <button
+                type="button"
+                onClick={() => chatControls?.clearChat()}
+                disabled={!chatControls || !chatControls.canClear || chatControls.running}
+                class="rounded p-1.5 text-gray-600 hover:bg-gray-100 disabled:opacity-40 dark:text-gray-300 dark:hover:bg-gray-800"
+                title="Clear chat"
+              >
+                <Icon name="trash" />
+              </button>
+              <button
+                type="button"
+                onClick={newChat}
+                disabled={chatControls?.running}
+                class="rounded p-1.5 text-gray-600 hover:bg-gray-100 disabled:opacity-40 dark:text-gray-300 dark:hover:bg-gray-800"
+                title={t('new_conversation')}
+              >
+                <Icon name="plus" />
+              </button>
+            </>
+          )}
+          <button
+            type="button"
+            onClick={openSettings}
+            class="rounded p-1.5 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+            title={t('settings')}
+          >
+            <Icon name="settings" />
+          </button>
+        </div>
       </header>
 
       {dbError && (
@@ -155,7 +181,11 @@ export function App() {
       <main class="min-h-0 flex-1">
         <ErrorBoundary label={tab}>
           {tab === 'chat' && (
-            <ChatTab key={conversationId} conversationId={conversationId} onNewChat={newChat} />
+            <ChatTab
+              key={conversationId}
+              conversationId={conversationId}
+              registerControls={setChatControls}
+            />
           )}
           {tab === 'tasks' && <TasksTab key={conversationId} conversationId={conversationId} />}
           {tab === 'files' && <FilesTab key={conversationId} conversationId={conversationId} />}

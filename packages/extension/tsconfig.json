@@ -3,6 +3,8 @@
   "compilerOptions": {
     "types": ["chrome", "vite/client", "node"],
     "baseUrl": ".",
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
     "paths": {
       "@/*": ["src/*"]
     }

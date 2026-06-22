@@ -7,19 +7,34 @@ import type { Model, Provider, Settings } from '@/types';
 import type { ApiMessage } from '@/providers/chat-types';
 import { streamChat } from '@/providers/chat';
 
-const KEEP_RECENT = 5;
+const DEFAULT_KEEP_RECENT = 5;
+
+// Rough cost of one image data URL part. Image inputs don't scale with their
+// (huge) base64 length, so count a flat per-image token budget instead — close
+// to OpenAI's documented ~1K tokens for a typical image (H-EXT-4).
+const IMAGE_TOKENS = 1000;
 
 /** Cheap token estimate: ~4 chars per token (PLAN §31). */
 export function estimateTokens(messages: ApiMessage[]): number {
   let chars = 0;
+  let imageTokens = 0;
   for (const m of messages) {
-    if (typeof m.content === 'string') chars += m.content.length;
+    if (typeof m.content === 'string') {
+      chars += m.content.length;
+    } else if (Array.isArray(m.content)) {
+      // Multimodal turns: count text parts; charge a flat budget per image so
+      // image-heavy conversations still trigger compaction (H-EXT-4).
+      for (const part of m.content) {
+        if (part.type === 'text') chars += part.text.length;
+        else if (part.type === 'image_url') imageTokens += IMAGE_TOKENS;
+      }
+    }
     if (m.role === 'assistant' && m.tool_calls) {
       for (const tc of m.tool_calls)
         chars += tc.function.arguments.length + tc.function.name.length;
     }
   }
-  return Math.ceil(chars / 4);
+  return Math.ceil(chars / 4) + imageTokens;
 }
 
 export function shouldCompact(messages: ApiMessage[], settings: Settings, model: Model): boolean {
@@ -38,6 +53,7 @@ export async function compact(
   model: Model,
   signal: AbortSignal,
   pinnedContents: string[] = [],
+  keepRecent: number = DEFAULT_KEEP_RECENT,
 ): Promise<ApiMessage[]> {
   // Keep the first user turn (original task) and the last N turns.
   const firstUserIdx = messages.findIndex((m) => m.role === 'user');
@@ -49,7 +65,8 @@ export async function compact(
   // providers (e.g. DeepSeek) reject a 'tool' message with no preceding
   // tool_calls. Walk the boundary back over any leading tool messages so a
   // result always stays paired with its assistant call.
-  let tailStart = Math.max(firstUserIdx + 1, messages.length - KEEP_RECENT);
+  const keep = keepRecent > 0 ? keepRecent : DEFAULT_KEEP_RECENT;
+  let tailStart = Math.max(firstUserIdx + 1, messages.length - keep);
   while (tailStart > firstUserIdx + 1 && messages[tailStart].role === 'tool') tailStart--;
 
   const tail = messages.slice(tailStart);

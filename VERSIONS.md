@@ -4,10 +4,23 @@ BrowseCortex follows [Semantic Versioning](https://semver.org/).
 
 ## Release Timeline
 
+### v1.1.0
+
+- **Date:** 2026-06-23
+- **Status:** Released
+- **Highlights:**
+  - Security hardening: relay body-size limit, header-based auth tokens,
+    timing-safe token comparison, graceful shutdown, CSP on the landing page
+  - Agent loop fixes: tool-call name accumulation, content-filter surfacing,
+    multimodal token estimation, structured tool-arg parse errors
+  - i18n: Unicode-aware memory keyword extraction
+  - Version sync across all packages, manifest, and the `VERSION` file
+  - See [CHANGELOG.md](CHANGELOG.md) for full details
+
 ### v1.0.0 (Initial Release)
 
-- **Date:** TBD
-- **Status:** In Development
+- **Date:** 2026-06-21
+- **Status:** Released
 - **Features:**
   - Streaming agent loop with parallel tool calls
   - 100+ browser tools
@@ -30,11 +43,14 @@ BrowseCortex follows [Semantic Versioning](https://semver.org/).
 
 ## Release Process
 
-1. Update versions in `package.json` and `packages/*/package.json`
-2. Update `CHANGELOG.md` with release notes
-3. Create git tag `v{VERSION}`
-4. Push to GitHub and create release
-5. Publish relay to npm: `npm publish packages/relay`
+The `release.sh` script updates every version source in one pass:
+`package.json`, all `packages/*/package.json`, `packages/extension/manifest.json`,
+and the `VERSION` file.
+
+1. Run `npm run release [major|minor|patch]`
+2. Review the generated `CHANGELOG.md` entry
+3. Push the commit and tag: `git push origin main --follow-tags`
+4. Publish relay to npm: `npm publish packages/relay`
 
 ### Quick Release
 

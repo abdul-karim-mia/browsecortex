@@ -57,13 +57,21 @@ const EXAMPLE_PROMPTS = [
   'List all my open tabs',
 ];
 
+/** Chat actions surfaced in the app header (clear/new live there now). */
+export interface ChatControls {
+  clearChat: () => void;
+  canClear: boolean;
+  running: boolean;
+}
+
 interface Props {
   /** The conversation this chat is bound to (owned by App). */
   conversationId: string;
-  onNewChat: () => void;
+  /** Lets the App header render this tab's clear/new controls (PLAN §7). */
+  registerControls?: (controls: ChatControls | null) => void;
 }
 
-export function ChatTab({ conversationId, onNewChat }: Props) {
+export function ChatTab({ conversationId, registerControls }: Props) {
   const [lines, setLines] = useState<ChatLine[]>([]);
   const [input, setInput] = useState('');
   const [running, setRunning] = useState(false);
@@ -410,13 +418,6 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
         ? 'Auto mode'
         : 'Ask permissions';
 
-  const newChat = () => {
-    if (running) return;
-    openRef.current = false;
-    setAsk(null);
-    onNewChat();
-  };
-
   const reloadFromStore = async () => {
     const m = await Storage.messages.byConversation(conversationId);
     setLines(messagesToLines(m));
@@ -452,41 +453,27 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
     send({ type: 'ask_user_response', answers });
   };
 
+  // Surface clear/new state to the App header. Re-register whenever the inputs
+  // to clearChat change so the header always holds a fresh closure; deregister
+  // on unmount so stale handlers don't linger.
+  useEffect(() => {
+    registerControls?.({ clearChat, canClear: lines.length > 0, running });
+  }, [lines.length, running, conversationId]);
+  useEffect(() => () => registerControls?.(null), [registerControls]);
+
   return (
     <div class="flex h-full flex-col">
-      {/* Toolbar */}
-      <div class="flex items-center justify-between px-2 py-1">
-        {contextWindow ? (
+      {/* Toolbar — clear/new conversation live in the App header now. */}
+      {contextWindow ? (
+        <div class="px-2 py-1">
           <span
             class={`text-xs ${ctxPercent >= 80 ? 'text-amber-600' : 'text-gray-400'}`}
             title={`~${usedTokens.toLocaleString()} / ${contextWindow.toLocaleString()} tokens`}
           >
             {ctxPercent < 1 ? 'context: empty' : `context ${ctxPercent.toFixed(0)}%`}
           </span>
-        ) : (
-          <span />
-        )}
-        <div class="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={clearChat}
-            disabled={running || lines.length === 0}
-            class="flex items-center gap-1 rounded px-2 py-0.5 text-xs text-gray-500 hover:bg-gray-100 disabled:opacity-40 dark:hover:bg-gray-800"
-            title="Clear chat"
-          >
-            <Icon name="trash" size={14} />
-          </button>
-          <button
-            type="button"
-            onClick={newChat}
-            disabled={running}
-            class="flex items-center gap-1 rounded px-2 py-0.5 text-xs text-gray-500 hover:bg-gray-100 disabled:opacity-40 dark:hover:bg-gray-800"
-            title={t('new_conversation')}
-          >
-            <Icon name="plus" size={14} /> {t('new_conversation')}
-          </button>
         </div>
-      </div>
+      ) : null}
       {ctxPercent >= 80 && (
         <div class="bg-amber-100 px-3 py-1 text-xs text-amber-800 dark:bg-amber-950 dark:text-amber-200">
           Context window {ctxPercent.toFixed(0)}% full — older turns will be compacted

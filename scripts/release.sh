@@ -49,11 +49,19 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
   exit 1
 fi
 
-# Update versions
+# Update versions across ALL sources (Chrome reads manifest.json; the build
+# embeds VERSION; the landing package has its own version too).
 echo "📝 Updating version files..."
 npm version $NEW_VERSION --no-git-tag-version
 (cd packages/relay && npm version $NEW_VERSION --no-git-tag-version)
 (cd packages/extension && npm version $NEW_VERSION --no-git-tag-version 2>/dev/null || true)
+(cd packages/landing && npm version $NEW_VERSION --no-git-tag-version 2>/dev/null || true)
+
+# manifest.json — Chrome's source of truth for the extension version.
+node -e "const f='packages/extension/manifest.json';const m=require('./'+f);m.version='$NEW_VERSION';require('fs').writeFileSync(f, JSON.stringify(m,null,2)+'\n');"
+
+# VERSION file — consumed by build-time version embedding.
+echo "$NEW_VERSION" > VERSION
 
 # Update CHANGELOG
 echo "📋 Updating CHANGELOG.md..."
@@ -64,9 +72,13 @@ sed -i.bak "/^## \[$NEW_VERSION\]/i \\
 ### Added
 " CHANGELOG.md
 
-OLD_LINK="\[Unreleased\]: https://github.com/abdul-karim-mia/browsecortex"
-NEW_LINK="\[Unreleased\]: https://github.com/abdul-karim-mia/browsecortex/compare/v$NEW_VERSION...HEAD\\n\[$NEW_VERSION\]: https://github.com/abdul-karim-mia/browsecortex/releases/tag/v$NEW_VERSION"
-sed -i.bak "s|$OLD_LINK|$NEW_LINK|g" CHANGELOG.md
+# Rewrite the reference links. Match the WHOLE `[Unreleased]:` line (anchored,
+# `.*` to the end) and replace it — matching only the prefix leaves the old
+# `/compare/...HEAD` suffix dangling, which is what corrupted past CHANGELOGs.
+REPO="https://github.com/abdul-karim-mia/browsecortex"
+NEW_LINK="[Unreleased]: $REPO/compare/v$NEW_VERSION...HEAD\\
+[$NEW_VERSION]: $REPO/compare/v$CURRENT_VERSION...v$NEW_VERSION"
+sed -i.bak "s|^\[Unreleased\]:.*\$|$NEW_LINK|" CHANGELOG.md
 rm -f CHANGELOG.md.bak
 
 # Commit and tag
@@ -74,7 +86,7 @@ echo "🔗 Creating commit and tag..."
 git config user.name "$(git config user.name || echo 'Release Bot')"
 git config user.email "$(git config user.email || echo 'release@browsecortex.dev')"
 
-git add package.json packages/*/package.json CHANGELOG.md
+git add package.json packages/*/package.json packages/extension/manifest.json CHANGELOG.md VERSION
 git commit -m "chore(release): v$NEW_VERSION"
 git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
 

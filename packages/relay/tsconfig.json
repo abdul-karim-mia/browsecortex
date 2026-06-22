@@ -5,8 +5,9 @@
     "lib": ["ES2022"],
     "noEmit": false,
     "outDir": "dist",
-    "module": "ESNext",
-    "moduleResolution": "bundler"
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "resolveJsonModule": true
   },
   "include": ["src"]
 }

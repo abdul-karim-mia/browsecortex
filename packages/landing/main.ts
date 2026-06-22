@@ -22,6 +22,39 @@ function setInstallButtonsHref(url: string) {
 }
 
 // --- GITHUB API INTEGRATION ---
+const CACHE_TTL = 5 * 60 * 1000; // 5-minute localStorage TTL
+
+function getCached(key: string): unknown | null {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) {
+      localStorage.removeItem(key);
+      return null;
+    }
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+function setCache(key: string, data: unknown) {
+  try {
+    localStorage.setItem(key, JSON.stringify({ ts: Date.now(), data }));
+  } catch { /* quota exceeded — ignore */ }
+}
+
+async function fetchWithCache(url: string, cacheKey: string): Promise<unknown> {
+  const cached = getCached(cacheKey);
+  if (cached !== null) return cached;
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const data = await response.json();
+  setCache(cacheKey, data);
+  return data;
+}
+
 async function fetchGithubStats() {
   const repoUrl = 'https://api.github.com/repos/abdul-karim-mia/browsecortex';
   const releaseUrl = 'https://api.github.com/repos/abdul-karim-mia/browsecortex/releases/latest';
@@ -34,49 +67,44 @@ async function fetchGithubStats() {
   const bentoStars = document.getElementById('bento-stats-stars');
   const bentoForks = document.getElementById('bento-stats-forks');
   const bentoIssues = document.getElementById('bento-stats-issues');
+  const contributorsGrid = document.getElementById('contributors-avatars-grid');
 
-  // 1. Fetch Repository Details (Stars, Forks, Issues)
-  try {
-    const response = await fetch(repoUrl);
-    if (!response.ok) throw new Error('GitHub API Limit or Offline');
-    const data = await response.json();
+  // Parallelize all three API calls
+  const [repoResult, releaseResult, contributorsResult] = await Promise.allSettled([
+    fetchWithCache(repoUrl, 'gh_repo'),
+    fetchWithCache(releaseUrl, 'gh_release'),
+    fetchWithCache(contributorsUrl, 'gh_contributors'),
+  ]);
 
-    // Stars
+  // 1. Process Repository Details (Stars, Forks, Issues)
+  if (repoResult.status === 'fulfilled') {
+    const data = repoResult.value as Record<string, unknown>;
     if (starsPill && typeof data.stargazers_count === 'number') {
       starsPill.textContent = `${data.stargazers_count} Stars`;
     }
     if (bentoStars && typeof data.stargazers_count === 'number') {
       bentoStars.textContent = String(data.stargazers_count);
     }
-
-    // Forks
     if (bentoForks && typeof data.forks_count === 'number') {
       bentoForks.textContent = String(data.forks_count);
     }
-
-    // Open Issues
     if (bentoIssues && typeof data.open_issues_count === 'number') {
       bentoIssues.textContent = String(data.open_issues_count);
     }
-  } catch (e) {
-    console.warn('[GitHub Stats] Falling back for repo details:', e);
+  } else {
+    console.warn('[GitHub Stats] Falling back for repo details:', repoResult.reason);
     if (starsPill) starsPill.textContent = 'Stars';
     if (bentoStars) bentoStars.textContent = '12';
     if (bentoForks) bentoForks.textContent = '3';
     if (bentoIssues) bentoIssues.textContent = '0';
   }
 
-  // 2. Fetch Latest Release Tag + wire install buttons to the extension zip
-  try {
-    const response = await fetch(releaseUrl);
-    if (!response.ok) throw new Error('Release fetch rate limited');
-    const data = await response.json();
+  // 2. Process Latest Release Tag + wire install buttons
+  if (releaseResult.status === 'fulfilled') {
+    const data = releaseResult.value as Record<string, unknown>;
     if (releaseTag && data.tag_name) {
-      releaseTag.textContent = data.tag_name;
+      releaseTag.textContent = String(data.tag_name);
     }
-
-    // Point the install buttons straight at the built extension zip if the
-    // release ships one; otherwise the static releases/latest href stays.
     const assets: { name?: string; browser_download_url?: string }[] = Array.isArray(data.assets)
       ? data.assets
       : [];
@@ -84,18 +112,14 @@ async function fetchGithubStats() {
     if (extensionZip?.browser_download_url) {
       setInstallButtonsHref(extensionZip.browser_download_url);
     }
-  } catch (e) {
-    console.warn('[GitHub Release] Keeping fallback install link:', e);
+  } else {
+    console.warn('[GitHub Release] Keeping fallback install link:', releaseResult.reason);
     if (releaseTag) releaseTag.textContent = 'v1.0.0';
   }
 
-  // 3. Fetch & Render Contributors List
-  const contributorsGrid = document.getElementById('contributors-avatars-grid');
-  try {
-    const response = await fetch(contributorsUrl);
-    if (!response.ok) throw new Error('Contributors fetch rate limited');
-    const list: Contributor[] = await response.json();
-
+  // 3. Process & Render Contributors List (XSS-safe DOM construction)
+  if (contributorsResult.status === 'fulfilled') {
+    const list = contributorsResult.value as Contributor[];
     if (contributorsGrid && Array.isArray(list)) {
       contributorsGrid.innerHTML = ''; // clear loading state
 
@@ -107,22 +131,45 @@ async function fetchGithubStats() {
         item.rel = 'noopener noreferrer';
         item.title = `${c.login} (${c.contributions} contributions)`;
 
-        item.innerHTML = `
-          <img src="${c.avatar_url}" alt="${c.login}" class="contributor-avatar" loading="lazy" />
-          <span class="contributor-name">${c.login}</span>
-        `;
+        const img = document.createElement('img');
+        img.setAttribute('src', c.avatar_url);
+        img.setAttribute('alt', c.login);
+        img.className = 'contributor-avatar';
+        img.width = 40;
+        img.height = 40;
+        img.loading = 'lazy';
+        img.addEventListener('error', () => {
+          img.src = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(c.login)}`;
+        });
+        const name = document.createElement('span');
+        name.className = 'contributor-name';
+        name.textContent = c.login;
+        item.append(img, name);
         contributorsGrid.appendChild(item);
       });
     }
-  } catch (e) {
-    console.warn('[GitHub Contributors] Using fallback creator attribution:', e);
+  } else {
+    console.warn('[GitHub Contributors] Using fallback creator attribution:', contributorsResult.reason);
     if (contributorsGrid) {
-      contributorsGrid.innerHTML = `
-        <a href="https://github.com/abdul-karim-mia" target="_blank" rel="noopener noreferrer" class="contributor-item animate-fade-in" title="Abdul karim mia">
-          <img src="https://github.com/abdul-karim-mia.png" alt="Abdul karim mia" class="contributor-avatar" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=abdul'" />
-          <span class="contributor-name">Abdul karim mia</span>
-        </a>
-      `;
+      contributorsGrid.innerHTML = ''; // clear loading state
+      const item = document.createElement('a');
+      item.href = 'https://github.com/abdul-karim-mia';
+      item.target = '_blank';
+      item.rel = 'noopener noreferrer';
+      item.className = 'contributor-item animate-fade-in';
+      item.title = 'Abdul karim mia';
+      const img = document.createElement('img');
+      img.setAttribute('src', 'https://github.com/abdul-karim-mia.png');
+      img.setAttribute('alt', 'Abdul karim mia');
+      img.className = 'contributor-avatar';
+      img.addEventListener('error', () => {
+        img.src = 'https://api.dicebear.com/7.x/bottts/svg?seed=abdul';
+      });
+      const name = document.createElement('span');
+      name.className = 'contributor-name';
+      name.textContent = 'Abdul karim mia';
+      item.append(img, name);
+      contributorsGrid.appendChild(item);
     }
   }
 }
@@ -326,12 +373,8 @@ let simTimeout: number | null = null;
 function runSimulationStep() {
   const step = simulationSequence[currentStep];
 
-  statusText!.textContent = step.status;
-  if (step.showDots) {
-    dots!.style.display = 'flex';
-  } else {
-    dots!.style.display = 'none';
-  }
+  if (statusText) statusText.textContent = step.status;
+  if (dots) dots.style.display = step.showDots ? 'flex' : 'none';
 
   if (step.url && browserUrl) {
     browserUrl.textContent = step.url;
@@ -344,17 +387,23 @@ function runSimulationStep() {
   switchTab(step.tab);
 
   currentStep = (currentStep + 1) % simulationSequence.length;
+  // Clear chat DOM when simulation loops back to the beginning
+  if (currentStep === 0 && chatMessages) {
+    chatMessages.innerHTML = '';
+  }
   simTimeout = window.setTimeout(runSimulationStep, step.delay);
 }
 
 tabExt?.addEventListener('click', () => {
   if (simTimeout) clearTimeout(simTimeout);
   switchTab('extension');
+  simTimeout = window.setTimeout(runSimulationStep, 3000);
 });
 
 tabBrowser?.addEventListener('click', () => {
   if (simTimeout) clearTimeout(simTimeout);
   switchTab('browser');
+  simTimeout = window.setTimeout(runSimulationStep, 3000);
 });
 
 // --- CAPABILITY ACCORDIONS LOGIC ---
@@ -362,8 +411,28 @@ function initCapabilities() {
   const cards = document.querySelectorAll('.capability-card');
   cards.forEach((card) => {
     card.addEventListener('click', () => {
-      card.classList.toggle('expanded');
+      const expanded = card.classList.toggle('expanded');
+      card.setAttribute('aria-expanded', String(expanded));
     });
+    card.addEventListener('keydown', (e) => {
+      const evt = e as KeyboardEvent;
+      if (evt.key === 'Enter' || evt.key === ' ') {
+        evt.preventDefault();
+        const expanded = card.classList.toggle('expanded');
+        card.setAttribute('aria-expanded', String(expanded));
+      }
+    });
+  });
+}
+
+// --- MOBILE HAMBURGER MENU TOGGLE ---
+function initMobileMenu() {
+  const menuBtn = document.querySelector('.mobile-menu-btn');
+  const navLinks = document.querySelector('.nav-links');
+  menuBtn?.addEventListener('click', () => {
+    const expanded = menuBtn.getAttribute('aria-expanded') === 'true';
+    menuBtn.setAttribute('aria-expanded', String(!expanded));
+    navLinks?.classList.toggle('open');
   });
 }
 
@@ -371,5 +440,6 @@ function initCapabilities() {
 document.addEventListener('DOMContentLoaded', () => {
   fetchGithubStats();
   initCapabilities();
+  initMobileMenu();
   runSimulationStep();
 });

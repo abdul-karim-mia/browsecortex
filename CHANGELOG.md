@@ -8,25 +8,47 @@ All notable changes to BrowseCortex are documented here. The format is based on
 
 ### Added
 
+## [1.1.0] - 2026-06-23
+
+### Fixed
+
+- Relay server denial-of-service vector — `/messages` now enforces a 1 MB body limit.
+- Auth tokens no longer travel in URL query strings: HTTP uses `Authorization: Bearer`,
+  the extension WebSocket uses the `token.<value>` sub-protocol. Token comparison is
+  constant-time.
+- Relay resource leaks: pending RPCs are drained on extension disconnect/replacement,
+  SSE writes are guarded against destroyed responses, and WebSocket/HTTP/WSS errors are
+  handled (including `EADDRINUSE`).
+- `run_javascript` now runs in the ISOLATED world, shrinking the blast radius of a
+  prompt-injected script.
+- Streaming tool-call names no longer accumulate across SSE chunks (fixes doubled names
+  like `click_elementclick_element`).
+- Provider `content_filter` finish reason is surfaced to the user instead of being
+  silently treated as a normal completion.
+- Malformed tool-call JSON is reported back to the model instead of silently passing `{}`.
+- Token estimation counts multimodal/image content so compaction triggers for
+  image-heavy conversations.
+- Memory keyword extraction is Unicode-aware (non-Latin scripts are no longer dropped).
+- `fs_export` uses correct UTF-8 base64 encoding (no more corrupted emoji/supplementary
+  characters).
+- `ask_user` promise no longer leaks when the side panel disconnects mid-question.
+- Four-way version desync resolved — all packages, the manifest, and `VERSION` are 1.1.0.
+
+### Added
+
+- Content Security Policy and accessibility (ARIA, mobile menu, reduced-motion) on the
+  landing page.
+- Graceful shutdown (SIGINT/SIGTERM) for the relay server.
+- Timeouts on the MCP client and vision fallback requests.
+- Configurable compaction `keepRecent`, cached memory search index, parallel image
+  analysis.
+- Relay unit tests, an accurate relay README, and CORS handling.
+
 ## [1.0.5] - 2026-06-21
 
 ### Added
 
-## [1.0.4] - 2026-06-21
-
-### Added
-
-## [1.0.3] - 2026-06-21
-
-### Added
-
-## [1.0.2] - 2026-06-21
-
-### Added
-
-## [1.0.2] - 2026-06-21
-
-### Added
+- Incremental bugfixes and stability improvements.
 
 ## [1.0.1] - 2026-06-21
 
@@ -49,8 +71,7 @@ All notable changes to BrowseCortex are documented here. The format is based on
   storage-quota handling, session checkpointing, and keyboard shortcuts.
 - SVG icon set and branded extension icons.
 
-[Unreleased]: https://github.com/abdul-karim-mia/browsecortex/compare/v1.0.5...HEAD/compare/v1.0.4...HEAD
-[1.0.4]: https://github.com/abdul-karim-mia/browsecortex/releases/tag/v1.0.4/compare/v1.0.3...HEAD
-[1.0.3]: https://github.com/abdul-karim-mia/browsecortex/releases/tag/v1.0.3/compare/v1.0.2...HEAD
-[1.0.2]: https://github.com/abdul-karim-mia/browsecortex/releases/tag/v1.0.2/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/abdul-karim-mia/browsecortex/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/abdul-karim-mia/browsecortex/compare/v1.0.5...v1.1.0
+[1.0.5]: https://github.com/abdul-karim-mia/browsecortex/compare/v1.0.1...v1.0.5
 [1.0.1]: https://github.com/abdul-karim-mia/browsecortex/releases/tag/v1.0.1

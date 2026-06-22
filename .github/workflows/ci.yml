@@ -21,6 +21,14 @@ jobs:
         run: npm run lint
       - name: Unit tests
         run: npm run test
+      - name: Coverage (extension)
+        run: npm run test:coverage --workspace @browsecortex/extension
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: packages/*/coverage/lcov.info
+          if-no-files-found: ignore
       - name: Build
         run: npm run build
 

@@ -50,7 +50,7 @@ export function Settings() {
             key={tEntry.id}
             type="button"
             onClick={() => setTab(tEntry.id)}
-            class={`px-3 py-2 text-sm font-medium ${
+            class={`px-3 py-2 text-sm font-medium min-w-[100px] text-center ${
               tab === tEntry.id
                 ? 'border-b-2 border-blue-500 text-blue-600'
                 : 'text-gray-500 hover:text-gray-700'

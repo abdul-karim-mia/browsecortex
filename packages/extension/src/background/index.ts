@@ -291,6 +291,10 @@ chrome.runtime.onConnect.addListener((port) => {
     if (chrome.runtime.lastError) {
       log.warn('[chat:bg] port disconnected', chrome.runtime.lastError);
     }
+    // Resolve any in-flight ask_user before aborting — otherwise the promise
+    // leaks forever when the panel disconnects mid-question (H-EXT-3).
+    pendingAsk?.({});
+    pendingAsk = null;
     abortController?.abort();
     abortController = null;
   });

@@ -98,7 +98,11 @@ export const runJavascript: ToolDefinition = {
     try {
       const [res] = await chrome.scripting.executeScript({
         target: { tabId },
-        world: 'MAIN',
+        // ISOLATED world: shares the DOM but not the page's JS globals/functions,
+        // shrinking the blast radius if a prompt-injected script is run (C-EXT-1).
+        // Destructive + the loop's external-content guard already force a
+        // confirmation prompt before this runs once any page text was read.
+        world: 'ISOLATED',
         func: (code: string) => {
           try {
             const value = eval(code); // intentional: run_javascript is opt-in (PLAN §28)

@@ -27,8 +27,6 @@ export async function removeServer(id: string): Promise<void> {
   );
 }
 
-let rpcId = 0;
-
 async function rpc(server: McpServer, method: string, params?: unknown): Promise<unknown> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -39,7 +37,10 @@ async function rpc(server: McpServer, method: string, params?: unknown): Promise
   const res = await fetch(server.url, {
     method: 'POST',
     headers,
-    body: JSON.stringify({ jsonrpc: '2.0', id: ++rpcId, method, params: params ?? {} }),
+    body: JSON.stringify({ jsonrpc: '2.0', id: crypto.randomUUID(), method, params: params ?? {} }),
+    // Bound the request so a hung MCP server can't wedge the agent loop or leak
+    // the socket indefinitely (H-EXT-7).
+    signal: AbortSignal.timeout(30_000),
   });
   if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
 

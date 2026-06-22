@@ -64,7 +64,11 @@ function parseArgs(raw: string): Record<string, unknown> {
   try {
     return JSON.parse(raw) as Record<string, unknown>;
   } catch {
-    return {};
+    // Surface malformed JSON to the model instead of silently passing {} —
+    // otherwise tools fail with confusing "missing field" errors and the model
+    // retries the same broken call (C-EXT-2).
+    log.warn('[chat:loop] malformed tool call args:', raw.slice(0, 200));
+    return { __parseError: true, __raw: raw.slice(0, 500) };
   }
 }
 
@@ -173,7 +177,14 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
     // Compact older turns if we're approaching the context limit (PLAN §31).
     const body = messages.slice(1); // exclude system
     if (shouldCompact(body, settings, model)) {
-      const compacted = await compact(body, provider, model, signal, args.pinnedContents);
+      const compacted = await compact(
+        body,
+        provider,
+        model,
+        signal,
+        args.pinnedContents,
+        settings.compactionKeepRecent,
+      );
       if (compacted.length < body.length) {
         log.debug(`[chat:loop] compacted ${body.length} -> ${compacted.length} messages`);
         messages.splice(1, body.length, ...compacted);
@@ -212,6 +223,15 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
                 type: 'function',
                 function: { name: c.name, arguments: c.arguments },
               }));
+            } else if (event.type === 'done') {
+              // Surface provider-side content filtering instead of silently
+              // treating a censored/truncated response as normal (H-EXT-2).
+              if (event.finishReason === 'content_filter') {
+                emit({
+                  type: 'token',
+                  content: "\n\n_⚠️ Response was filtered by the provider's content policy._\n",
+                });
+              }
             }
           }
           break;
@@ -291,7 +311,13 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
         });
         let result;
         try {
-          if (isDestructive(tc.function.name, callArgs) && !confirmedDestructive) {
+          if (callArgs.__parseError) {
+            result = {
+              error:
+                'Malformed JSON in tool arguments. Fix the JSON syntax and retry.',
+              rawPreview: callArgs.__raw,
+            };
+          } else if (isDestructive(tc.function.name, callArgs) && !confirmedDestructive) {
             result = { error: 'User declined this action.' };
           } else if (isMcpTool(tc.function.name)) {
             result = await executeMcpTool(tc.function.name, callArgs);
@@ -360,16 +386,20 @@ async function buildUserMessage(
   }
 
   // No native vision — describe each image via the vision fallback (PLAN §17).
-  for (const img of images) {
-    try {
-      const desc = await analyzeImage(prompt || 'Describe this image in detail.', img.dataUrl!);
-      prompt += `\n\n--- Image "${img.name}" (described by vision model) ---\n${desc}`;
-    } catch (e) {
-      prompt += `\n\n--- Image "${img.name}" could not be analyzed: ${
-        e instanceof Error ? e.message : String(e)
-      } ---`;
-    }
-  }
+  // Analyze in parallel so multiple images don't serialize their latency (M-EXT-9).
+  const descriptions = await Promise.all(
+    images.map(async (img) => {
+      try {
+        const desc = await analyzeImage(prompt || 'Describe this image in detail.', img.dataUrl!);
+        return `\n\n--- Image "${img.name}" (described by vision model) ---\n${desc}`;
+      } catch (e) {
+        return `\n\n--- Image "${img.name}" could not be analyzed: ${
+          e instanceof Error ? e.message : String(e)
+        } ---`;
+      }
+    }),
+  );
+  prompt += descriptions.join('');
   return { role: 'user', content: prompt };
 }
 

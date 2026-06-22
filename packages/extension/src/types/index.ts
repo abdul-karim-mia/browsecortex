@@ -26,6 +26,7 @@ export interface Model {
   hasVision?: boolean;
   hasToolCalling?: boolean;
   hasParallelTools?: boolean;
+  hasToolChoice?: boolean;
   hasReasoning?: boolean;
   inputCostPerToken?: number;
   outputCostPerToken?: number;
@@ -143,6 +144,8 @@ export interface Settings {
   maxToolCallLoops: number;
   compactionThreshold: 0.5 | 0.7 | 0.8;
   compactionEnabled: boolean;
+  /** Recent turns kept verbatim during compaction (PLAN §31). Default 5. */
+  compactionKeepRecent?: number;
   runJavascriptEnabled: boolean;
   systemPromptAdditions: string;
   toolTimeoutMultiplier: 0.5 | 1 | 2 | 3;

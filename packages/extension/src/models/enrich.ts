@@ -37,6 +37,7 @@ export async function syncProviderModels(provider: Provider): Promise<Model[]> {
       hasVision: entry?.supports_vision,
       hasToolCalling: entry?.supports_function_calling ?? true,
       hasParallelTools: entry?.supports_parallel_function_calling,
+      hasToolChoice: entry?.supports_tool_choice ?? true,
       hasReasoning: entry?.supports_reasoning,
       inputCostPerToken: entry?.input_cost_per_token,
       outputCostPerToken: entry?.output_cost_per_token,

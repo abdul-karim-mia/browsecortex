@@ -65,6 +65,8 @@ export async function analyzeImage(prompt: string, imageDataUrl: string): Promis
     method: 'POST',
     headers: authHeaders(target.provider),
     body: JSON.stringify(body),
+    // Don't let a slow vision provider block the agent loop forever (M-EXT-8).
+    signal: AbortSignal.timeout(30_000),
   });
   if (!res.ok) throw new Error(`Vision call failed: ${res.status} ${res.statusText}`);
 

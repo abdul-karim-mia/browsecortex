@@ -47,7 +47,9 @@ function buildRequest(opts: ChatOptions): ChatRequest {
   };
   if (tools && tools.length > 0) {
     req.tools = tools;
-    req.tool_choice = 'auto';
+    if (model.hasToolChoice ?? true) {
+      req.tool_choice = 'auto';
+    }
   }
   // Reasoning models swap parameter names and omit temperature (PLAN §6).
   if (model.hasReasoning) {
@@ -152,7 +154,10 @@ export async function* streamChat(opts: ChatOptions): AsyncGenerator<ChatStreamE
           arguments: '',
         };
         if (tc.id) existing.id = tc.id;
-        if (tc.function?.name) existing.name += tc.function.name;
+        // Set the name on the first chunk only. Some providers (e.g. Azure
+        // OpenAI) resend the full name in later chunks; concatenating would
+        // produce doubled names like "click_elementclick_element".
+        if (tc.function?.name && !existing.name) existing.name = tc.function.name;
         if (tc.function?.arguments) existing.arguments += tc.function.arguments;
         toolCalls.set(tc.index, existing);
       }

@@ -8,6 +8,7 @@
  */
 import { getApiTools, executeTool, getTool, isDestructive } from '@/tools/registry';
 import type { ToolContext } from '@/tools/types';
+import { log } from '@/log';
 import { getConfig } from './config';
 import { runUseAgent } from './use-agent';
 
@@ -111,9 +112,11 @@ async function attemptConnect(): Promise<void> {
   if (!cfg.enabled) return disconnect();
 
   disconnect();
-  const url = `ws://localhost:${cfg.port}/ws?token=${encodeURIComponent(cfg.token)}`;
+  // Auth via the `token.<value>` sub-protocol keeps the token out of the URL
+  // (which would otherwise leak into devtools, logs, and process memory).
+  const url = `ws://localhost:${cfg.port}/ws`;
   try {
-    socket = new WebSocket(url);
+    socket = new WebSocket(url, [`token.${cfg.token}`]);
   } catch {
     scheduleReconnect();
     return;
@@ -128,7 +131,10 @@ async function attemptConnect(): Promise<void> {
     failedAttempts++;
     scheduleReconnect();
   };
-  socket.onerror = () => socket?.close();
+  socket.onerror = (ev) => {
+    log.warn('[relay] ws error', ev);
+    socket?.close();
+  };
   socket.onmessage = async (ev) => {
     let msg: { type?: string; id?: string; method?: string; params?: Record<string, unknown> };
     try {

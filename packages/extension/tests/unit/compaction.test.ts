@@ -29,6 +29,20 @@ describe('estimateTokens', () => {
     ];
     expect(estimateTokens(msgs)).toBeGreaterThan(0);
   });
+
+  it('counts multimodal text parts and charges a flat budget per image', () => {
+    const msgs: ApiMessage[] = [
+      {
+        role: 'user',
+        content: [
+          { type: 'text', text: 'a'.repeat(400) }, // 100 tokens
+          { type: 'image_url', image_url: { url: 'data:image/png;base64,' + 'A'.repeat(200_000) } },
+        ],
+      },
+    ];
+    // 100 (text) + 1000 (image) — image cost must NOT scale with base64 length.
+    expect(estimateTokens(msgs)).toBe(1100);
+  });
 });
 
 describe('shouldCompact', () => {

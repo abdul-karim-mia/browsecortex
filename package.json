@@ -1,6 +1,6 @@
 {
   "name": "browsecortex",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "private": true,
   "description": "Open source AI browser assistant — Chrome extension, bring your own AI provider, full browser control.",
   "license": "MIT",
@@ -14,11 +14,11 @@
     "typecheck": "turbo run typecheck",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
-    "release": "scripts/release.sh",
-    "release:major": "scripts/release.sh major",
-    "release:minor": "scripts/release.sh minor",
-    "release:patch": "scripts/release.sh patch"
+    "format": "prettier --write \"**/*.{ts,tsx,json,md,css,html}\"",
+    "release": "bash scripts/release.sh",
+    "release:major": "bash scripts/release.sh major",
+    "release:minor": "bash scripts/release.sh minor",
+    "release:patch": "bash scripts/release.sh patch"
   },
   "devDependencies": {
     "prettier": "^3.3.3",

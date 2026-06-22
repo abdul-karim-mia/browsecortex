@@ -16,6 +16,7 @@ export interface LiteLLMEntry {
   supports_vision?: boolean;
   supports_function_calling?: boolean;
   supports_parallel_function_calling?: boolean;
+  supports_tool_choice?: boolean;
   supports_reasoning?: boolean;
   input_cost_per_token?: number;
   output_cost_per_token?: number;
@@ -57,34 +58,106 @@ export async function getCatalog(force = false): Promise<Catalog> {
   }
 }
 
-function shortName(id: string): string {
-  return id.includes('/') ? id.slice(id.lastIndexOf('/') + 1) : id;
+function sanitize(id: string): string {
+  const cleaned = id
+    .replace(/[:\-_/]free\b/gi, '')
+    .replace(/\bfree\b/gi, '')
+    .trim();
+  return cleaned || id;
 }
 
-// Suffix index: maps the bare model name (after any provider prefix) to its
-// entry. Built once per catalog object so repeated lookups stay cheap.
-let suffixIndex: { catalog: Catalog; map: Map<string, LiteLLMEntry> } | null = null;
+export function fullSanitizedName(id: string): string {
+  return sanitize(id).toLowerCase();
+}
 
-function getSuffixIndex(catalog: Catalog): Map<string, LiteLLMEntry> {
-  if (suffixIndex && suffixIndex.catalog === catalog) return suffixIndex.map;
-  const map = new Map<string, LiteLLMEntry>();
-  for (const [key, entry] of Object.entries(catalog)) {
-    const short = shortName(key);
-    // First write wins, so an exact bare key isn't shadowed by a prefixed one.
-    if (!map.has(short)) map.set(short, entry);
+export function bareSanitizedName(id: string): string {
+  const clean = sanitize(id);
+  const short = clean.includes('/') ? clean.slice(clean.lastIndexOf('/') + 1) : clean;
+  return short.toLowerCase();
+}
+
+export function canonicalName(id: string): string {
+  return bareSanitizedName(id);
+}
+
+// Cached indices for full and bare sanitized name lookups.
+// Built once per catalog object so repeated lookups stay cheap.
+let cachedIndices: {
+  catalog: Catalog;
+  fullIndex: Map<string, { key: string; entry: LiteLLMEntry }[]>;
+  bareIndex: Map<string, { key: string; entry: LiteLLMEntry }[]>;
+} | null = null;
+
+function getIndices(catalog: Catalog) {
+  if (cachedIndices && cachedIndices.catalog === catalog) {
+    return { fullIndex: cachedIndices.fullIndex, bareIndex: cachedIndices.bareIndex };
   }
-  suffixIndex = { catalog, map };
-  return map;
+  const fullIndex = new Map<string, { key: string; entry: LiteLLMEntry }[]>();
+  const bareIndex = new Map<string, { key: string; entry: LiteLLMEntry }[]>();
+
+  for (const [key, entry] of Object.entries(catalog)) {
+    const full = fullSanitizedName(key);
+    const bare = bareSanitizedName(key);
+
+    if (!fullIndex.has(full)) fullIndex.set(full, []);
+    fullIndex.get(full)!.push({ key, entry });
+
+    if (!bareIndex.has(bare)) bareIndex.set(bare, []);
+    bareIndex.get(bare)!.push({ key, entry });
+  }
+
+  cachedIndices = { catalog, fullIndex, bareIndex };
+  return { fullIndex, bareIndex };
+}
+
+function getMatchScore(key: string, query: string): number {
+  const lowerKey = key.toLowerCase();
+  const lowerQuery = query.toLowerCase();
+  if (lowerKey === lowerQuery) return 3;
+
+  const cleanKey = sanitize(key).toLowerCase();
+  const cleanQuery = sanitize(query).toLowerCase();
+  if (cleanKey === cleanQuery) return 2;
+
+  const keyPrefix = key.includes('/') ? key.split('/')[0].toLowerCase() : '';
+  const queryPrefix = query.includes('/') ? query.split('/')[0].toLowerCase() : '';
+  if (keyPrefix && queryPrefix && keyPrefix === queryPrefix) return 1;
+
+  return 0;
 }
 
 /**
- * Look up an entry by model id. LiteLLM keys are often provider-prefixed
- * (e.g. `groq/llama-3.3-70b-versatile`) while providers return bare ids, so we
- * try: exact key → bare key → suffix match against prefixed catalog keys.
+ * Look up an entry by model id. Sanitizes the model id (removing free keywords),
+ * matches against the full name first, then falls back to the bare model name,
+ * scores matches, and merges all matching entries (more specific matches override general ones).
  */
 export function lookup(catalog: Catalog, modelId: string): LiteLLMEntry | undefined {
-  if (catalog[modelId]) return catalog[modelId];
-  const short = shortName(modelId);
-  if (catalog[short]) return catalog[short];
-  return getSuffixIndex(catalog).get(short);
+  const { fullIndex, bareIndex } = getIndices(catalog);
+
+  // 1. Try matching by full sanitized name first (removing free)
+  const queryFull = fullSanitizedName(modelId);
+  let matches = fullIndex.get(queryFull);
+
+  // 2. Fall back to bare name without provider (removing free) if no match found
+  if (!matches || matches.length === 0) {
+    const queryBare = bareSanitizedName(modelId);
+    matches = bareIndex.get(queryBare);
+  }
+
+  if (!matches || matches.length === 0) return undefined;
+
+  const sorted = [...matches].sort(
+    (a, b) => getMatchScore(a.key, modelId) - getMatchScore(b.key, modelId)
+  );
+
+  const merged: LiteLLMEntry = {};
+  for (const match of sorted) {
+    for (const [k, v] of Object.entries(match.entry)) {
+      if (v !== undefined && v !== null) {
+        (merged as Record<string, unknown>)[k] = v;
+      }
+    }
+  }
+
+  return merged;
 }

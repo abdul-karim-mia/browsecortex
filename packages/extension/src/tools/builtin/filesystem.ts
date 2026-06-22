@@ -9,6 +9,16 @@ import { Storage } from '@/storage';
 
 const FS_READ_LIMIT = 50_000;
 
+/** Base64-encode raw bytes (chunked to avoid call-stack limits on large files). */
+function bytesToBase64(bytes: Uint8Array): string {
+  let binary = '';
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
+}
+
 /** Run a vfs op with the conversation scope, converting throws to { error }. */
 function scoped(ctx: ToolContext, fn: (cid: string) => Promise<ToolResult>): Promise<ToolResult> {
   if (!ctx.conversationId) return Promise.resolve({ error: 'No conversation context for files.' });
@@ -150,7 +160,13 @@ export const fsExport: ToolDefinition = {
     scoped(ctx, async (cid) => {
       const content = await vfs.readFile(cid, String(args.path));
       const name = String(args.path).split('/').pop() || 'file.txt';
-      const dataUrl = `data:text/plain;base64,${btoa(unescape(encodeURIComponent(content)))}`;
+      // Encode UTF-8 bytes to base64 directly. The old `unescape(encodeURIComponent())`
+      // trick is deprecated and corrupts supplementary-plane chars/emoji (H-EXT-8).
+      // (createObjectURL isn't available in the MV3 service worker, so we stay on
+      // a data: URL.)
+      const dataUrl = `data:text/plain;charset=utf-8;base64,${bytesToBase64(
+        new TextEncoder().encode(content),
+      )}`;
       const id = await chrome.downloads.download({ url: dataUrl, filename: name });
       return { exported: name, downloadId: id };
     }),
