@@ -14,7 +14,8 @@ export const screenshotTab: ToolDefinition = {
   timeout: 'page_read',
   async execute() {
     try {
-      const dataUrl = await chrome.tabs.captureVisibleTab({ format: 'png' });
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const dataUrl = await chrome.tabs.captureVisibleTab(tab?.windowId, { format: 'png' });
       return { dataUrl, note: 'Base64 PNG data URL of the visible viewport.' };
     } catch (e) {
       return { error: `Screenshot failed: ${e instanceof Error ? e.message : String(e)}` };
@@ -136,11 +137,12 @@ export const analyzeScreenshot: ToolDefinition = {
     required: ['question'],
   },
   destructive: false,
-  timeout: 'page_read',
+  timeout: 'inference',
   async execute(args) {
     let dataUrl: string;
     try {
-      dataUrl = await chrome.tabs.captureVisibleTab({ format: 'png' });
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      dataUrl = await chrome.tabs.captureVisibleTab(tab?.windowId, { format: 'png' });
     } catch (e) {
       return { error: `Screenshot failed: ${e instanceof Error ? e.message : String(e)}` };
     }

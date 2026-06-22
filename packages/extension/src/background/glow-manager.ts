@@ -29,15 +29,26 @@ async function updateGlowForActiveTab() {
   }
 }
 
+async function clearAnnotations(tabId: number) {
+  try {
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      func: () => document.querySelectorAll('[data-bm-badge]').forEach((b) => b.remove()),
+    });
+  } catch {}
+}
+
 async function clearGlow() {
   if (currentTabId !== null) {
     await removeGlowEffect(currentTabId).catch(() => {});
+    await clearAnnotations(currentTabId);
     currentTabId = null;
   }
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     if (tab?.id !== undefined) {
       await removeGlowEffect(tab.id).catch(() => {});
+      await clearAnnotations(tab.id);
     }
   } catch {}
 }
@@ -46,6 +57,7 @@ chrome.tabs.onActivated?.addListener(async (activeInfo) => {
   if (!isAgentActive) return;
   if (currentTabId !== null && currentTabId !== activeInfo.tabId) {
     await removeGlowEffect(currentTabId).catch(() => {});
+    await clearAnnotations(currentTabId);
   }
   currentTabId = activeInfo.tabId;
   await injectGlowEffect(activeInfo.tabId).catch(() => {});

@@ -7,10 +7,12 @@ const ctx: ToolContext = { getActiveTabId: async () => 1 };
 // Minimal chrome.tabs stub so open_tab's executor can run under node (no real
 // chrome global in this test environment).
 let nextTabId = 1000;
-(globalThis as { chrome?: unknown }).chrome = {
+(globalThis as unknown as { chrome?: unknown }).chrome = {
   tabs: {
     create: async (opts: { url: string }) => ({ id: nextTabId++, url: opts.url }),
     onRemoved: { addListener: () => {} },
+    query: async () => [{ id: 1, windowId: 100 }],
+    captureVisibleTab: async (windowId: number) => `data:image/png;base64,stub-data-${windowId}`,
   },
 };
 
@@ -101,5 +103,13 @@ describe('debugger interaction tools registration', () => {
     expect(clickTool?.destructive).toBe(false);
     expect(typeTool?.destructive).toBe(false);
     expect(keyTool?.destructive).toBe(false);
+  });
+});
+
+describe('screenshot tools', () => {
+  it('runs screenshot_tab and returns a dataUrl with tab windowId', async () => {
+    const result = await executeTool('screenshot_tab', {}, ctx);
+    expect(result).toHaveProperty('dataUrl');
+    expect((result as { dataUrl: string }).dataUrl).toContain('stub-data-100');
   });
 });

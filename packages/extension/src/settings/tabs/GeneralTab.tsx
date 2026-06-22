@@ -13,6 +13,7 @@ export function GeneralTab() {
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [providers, setProviders] = useState<Provider[]>([]);
   const [models, setModels] = useState<Model[]>([]);
+  const [visionModels, setVisionModels] = useState<Model[]>([]);
 
   useEffect(() => {
     Storage.settings.get().then(setSettings);
@@ -24,6 +25,12 @@ export function GeneralTab() {
     if (!settings.selectedProviderId) return setModels([]);
     Storage.models.listByProvider(settings.selectedProviderId).then(setModels);
   }, [settings.selectedProviderId]);
+
+  // Vision fallback model options come from the selected vision fallback provider.
+  useEffect(() => {
+    if (!settings.visionFallbackProviderId) return setVisionModels([]);
+    Storage.models.listByProvider(settings.visionFallbackProviderId).then(setVisionModels);
+  }, [settings.visionFallbackProviderId]);
 
   const update = async (patch: Partial<Settings>) => {
     const next = await Storage.settings.update(patch);
@@ -172,9 +179,13 @@ export function GeneralTab() {
           <div class="mt-2 space-y-2">
             <select
               value={settings.visionFallbackProviderId ?? ''}
-              onChange={(e) =>
-                update({ visionFallbackProviderId: (e.target as HTMLSelectElement).value || null })
-              }
+              onChange={(e) => {
+                const provId = (e.target as HTMLSelectElement).value || null;
+                update({
+                  visionFallbackProviderId: provId,
+                  visionFallbackModel: null,
+                });
+              }}
               class={selectCls}
             >
               <option value="">Select provider…</option>
@@ -184,14 +195,21 @@ export function GeneralTab() {
                 </option>
               ))}
             </select>
-            <input
+            <select
               value={settings.visionFallbackModel ?? ''}
-              onInput={(e) =>
-                update({ visionFallbackModel: (e.target as HTMLInputElement).value || null })
+              onChange={(e) =>
+                update({ visionFallbackModel: (e.target as HTMLSelectElement).value || null })
               }
-              placeholder="vision model id (e.g. gpt-4o)"
               class={selectCls}
-            />
+              disabled={!settings.visionFallbackProviderId}
+            >
+              <option value="">Select vision model…</option>
+              {visionModels.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.id} {m.hasVision ? ' 👁️' : ''}
+                </option>
+              ))}
+            </select>
           </div>
         )}
       </Field>

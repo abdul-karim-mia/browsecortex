@@ -16,6 +16,7 @@ export type TimeoutCategory =
   | 'file'
   | 'history'
   | 'mcp'
+  | 'inference'
   | 'instant';
 
 /** Default per-category timeouts in ms (PLAN §45). Scaled by user multiplier. */
@@ -28,6 +29,7 @@ export const TIMEOUTS: Record<TimeoutCategory, number> = {
   file: 10_000,
   history: 5_000,
   mcp: 30_000,
+  inference: 30_000,
   instant: 5_000,
 };
 
