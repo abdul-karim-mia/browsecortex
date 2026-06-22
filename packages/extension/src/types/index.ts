@@ -156,6 +156,8 @@ export interface Settings {
   visionFallbackModel: string | null;
   /** Local recovery-snapshot interval in days; 0 = off (PLAN §32). */
   autoBackupDays: number;
+  /** Model id used for spawned subagents; '' = same as the main model. */
+  subagentModel: string;
   /** Per-event notification toggles (PLAN §39). */
   notifications: {
     taskCompleted: boolean;
@@ -184,6 +186,7 @@ export const DEFAULT_SETTINGS: Settings = {
   visionFallbackProviderId: null,
   visionFallbackModel: null,
   autoBackupDays: 0,
+  subagentModel: '',
   notifications: {
     taskCompleted: true,
     taskFailed: true,

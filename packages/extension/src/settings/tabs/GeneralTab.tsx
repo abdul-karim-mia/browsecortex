@@ -1,16 +1,29 @@
 import { useEffect, useState } from 'preact/hooks';
 import { Storage } from '@/storage';
-import { DEFAULT_SETTINGS, type Provider, type ReasoningEffort, type Settings } from '@/types';
+import {
+  DEFAULT_SETTINGS,
+  type Model,
+  type Provider,
+  type ReasoningEffort,
+  type Settings,
+} from '@/types';
 
 /** General settings (PLAN §10, §17, §34, §35, §45). */
 export function GeneralTab() {
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [providers, setProviders] = useState<Provider[]>([]);
+  const [models, setModels] = useState<Model[]>([]);
 
   useEffect(() => {
     Storage.settings.get().then(setSettings);
     Storage.providers.list().then(setProviders);
   }, []);
+
+  // Subagent model options come from the active provider (subagents reuse it).
+  useEffect(() => {
+    if (!settings.selectedProviderId) return setModels([]);
+    Storage.models.listByProvider(settings.selectedProviderId).then(setModels);
+  }, [settings.selectedProviderId]);
 
   const update = async (patch: Partial<Settings>) => {
     const next = await Storage.settings.update(patch);
@@ -31,6 +44,24 @@ export function GeneralTab() {
           <option value="medium">Medium</option>
           <option value="high">High</option>
         </select>
+      </Field>
+
+      <Field label="Subagent model">
+        <select
+          value={settings.subagentModel}
+          onChange={(e) => update({ subagentModel: (e.target as HTMLSelectElement).value })}
+          class={selectCls}
+        >
+          <option value="">Same as main model</option>
+          {models.map((m) => (
+            <option key={m.id} value={m.id}>
+              {m.id}
+            </option>
+          ))}
+        </select>
+        <p class="mt-1 text-xs text-gray-500">
+          Model used by delegated subagents (spawn_agent). Uses the active provider.
+        </p>
       </Field>
 
       <Field label={`Max tool-call loops per message (${settings.maxToolCallLoops})`}>

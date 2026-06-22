@@ -38,6 +38,11 @@ export interface ToolContext {
   conversationId?: string;
   /** Asks the user questions inline and resolves with their answers (PLAN §18). */
   askUser?(questions: unknown): Promise<Record<string, unknown>>;
+  /**
+   * Runs a sandboxed subagent to completion and resolves with its final
+   * summary text. Only present at the top level — subagents can't spawn.
+   */
+  spawnAgent?(type: string, task: string): Promise<string>;
 }
 
 export type ToolResult = Record<string, unknown> | { error: string };

@@ -20,6 +20,11 @@ import { retrieveMemories } from '@/memory/retrieval';
 import { buildSystemPrompt } from './system-prompt';
 import { compact, shouldCompact } from './compaction';
 import { log } from '@/log';
+import { Storage } from '@/storage';
+import { buildSubagentPrompt, getSubagent } from './subagents';
+
+/** Subagents run one level deep; they never get the spawn tool themselves. */
+const MAX_SUBAGENT_DEPTH = 1;
 
 const RESULT_LIMIT = 10_000;
 
@@ -41,6 +46,12 @@ export interface RunArgs {
   askUser(questions: unknown): Promise<Record<string, unknown>>;
   /** Called after each tool round with the current messages (PLAN §22 L3). */
   onCheckpoint?(messages: ApiMessage[]): void;
+  /** Restrict the toolset to these tool names (subagent sandbox). */
+  allowedTools?: string[];
+  /** Recursion depth — 0 for the top-level agent, 1+ for subagents. */
+  depth?: number;
+  /** Replaces the built system prompt (used for subagent runs). */
+  systemPromptOverride?: string;
 }
 
 function truncate(value: string): string {
@@ -75,12 +86,15 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
   const { provider, model, settings, signal, emit } = args;
   let toolRounds = 0;
 
-  const memories = await retrieveMemories(args.userContent);
-  const system = buildSystemPrompt({
-    settings,
-    memories,
-    activeTabUrl: args.activeTabUrl,
-  });
+  const depth = args.depth ?? 0;
+
+  const system =
+    args.systemPromptOverride ??
+    buildSystemPrompt({
+      settings,
+      memories: await retrieveMemories(args.userContent),
+      activeTabUrl: args.activeTabUrl,
+    });
 
   const userMessage = await buildUserMessage(args.userContent, args.attachments ?? [], model);
 
@@ -98,14 +112,54 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
       if (tab?.id === undefined) throw new Error('No active tab.');
       return tab.id;
     },
+    // Only the top-level agent can delegate (subagents run one level deep).
+    spawnAgent:
+      depth >= MAX_SUBAGENT_DEPTH
+        ? undefined
+        : async (type, task) => {
+            const def = getSubagent(type);
+            if (!def) return `Error: unknown agent_type '${type}'.`;
+            // Subagents reuse the parent provider; model is overridable in settings.
+            let subModel = model;
+            if (settings.subagentModel) {
+              const candidates = await Storage.models.listByProvider(provider.id);
+              const found = candidates.find((m) => m.id === settings.subagentModel);
+              if (found) subModel = found;
+            }
+            const result = await runAgentLoop({
+              provider,
+              model: subModel,
+              settings,
+              history: [],
+              userContent: task,
+              conversationId: args.conversationId,
+              activeTabUrl: args.activeTabUrl,
+              signal,
+              emit: () => {}, // MVP: subagent stream is folded into the returned summary
+              askUser: args.askUser,
+              allowedTools: def.allowedTools,
+              depth: depth + 1,
+              systemPromptOverride: buildSubagentPrompt(def, args.activeTabUrl),
+            });
+            const last = [...result.messages]
+              .reverse()
+              .find((m) => m.role === 'assistant' && typeof m.content === 'string');
+            const summary = (last?.content as string)?.trim();
+            return summary || `Subagent finished (${result.outcome}) with no summary.`;
+          },
   };
 
-  const tools = model.hasToolCalling
-    ? [
-        ...getApiTools({ runJavascript: settings.runJavascriptEnabled }),
-        ...(await getMcpApiTools()),
-      ]
-    : undefined;
+  // Subagents get a restricted toolset; spawn_agent is never available below
+  // the top level (prevents recursive delegation).
+  const allApiTools = [
+    ...getApiTools({ runJavascript: settings.runJavascriptEnabled }),
+    ...(depth === 0 ? await getMcpApiTools() : []),
+  ].filter((t) => {
+    if (depth > 0 && t.function.name === 'spawn_agent') return false;
+    if (args.allowedTools && !args.allowedTools.includes(t.function.name)) return false;
+    return true;
+  });
+  const tools = model.hasToolCalling ? allApiTools : undefined;
   const maxLoops = settings.maxToolCallLoops;
   // Tracks whether untrusted external content has been read — once true,
   // destructive actions require confirmation regardless of mode (PLAN §28).

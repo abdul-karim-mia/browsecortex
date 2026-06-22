@@ -34,6 +34,7 @@ import { waitTools } from './builtin/waits';
 import { pageExtraTools } from './builtin/page-extras';
 import { chromeExtraTools } from './builtin/chrome-extras';
 import { askUser } from './builtin/ask-user';
+import { subagentTools } from './builtin/subagent';
 
 const ALL_TOOLS: ToolDefinition[] = [
   ...tabTools,
@@ -58,10 +59,11 @@ const ALL_TOOLS: ToolDefinition[] = [
   ...miscTools,
   runJavascript,
   askUser,
+  ...subagentTools,
 ];
 
-/** Tools that block on user input and must not be raced against a timeout. */
-const NO_TIMEOUT = new Set(['ask_user']);
+/** Tools that block on user input or run a full nested loop — not timeout-raced. */
+const NO_TIMEOUT = new Set(['ask_user', 'spawn_agent']);
 
 /** Opt-in tools excluded from the API schema unless explicitly enabled. */
 const OPT_IN = new Set(['run_javascript']);
