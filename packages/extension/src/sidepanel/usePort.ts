@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { PORT_NAME, type ClientMessage, type ServerMessage } from '@/background/protocol';
+import { log } from '@/log';
 
 /**
  * Connects to the background 'chat' port (PLAN §23) and exposes a send fn
@@ -20,23 +21,24 @@ export function usePort(onMessage: (msg: ServerMessage) => void) {
 
     function connect() {
       if (typeof chrome === 'undefined' || !chrome.runtime?.connect) {
-        console.error('[chat:port] chrome.runtime.connect unavailable');
+        log.error('[chat:port] chrome.runtime.connect unavailable');
         return;
       }
       try {
-        console.log('[chat:port] connecting…');
         port = chrome.runtime.connect({ name: PORT_NAME });
         portRef.current = port;
         setConnected(true);
-        console.log('[chat:port] connected');
 
         const listener = (msg: ServerMessage) => {
-          console.log('[chat:port] recv', msg.type, msg);
           handlerRef.current(msg);
         };
         port.onMessage.addListener(listener);
         port.onDisconnect.addListener(() => {
-          console.warn('[chat:port] disconnected', chrome.runtime.lastError);
+          // MV3 recycles the idle service worker; lastError is unset on a clean
+          // disconnect, so only surface a genuine error.
+          if (chrome.runtime.lastError) {
+            log.warn('[chat:port] disconnected', chrome.runtime.lastError);
+          }
           setConnected(false);
           portRef.current = null;
           port = null;
@@ -44,7 +46,7 @@ export function usePort(onMessage: (msg: ServerMessage) => void) {
           if (!cancelled) setTimeout(connect, 500);
         });
       } catch (e) {
-        console.error('[chat:port] connect threw', e);
+        log.error('[chat:port] connect threw', e);
         setConnected(false);
         portRef.current = null;
         if (!cancelled) setTimeout(connect, 1000);
@@ -64,15 +66,14 @@ export function usePort(onMessage: (msg: ServerMessage) => void) {
   }, []);
 
   const send = (msg: ClientMessage) => {
-    console.log('[chat:port] send', msg.type, msg);
     if (!portRef.current) {
-      console.error('[chat:port] send failed — no active port', msg);
+      log.error('[chat:port] send failed — no active port', msg);
       return;
     }
     try {
       portRef.current.postMessage(msg);
     } catch (e) {
-      console.error('[chat:port] postMessage threw', e, msg);
+      log.error('[chat:port] postMessage threw', e, msg);
     }
   };
 

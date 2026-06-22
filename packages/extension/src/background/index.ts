@@ -29,6 +29,7 @@ import { writeRecoverySnapshot } from '@/backup/backup';
 import { runMigrationSafety } from '@/db/migration';
 import { executeTool } from '@/tools/registry';
 import { registerLocalOriginFix } from '@/providers/local-origin-fix';
+import { log } from '@/log';
 
 // Snapshot data on version change before further use (PLAN §42).
 runMigrationSafety();
@@ -129,14 +130,12 @@ async function getActiveTabUrl(): Promise<string | undefined> {
 // Long-lived chat port (PLAN §23). One agent runs at a time per port (PLAN §48).
 chrome.runtime.onConnect.addListener((port) => {
   if (port.name !== PORT_NAME) return;
-  console.log('[chat:bg] port connected');
 
   const send = (msg: ServerMessage) => {
-    console.log('[chat:bg] send', msg.type, msg);
     try {
       port.postMessage(msg);
     } catch (e) {
-      console.error('[chat:bg] postMessage threw (port likely disconnected)', e, msg);
+      log.error('[chat:bg] postMessage threw (port likely disconnected)', e, msg);
     }
   };
   setBadge('clear'); // panel is open — clear any pending indicator (PLAN §39)
@@ -154,17 +153,14 @@ chrome.runtime.onConnect.addListener((port) => {
   };
 
   port.onMessage.addListener(async (msg: ClientMessage) => {
-    console.log('[chat:bg] recv', msg.type, msg);
     try {
       if (msg.type === 'abort') {
-        console.log('[chat:bg] abort requested');
         abortController?.abort();
         pendingAsk?.({}); // unblock a waiting ask_user so the loop can wind down
         pendingAsk = null;
         return;
       }
       if (msg.type === 'ask_user_response') {
-        console.log('[chat:bg] ask_user_response', msg.answers);
         pendingAsk?.(msg.answers);
         pendingAsk = null;
         return;
@@ -172,7 +168,7 @@ chrome.runtime.onConnect.addListener((port) => {
       if (msg.type !== 'send') return;
 
       if (abortController) {
-        console.warn('[chat:bg] rejected send — agent already running');
+        log.warn('[chat:bg] rejected send — agent already running');
         send({ type: 'error', message: 'An agent is already running. Stop it first.' });
         return;
       }
@@ -181,11 +177,9 @@ chrome.runtime.onConnect.addListener((port) => {
       abortController = new AbortController();
       setBadge('running');
 
-      console.log('[chat:bg] resolving active provider/model…');
       const resolved = await resolveActive();
-      console.log('[chat:bg] resolveActive ->', resolved);
       if ('error' in resolved) {
-        console.error('[chat:bg] resolveActive failed', resolved.error);
+        log.error('[chat:bg] resolveActive failed', resolved.error);
         send({ type: 'error', message: resolved.error });
         send({ type: 'done' });
         abortController = null;
@@ -194,12 +188,9 @@ chrome.runtime.onConnect.addListener((port) => {
       // Surface fallback routing to the user (PLAN §40).
       if (resolved.note) send({ type: 'token', content: `_${resolved.note}_\n\n` });
 
-      console.log('[chat:bg] ensuring offscreen doc…');
       await ensureOffscreen();
-      console.log('[chat:bg] offscreen ready');
       const stopKeepAlive = startKeepAlive();
       const settings = await Storage.settings.get();
-      console.log('[chat:bg] settings loaded');
 
       try {
         await ensureConversation(msg.conversationId, resolved.provider, resolved.model.id);
@@ -208,9 +199,7 @@ chrome.runtime.onConnect.addListener((port) => {
         const pinnedContents = existing.filter((m) => m.pinned).map((m) => m.content);
         // Rebuild history from IndexedDB so chats survive panel reloads (PLAN §8).
         const history = await getApiHistory(msg.conversationId);
-        console.log('[chat:bg] history loaded, turns:', history.length);
 
-        console.log('[chat:bg] starting agent loop…');
         const {
           messages: updated,
           outcome,
@@ -236,7 +225,7 @@ chrome.runtime.onConnect.addListener((port) => {
               updatedAt: Date.now(),
             }),
         });
-        console.log('[chat:bg] agent loop finished — outcome:', outcome, 'toolRounds:', toolRounds);
+        log.debug('[chat:bg] agent loop finished — outcome:', outcome, 'toolRounds:', toolRounds);
 
         // Persist the user message + every new assistant/tool turn this run added,
         // THEN signal done — so the panel's reload-from-storage sees a complete

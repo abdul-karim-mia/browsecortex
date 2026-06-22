@@ -12,6 +12,7 @@ import { Icon } from '@/components/Icon';
 import type { Attachment } from '@/background/protocol';
 import type { Settings } from '@/types';
 import { ModelPickerPopup } from '../ModelPickerPopup';
+import { ModePickerPopup } from '../ModePickerPopup';
 
 type Block = { kind: 'working'; lines: ChatLine[] } | { kind: 'message'; line: ChatLine };
 
@@ -74,6 +75,7 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [modelSupportsThinking, setModelSupportsThinking] = useState(false);
   const [showModelPicker, setShowModelPicker] = useState(false);
+  const [showModePicker, setShowModePicker] = useState(false);
   const [listening, setListening] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   /** Whether the trailing assistant line is still receiving tokens. */
@@ -399,13 +401,14 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
     setThinking(false);
   };
 
-  const bypassPermissions = settings?.agentMode === 'full_auto';
-  const toggleBypassPermissions = async () => {
-    const next = await Storage.settings.update({
-      agentMode: bypassPermissions ? 'confirm_destructive' : 'full_auto',
-    });
-    setSettings(next);
-  };
+  const agentMode = settings?.agentMode ?? 'full_auto';
+  const bypassPermissions = agentMode === 'full_auto';
+  const modeLabel =
+    agentMode === 'full_auto'
+      ? 'Bypass permissions'
+      : agentMode === 'notify_only'
+        ? 'Auto mode'
+        : 'Ask permissions';
 
   const newChat = () => {
     if (running) return;
@@ -584,19 +587,27 @@ export function ChatTab({ conversationId, onNewChat }: Props) {
             class="min-h-[40px] w-full resize-none border-none bg-transparent p-0 text-sm focus:outline-none"
           />
           <div class="mt-2 flex items-center justify-between">
-            <div class="flex items-center gap-1">
+            <div class="relative flex items-center gap-1">
               <button
                 type="button"
-                onClick={toggleBypassPermissions}
-                title="Toggle agent confirmation prompts"
-                class={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                onClick={() => setShowModePicker((v) => !v)}
+                title="Agent permission mode"
+                class={`flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
                   bypassPermissions
                     ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400'
                     : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
                 }`}
               >
-                Bypass permissions
+                {modeLabel}
+                <Icon name="chevron-down" size={12} />
               </button>
+              {showModePicker && (
+                <ModePickerPopup
+                  settings={settings}
+                  onClose={() => setShowModePicker(false)}
+                  onChange={setSettings}
+                />
+              )}
               <label
                 class="flex cursor-pointer items-center rounded p-1.5 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
                 title="Attach files"
