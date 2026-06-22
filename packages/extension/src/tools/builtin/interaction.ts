@@ -79,7 +79,7 @@ export const clickElement: ToolDefinition = {
 
 export const fillInput: ToolDefinition = {
   name: 'fill_input',
-  description: 'Set the value of an input or textarea identified by CSS selector.',
+  description: 'Set the value of an input, textarea, or contenteditable editor identified by CSS selector.',
   parameters: {
     type: 'object',
     properties: {
@@ -96,15 +96,42 @@ export const fillInput: ToolDefinition = {
     const [res] = await chrome.scripting.executeScript({
       target: { tabId },
       func: (selector: string, value: string) => {
-        const el = document.querySelector(selector) as
-          | HTMLInputElement
-          | HTMLTextAreaElement
-          | null;
+        const el = document.querySelector(selector) as HTMLElement | null;
         if (!el) return { found: false };
         el.focus();
-        el.value = value;
-        el.dispatchEvent(new Event('input', { bubbles: true }));
-        el.dispatchEvent(new Event('change', { bubbles: true }));
+        const isContentEditable = el.isContentEditable || el.closest('[contenteditable="true"]');
+        if (isContentEditable || el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+          try {
+            if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
+              el.select();
+              document.execCommand('selectAll', false);
+              document.execCommand('insertText', false, value);
+              if (el.value !== value) {
+                el.value = value;
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+              }
+            } else {
+              const range = document.createRange();
+              range.selectNodeContents(el);
+              const sel = window.getSelection();
+              if (sel) {
+                sel.removeAllRanges();
+                sel.addRange(range);
+              }
+              document.execCommand('insertText', false, value);
+            }
+            return { found: true };
+          } catch (e) {
+            // Fallback if execCommand fails
+          }
+        }
+        if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
+          el.value = value;
+          el.dispatchEvent(new Event('input', { bubbles: true }));
+          el.dispatchEvent(new Event('change', { bubbles: true }));
+          return { found: true };
+        }
         return { found: true };
       },
       args: [String(args.selector), String(args.value)],

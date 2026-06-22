@@ -35,6 +35,7 @@ import { pageExtraTools } from './builtin/page-extras';
 import { chromeExtraTools } from './builtin/chrome-extras';
 import { askUser } from './builtin/ask-user';
 import { subagentTools } from './builtin/subagent';
+import { debuggerInteractionTools } from './builtin/debugger-interaction';
 
 const ALL_TOOLS: ToolDefinition[] = [
   ...tabTools,
@@ -44,6 +45,7 @@ const ALL_TOOLS: ToolDefinition[] = [
   ...pageReadTools,
   ...interactionTools,
   ...interactionExtraTools,
+  ...debuggerInteractionTools,
   ...annotationTools,
   ...waitTools,
   ...pageExtraTools,

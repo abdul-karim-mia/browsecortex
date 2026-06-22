@@ -67,7 +67,16 @@ export const annotatePage: ToolDefinition = {
             el.getAttribute('aria-label') ||
             (el as HTMLInputElement).value ||
             '';
-          return { id, tag: el.tagName.toLowerCase(), type: (el as HTMLInputElement).type, label };
+          return {
+            id,
+            tag: el.tagName.toLowerCase(),
+            type: (el as HTMLInputElement).type,
+            label,
+            x: Math.round(r.left + r.width / 2),
+            y: Math.round(r.top + r.height / 2),
+            width: Math.round(r.width),
+            height: Math.round(r.height),
+          };
         });
         return map;
       },

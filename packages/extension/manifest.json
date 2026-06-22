@@ -38,7 +38,8 @@
     "search",
     "readingList",
     "alarms",
-    "declarativeNetRequest"
+    "declarativeNetRequest",
+    "debugger"
   ],
   "optional_permissions": [
     "clipboardRead",

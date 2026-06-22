@@ -25,6 +25,7 @@ import { autoName } from '@/conversations/naming';
 import { notify, setBadge } from './notify';
 import { clearCheckpoint, getCheckpoint, saveCheckpoint } from './checkpoint';
 import { connect as connectRelay } from '@/mcp-server/relay-client';
+import { setAgentActive } from './glow-manager';
 import { writeRecoverySnapshot } from '@/backup/backup';
 import { runMigrationSafety } from '@/db/migration';
 import { executeTool } from '@/tools/registry';
@@ -176,6 +177,7 @@ chrome.runtime.onConnect.addListener((port) => {
       // Set before any await to prevent concurrent runs from double-submit.
       abortController = new AbortController();
       setBadge('running');
+      setAgentActive(true);
 
       const resolved = await resolveActive();
       if ('error' in resolved) {
@@ -272,6 +274,7 @@ chrome.runtime.onConnect.addListener((port) => {
       } finally {
         stopKeepAlive();
         abortController = null;
+        setAgentActive(false);
       }
     } catch (e) {
       // Catches anything thrown before/outside the inner try (e.g. resolveActive,

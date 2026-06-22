@@ -87,3 +87,19 @@ describe('executeTool', () => {
     vi.useRealTimers();
   });
 });
+
+describe('debugger interaction tools registration', () => {
+  it('registers debugger_click, debugger_type, and debugger_key', () => {
+    const clickTool = getTool('debugger_click');
+    const typeTool = getTool('debugger_type');
+    const keyTool = getTool('debugger_key');
+
+    expect(clickTool).toBeDefined();
+    expect(typeTool).toBeDefined();
+    expect(keyTool).toBeDefined();
+
+    expect(clickTool?.destructive).toBe(false);
+    expect(typeTool?.destructive).toBe(false);
+    expect(keyTool?.destructive).toBe(false);
+  });
+});
