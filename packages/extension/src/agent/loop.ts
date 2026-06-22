@@ -19,6 +19,7 @@ import type { ServerMessage } from '@/background/protocol';
 import { retrieveMemories } from '@/memory/retrieval';
 import { buildSystemPrompt } from './system-prompt';
 import { compact, shouldCompact } from './compaction';
+import { log } from '@/log';
 
 const RESULT_LIMIT = 10_000;
 
@@ -111,23 +112,18 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
   let externalContentRead = false;
 
   for (let iteration = 0; iteration < maxLoops; iteration++) {
-    console.log(`[chat:loop] iteration ${iteration}/${maxLoops}, messages: ${messages.length}`);
     if (signal.aborted) {
-      console.warn('[chat:loop] aborted before iteration', iteration);
       return { messages, outcome: 'aborted', toolRounds };
     }
 
     // Compact older turns if we're approaching the context limit (PLAN §31).
     const body = messages.slice(1); // exclude system
     if (shouldCompact(body, settings, model)) {
-      console.log('[chat:loop] compacting context — estimated over threshold');
       const compacted = await compact(body, provider, model, signal, args.pinnedContents);
       if (compacted.length < body.length) {
-        console.log(`[chat:loop] compacted ${body.length} -> ${compacted.length} messages`);
+        log.debug(`[chat:loop] compacted ${body.length} -> ${compacted.length} messages`);
         messages.splice(1, body.length, ...compacted);
         emit({ type: 'token', content: '\n_[Context compacted]_\n' });
-      } else {
-        console.log('[chat:loop] compaction skipped/no-op');
       }
     }
 
@@ -139,9 +135,6 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
       // nothing has streamed yet, to avoid duplicating output (PLAN §30).
       for (let attempt = 0; ; attempt++) {
         let streamed = false;
-        console.log(
-          `[chat:loop] calling streamChat (attempt ${attempt}), provider=${provider.id} model=${model.id}`,
-        );
         try {
           for await (const event of streamChat({
             provider,
@@ -160,10 +153,6 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
               if (settings.showReasoningTokens) emit({ type: 'reasoning', content: event.content });
             } else if (event.type === 'tool_calls') {
               streamed = true;
-              console.log(
-                '[chat:loop] tool_calls received:',
-                event.calls.map((c) => c.name),
-              );
               toolCalls = event.calls.map((c) => ({
                 id: c.id || crypto.randomUUID(),
                 type: 'function',
@@ -171,15 +160,11 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
               }));
             }
           }
-          console.log(
-            `[chat:loop] streamChat completed (attempt ${attempt}), textLen=${assistantText.length}, toolCalls=${toolCalls.length}`,
-          );
           break;
         } catch (err) {
-          console.error(`[chat:loop] streamChat threw (attempt ${attempt})`, err);
+          log.error(`[chat:loop] streamChat threw (attempt ${attempt})`, err);
           const transient = !(err instanceof ChatHttpError) || err.status >= 500;
           if (attempt === 0 && transient && !streamed && !signal.aborted) {
-            console.log('[chat:loop] retrying after transient failure in 1s');
             await new Promise((r) => setTimeout(r, 1000));
             assistantText = '';
             toolCalls = [];
@@ -189,16 +174,16 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
         }
       }
     } catch (e) {
-      console.error('[chat:loop] streamChat failed permanently', e);
+      log.error('[chat:loop] streamChat failed permanently', e);
       if (signal.aborted) return { messages, outcome: 'aborted', toolRounds };
       // Put the provider into cooldown on a 429 so the next request can route
       // to a fallback or wait (PLAN §40).
       if (e instanceof ChatHttpError && e.status === 429) {
-        console.warn('[chat:loop] 429 — recording rate limit cooldown for', provider.id);
+        log.warn('[chat:loop] 429 — recording rate limit cooldown for', provider.id);
         await recordRateLimit(provider.id, e.retryAfter);
       }
       const message = describeError(e);
-      console.error('[chat:loop] emitting error to panel:', message);
+      log.error('[chat:loop] emitting error to panel:', message);
       emit({ type: 'error', message });
       return { messages, outcome: 'error', toolRounds };
     }
@@ -206,7 +191,6 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
     // No tool calls → final answer, loop terminates (PLAN §24). 'done' is sent
     // by the caller after persistence, so the UI can safely reload from storage.
     if (toolCalls.length === 0) {
-      console.log('[chat:loop] no tool calls — final answer, completing');
       messages.push({ role: 'assistant', content: assistantText });
       return { messages, outcome: 'completed', toolRounds };
     }
@@ -240,7 +224,7 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
 
     // Execute all tool calls in parallel (PLAN §24).
     toolRounds++;
-    console.log(
+    log.debug(
       `[chat:loop] executing tool round ${toolRounds}:`,
       toolCalls.map((c) => c.function.name),
     );
@@ -266,10 +250,9 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
             );
           }
         } catch (e) {
-          console.error(`[chat:loop] tool '${tc.function.name}' threw uncaught`, e);
+          log.error(`[chat:loop] tool '${tc.function.name}' threw uncaught`, e);
           result = { error: e instanceof Error ? e.message : String(e) };
         }
-        console.log(`[chat:loop] tool '${tc.function.name}' result:`, result);
         if (readsExternal(tc.function.name) && !('error' in result)) externalContentRead = true;
         const content = truncate(JSON.stringify(result));
         const isError = 'error' in result;
@@ -286,7 +269,7 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
     args.onCheckpoint?.(messages);
   }
 
-  console.warn(`[chat:loop] hit max iterations (${maxLoops})`);
+  log.warn(`[chat:loop] hit max iterations (${maxLoops})`);
   // Iteration cap reached (PLAN §10). 'done' is sent by the caller after persist.
   emit({
     type: 'token',

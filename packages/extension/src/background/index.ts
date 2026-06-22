@@ -231,7 +231,6 @@ chrome.runtime.onConnect.addListener((port) => {
         // THEN signal done — so the panel's reload-from-storage sees a complete
         // history (avoids a race that dropped the latest turn).
         await persistNewTurns(msg.conversationId, updated, history.length);
-        console.log('[chat:bg] persisted new turns');
         await clearCheckpoint();
         send({ type: 'done' });
 
@@ -250,7 +249,7 @@ chrome.runtime.onConnect.addListener((port) => {
             resolved.model,
             msg.content,
             assistantText,
-          ).catch((e) => console.error('[chat:bg] autoName failed', e));
+          ).catch((e) => log.error('[chat:bg] autoName failed', e));
         }
 
         // Report status accurately (PLAN §39). Don't notify on abort, and only
@@ -265,7 +264,7 @@ chrome.runtime.onConnect.addListener((port) => {
           if (toolRounds > 0) notify('taskCompleted', 'BrowseCortex', 'Task completed.');
         }
       } catch (e) {
-        console.error('[chat:bg] agent loop threw', e);
+        log.error('[chat:bg] agent loop threw', e);
         setBadge('error');
         notify('taskFailed', 'BrowseCortex', 'Task failed.');
         send({ type: 'error', message: e instanceof Error ? e.message : String(e) });
@@ -277,19 +276,21 @@ chrome.runtime.onConnect.addListener((port) => {
     } catch (e) {
       // Catches anything thrown before/outside the inner try (e.g. resolveActive,
       // ensureOffscreen, Storage.settings.get) so a failure here is never silent.
-      console.error('[chat:bg] onMessage handler threw outside inner try', e);
+      log.error('[chat:bg] onMessage handler threw outside inner try', e);
       try {
         send({ type: 'error', message: e instanceof Error ? e.message : String(e) });
         send({ type: 'done' });
       } catch (sendErr) {
-        console.error('[chat:bg] failed to report outer error to panel', sendErr);
+        log.error('[chat:bg] failed to report outer error to panel', sendErr);
       }
       abortController = null;
     }
   });
 
   port.onDisconnect.addListener(() => {
-    console.warn('[chat:bg] port disconnected', chrome.runtime.lastError);
+    if (chrome.runtime.lastError) {
+      log.warn('[chat:bg] port disconnected', chrome.runtime.lastError);
+    }
     abortController?.abort();
     abortController = null;
   });

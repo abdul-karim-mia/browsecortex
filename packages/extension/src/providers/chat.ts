@@ -9,6 +9,7 @@
  */
 import type { Provider, Model } from '@/types';
 import { authHeaders, joinUrl } from './client';
+import { log } from '@/log';
 import type {
   ApiMessage,
   ApiToolDefinition,
@@ -81,16 +82,6 @@ interface DeltaChunk {
  */
 export async function* streamChat(opts: ChatOptions): AsyncGenerator<ChatStreamEvent> {
   const url = joinUrl(opts.provider.baseUrl, '/chat/completions');
-  console.log(
-    '[chat:http] POST',
-    url,
-    'model:',
-    opts.model.id,
-    'messages:',
-    opts.messages.length,
-    'tools:',
-    opts.tools?.length ?? 0,
-  );
   let res: Response;
   try {
     res = await fetch(url, {
@@ -100,19 +91,18 @@ export async function* streamChat(opts: ChatOptions): AsyncGenerator<ChatStreamE
       signal: opts.signal,
     });
   } catch (e) {
-    console.error('[chat:http] fetch threw (network error / CORS / offline?)', e);
+    log.error('[chat:http] fetch threw (network error / CORS / offline?)', e);
     throw e;
   }
-  console.log('[chat:http] response status', res.status, res.statusText);
 
   if (!res.ok) {
     const retryAfter = parseRetryAfter(res.headers.get('retry-after'));
     const body = await res.text().catch(() => '');
-    console.error('[chat:http] non-OK response', res.status, body);
+    log.error('[chat:http] non-OK response', res.status, body);
     throw new ChatHttpError(res.status, retryAfter, body || `${res.status} ${res.statusText}`);
   }
   if (!res.body) {
-    console.error('[chat:http] response had no body');
+    log.error('[chat:http] response had no body');
     throw new Error('No response body from provider.');
   }
 
@@ -122,16 +112,11 @@ export async function* streamChat(opts: ChatOptions): AsyncGenerator<ChatStreamE
   let finishReason: string | null = null;
   let buffer = '';
 
-  let chunkCount = 0;
   while (true) {
     const { done, value } = await reader.read();
     if (done) {
-      console.log(
-        `[chat:http] stream done after ${chunkCount} chunks, finishReason=${finishReason}`,
-      );
       break;
     }
-    chunkCount++;
     buffer += decoder.decode(value, { stream: true });
 
     const lines = buffer.split('\n');
