@@ -60,6 +60,7 @@ export function SkillsTab() {
 
   return (
     <div class="space-y-6 text-sm">
+      {status && <div class="rounded border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-800 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-200">{status}</div>}
       <section>
         <h2 class="mb-2 text-sm font-semibold">Installed skills</h2>
         {installed.length === 0 ? (

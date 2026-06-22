@@ -96,6 +96,7 @@ export type TaskStatus = 'pending' | 'in_progress' | 'done' | 'failed';
 export interface Subtask {
   title: string;
   done: boolean;
+  subtasks?: Subtask[];
 }
 
 export interface Task {

@@ -119,7 +119,7 @@ export const Storage = {
         await db.tasks
           .where('conversationId')
           .equals(id)
-          .modify({ conversationId: null });
+          .modify((t) => { t.conversationId = null; });
         await db.conversations.delete(id);
       });
     },
