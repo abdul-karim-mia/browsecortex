@@ -26,8 +26,9 @@ async function runDbgCommand<T>(tabId: number, method: string, params: Record<st
   try {
     await chrome.debugger.attach(target, '1.3');
     attached = true;
-  } catch (e: any) {
-    if (e?.message?.includes('Already attached')) {
+  } catch (e) {
+    const err = e as { message?: string };
+    if (err.message?.includes('Already attached')) {
       // Already attached, proceed to use it
     } else {
       throw e;

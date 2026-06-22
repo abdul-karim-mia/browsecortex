@@ -39,7 +39,7 @@ async function clearGlow() {
     if (tab?.id !== undefined) {
       await removeGlowEffect(tab.id).catch(() => {});
     }
-  } catch (e) {}
+  } catch {}
 }
 
 chrome.tabs.onActivated?.addListener(async (activeInfo) => {

@@ -122,7 +122,7 @@ export const fillInput: ToolDefinition = {
               document.execCommand('insertText', false, value);
             }
             return { found: true };
-          } catch (e) {
+          } catch {
             // Fallback if execCommand fails
           }
         }

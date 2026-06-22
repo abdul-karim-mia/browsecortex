@@ -132,15 +132,15 @@ export async function injectGlowEffect(tabId: number): Promise<void> {
         draw();
 
         // Attach cleanup hook to window object so it can be cleanly detached
-        (window as any).__browsecortex_glow_cleanup__ = () => {
+        (window as unknown as { __browsecortex_glow_cleanup__?: () => void }).__browsecortex_glow_cleanup__ = () => {
           window.removeEventListener('resize', resize);
           cancelAnimationFrame(animationFrameId);
           canvas.remove();
-          delete (window as any).__browsecortex_glow_cleanup__;
+          delete (window as unknown as { __browsecortex_glow_cleanup__?: () => void }).__browsecortex_glow_cleanup__;
         };
       },
     });
-  } catch (e) {
+  } catch {
     // Ignore frame/security errors on specific tabs (e.g. settings or system pages)
   }
 }
@@ -150,18 +150,20 @@ export async function removeGlowEffect(tabId: number): Promise<void> {
     await chrome.scripting.executeScript({
       target: { tabId },
       func: () => {
-        const cleanup = (window as any).__browsecortex_glow_cleanup__;
+        const cleanup = (window as unknown as { __browsecortex_glow_cleanup__?: () => void }).__browsecortex_glow_cleanup__;
         if (typeof cleanup === 'function') {
           try {
             cleanup();
-          } catch (e) {}
+          } catch {
+            // ignore
+          }
         } else {
           const canvas = document.getElementById('__browsecortex_glow__');
           canvas?.remove();
         }
       },
     });
-  } catch (e) {
+  } catch {
     // Ignore
   }
 }
