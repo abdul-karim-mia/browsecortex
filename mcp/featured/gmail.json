@@ -1,0 +1,42 @@
+{
+  "id": "gmail",
+  "name": "Gmail",
+  "icon": "https://cdn.simpleicons.org/gmail",
+  "description": "Draft replies, search inbox, summarize threads",
+  "longDescription": "Bring your inbox into BrowseCortex. The AI can search messages, summarize long threads, draft replies in your voice, and label or organize mail—without leaving the page you're on.",
+  "category": "communication",
+  "tier": "featured",
+  "version": "1.0",
+  "author": "BrowseCortex",
+  "submittedBy": null,
+  "url": "https://mcp.gmail.googleapis.com/",
+  "transport": "streamable_http",
+  "docsUrl": "https://developers.google.com/gmail/api",
+  "auth": "oauth",
+  "authFallback": null,
+  "oauthConfig": {
+    "authUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+    "tokenUrl": "https://oauth2.googleapis.com/token",
+    "revokeUrl": "https://myaccount.google.com/permissions",
+    "scopes": [
+      "https://www.googleapis.com/auth/gmail.modify",
+      "https://www.googleapis.com/auth/gmail.compose"
+    ]
+  },
+  "tools": [
+    "search_threads",
+    "get_thread",
+    "create_draft",
+    "list_drafts",
+    "list_labels",
+    "label_message",
+    "label_thread"
+  ],
+  "examplePrompts": [
+    "Summarize the unread threads in my inbox",
+    "Draft a polite reply declining this meeting",
+    "Find every email from my landlord this year",
+    "Label all newsletters as 'Reading'",
+    "What did the support team say in the last thread?"
+  ]
+}

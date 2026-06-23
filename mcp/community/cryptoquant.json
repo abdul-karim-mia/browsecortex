@@ -1,0 +1,19 @@
+{
+  "id": "cryptoquant",
+  "name": "CryptoQuant",
+  "icon": "https://cdn.simpleicons.org/bitcoin",
+  "description": "Query cryptocurrency on-chain data, OHLCV prices, market data, and Research & QuickTake insights.",
+  "longDescription": "Query cryptocurrency on-chain data, OHLCV prices, market data, and Research & QuickTake insights.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.1",
+  "author": "com.cryptoquant",
+  "submittedBy": "com.cryptoquant",
+  "url": "https://mcp.cryptoquant.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://userguide.cryptoquant.com/api/mcp-server-beta/remote-mcp-recommended",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

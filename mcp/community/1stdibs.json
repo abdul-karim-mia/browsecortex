@@ -1,0 +1,19 @@
+{
+  "id": "1stdibs",
+  "name": "1stDibs",
+  "icon": "https://cdn.simpleicons.org/1stdibs",
+  "description": "MCP server for browsing and searching items on 1stDibs marketplace.",
+  "longDescription": "MCP server for browsing and searching items on 1stDibs marketplace.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.1stdibs",
+  "submittedBy": "com.1stdibs",
+  "url": "https://www.1stdibs.com/soa/mcp/",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

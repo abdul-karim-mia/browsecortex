@@ -1,0 +1,43 @@
+{
+  "id": "slack",
+  "name": "Slack",
+  "icon": "https://cdn.simpleicons.org/slack",
+  "description": "Send messages, search channels, summarize threads",
+  "longDescription": "Connect Slack so the AI can post updates, search across channels and DMs, summarize busy threads, and pull the context you need into the side panel while you keep working.",
+  "category": "communication",
+  "tier": "featured",
+  "version": "1.0",
+  "author": "BrowseCortex",
+  "submittedBy": null,
+  "url": "https://mcp.slack.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://api.slack.com",
+  "auth": "oauth",
+  "authFallback": "api_key",
+  "oauthConfig": {
+    "authUrl": "https://slack.com/oauth/v2/authorize",
+    "tokenUrl": "https://slack.com/api/oauth.v2.access",
+    "revokeUrl": "https://slack.com/apps",
+    "scopes": ["channels:read", "channels:history", "chat:write", "search:read"]
+  },
+  "apiKeyConfig": {
+    "label": "Slack Bot Token",
+    "placeholder": "xoxb-...",
+    "helperUrl": "https://api.slack.com/apps",
+    "helperText": "Create a Slack app and copy its bot token"
+  },
+  "tools": [
+    "post_message",
+    "search_messages",
+    "list_channels",
+    "get_channel_history",
+    "get_thread_replies"
+  ],
+  "examplePrompts": [
+    "Summarize what I missed in #engineering today",
+    "Post the release notes to #announcements",
+    "Find the thread where we discussed pricing",
+    "What did Sarah say about the launch?",
+    "DM myself a reminder about the standup"
+  ]
+}

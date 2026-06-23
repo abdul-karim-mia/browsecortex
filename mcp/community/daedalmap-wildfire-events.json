@@ -1,0 +1,19 @@
+{
+  "id": "daedalmap-wildfire-events",
+  "name": "DaedalMap Wildfire Events",
+  "icon": "https://cdn.simpleicons.org/map",
+  "description": "Wildfire events and aggregates across global, U.S., and Canada sources. Paid via x402 USDC.",
+  "longDescription": "Wildfire events and aggregates across global, U.S., and Canada sources. Paid via x402 USDC.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.1",
+  "author": "com.daedalmap",
+  "submittedBy": "com.daedalmap",
+  "url": "https://app.daedalmap.com/mcp/wildfires",
+  "transport": "streamable_http",
+  "docsUrl": "https://www.daedalmap.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

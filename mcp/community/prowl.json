@@ -1,0 +1,24 @@
+{
+  "id": "prowl",
+  "name": "Prowl",
+  "icon": "https://cdn.simpleicons.org/prowl",
+  "description": "AI competitive intelligence agent: 235+ tools for SEO, ads, funnels, reviews, pricing analysis.",
+  "longDescription": "AI competitive intelligence agent: 235+ tools for SEO, ads, funnels, reviews, pricing analysis.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "chat.prowl",
+  "submittedBy": "chat.prowl",
+  "url": "https://prowl.chat/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer API key in format: Bearer prowl_..."
+  },
+  "tools": [],
+  "examplePrompts": []
+}

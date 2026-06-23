@@ -1,0 +1,19 @@
+{
+  "id": "snap-ads",
+  "name": "Snap Ads",
+  "icon": "https://cdn.simpleicons.org/snapchat",
+  "description": "Snapchat Ads automation with AI: analyze performance, manage campaigns, optimize creatives.",
+  "longDescription": "Snapchat Ads automation with AI: analyze performance, manage campaigns, optimize creatives.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "co.pipeboard",
+  "submittedBy": "co.pipeboard",
+  "url": "https://snap-ads.mcp.pipeboard.co/",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

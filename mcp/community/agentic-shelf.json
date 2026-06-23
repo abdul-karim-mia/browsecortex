@@ -1,0 +1,19 @@
+{
+  "id": "agentic-shelf",
+  "name": "Agentic Shelf",
+  "icon": "https://cdn.simpleicons.org/shelf",
+  "description": "Hosted MCP for e-commerce: live product catalog, stock, and pricing for AI agents.",
+  "longDescription": "Hosted MCP for e-commerce: live product catalog, stock, and pricing for AI agents.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.agenticshelf",
+  "submittedBy": "ai.agenticshelf",
+  "url": "https://api.agenticshelf.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://www.agenticshelf.ai",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

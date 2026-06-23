@@ -1,0 +1,19 @@
+{
+  "id": "docfork",
+  "name": "Docfork",
+  "icon": "https://cdn.simpleicons.org/document",
+  "description": "MCP server for Docfork",
+  "longDescription": "MCP server for Docfork",
+  "category": "community",
+  "tier": "community",
+  "version": "0.7.2",
+  "author": "com.docfork",
+  "submittedBy": "com.docfork",
+  "url": "https://mcp.docfork.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/docfork/docfork-mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

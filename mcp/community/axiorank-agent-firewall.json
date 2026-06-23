@@ -1,0 +1,24 @@
+{
+  "id": "axiorank-agent-firewall",
+  "name": "AxioRank Agent Firewall",
+  "icon": "https://cdn.simpleicons.org/firewall",
+  "description": "Security gateway for AI agents: score tool calls, verify agent cards, enforce policy, audit.",
+  "longDescription": "Security gateway for AI agents: score tool calls, verify agent cards, enforce policy, audit.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.axiorank",
+  "submittedBy": "com.axiorank",
+  "url": "https://app.axiorank.com/api/mcp-server/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://axiorank.com",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "AxioRank API key as a Bearer token (axr_live_\u2026). Create one in your AxioRank dashboard under Settings \u2192 API keys."
+  },
+  "tools": [],
+  "examplePrompts": []
+}

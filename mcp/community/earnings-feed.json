@@ -1,0 +1,19 @@
+{
+  "id": "earnings-feed",
+  "name": "Earnings Feed",
+  "icon": "https://cdn.simpleicons.org/finance",
+  "description": "SEC filings and insider trades in real-time. 10-K, 10-Q, 8-K, Form 4, and company lookup.",
+  "longDescription": "SEC filings and insider trades in real-time. 10-K, 10-Q, 8-K, Form 4, and company lookup.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.earningsfeed",
+  "submittedBy": "com.earningsfeed",
+  "url": "https://earningsfeed.com/api/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://earningsfeed.com/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "google-ads",
+  "name": "Google Ads",
+  "icon": "https://cdn.simpleicons.org/googleads",
+  "description": "Google Ads automation with AI: analyze performance, manage campaigns, optimize bids.",
+  "longDescription": "Google Ads automation with AI: analyze performance, manage campaigns, optimize bids.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "co.pipeboard",
+  "submittedBy": "co.pipeboard",
+  "url": "https://google-ads.mcp.pipeboard.co/",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "daedalmap-geographic-data-intelligence",
+  "name": "DaedalMap Geographic Data Intelligence",
+  "icon": "https://cdn.simpleicons.org/map",
+  "description": "Hosted geographic data MCP server for disasters and FX with mixed free and x402-paid access.",
+  "longDescription": "Hosted geographic data MCP server for disasters and FX with mixed free and x402-paid access.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.daedalmap",
+  "submittedBy": "com.daedalmap",
+  "url": "https://app.daedalmap.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://www.daedalmap.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

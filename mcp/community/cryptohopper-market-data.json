@@ -1,0 +1,19 @@
+{
+  "id": "cryptohopper-market-data",
+  "name": "Cryptohopper Market Data",
+  "icon": "https://cdn.simpleicons.org/bitcoin",
+  "description": "Real-time crypto market data: candles, tickers, orderbooks across 13+ exchanges via MCP.",
+  "longDescription": "Real-time crypto market data: candles, tickers, orderbooks across 13+ exchanges via MCP.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.cryptohopper",
+  "submittedBy": "com.cryptohopper",
+  "url": "https://mcp-data.cryptohopper.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://www.cryptohopper.com/features/cryptohopper-mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

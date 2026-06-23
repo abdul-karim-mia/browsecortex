@@ -79,6 +79,54 @@ export const getCookies: ToolDefinition = {
   },
 };
 
+export const setCookie: ToolDefinition = {
+  name: 'set_cookie',
+  description: 'Create or update a browser cookie for a given URL (requires cookie permission).',
+  parameters: {
+    type: 'object',
+    properties: {
+      url: { type: 'string', description: 'The request-URI to associate with the cookie.' },
+      name: { type: 'string', description: 'The name of the cookie.' },
+      value: { type: 'string', description: 'The value of the cookie.' },
+      domain: { type: 'string', description: 'The domain of the cookie.' },
+      path: { type: 'string', description: 'The path of the cookie.' },
+      secure: { type: 'boolean', description: 'Whether the cookie should be marked as Secure.' },
+      httpOnly: { type: 'boolean', description: 'Whether the cookie should be marked as HttpOnly.' },
+      sameSite: {
+        type: 'string',
+        enum: ['no_restriction', 'lax', 'strict'],
+        description: 'The cookie SameSite state.',
+      },
+      expirationDate: { type: 'number', description: 'The expiration date of the cookie as Unix timestamp in seconds.' },
+    },
+    required: ['url', 'name', 'value'],
+  },
+  destructive: true,
+  timeout: 'history',
+  async execute(args) {
+    const has = await chrome.permissions.contains({ permissions: ['cookies'] }).catch(() => false);
+    if (!has) return { error: 'Cookie permission not granted.' };
+    try {
+      const details: chrome.cookies.SetDetails = {
+        url: String(args.url),
+        name: String(args.name),
+        value: String(args.value),
+        domain: args.domain !== undefined ? String(args.domain) : undefined,
+        path: args.path !== undefined ? String(args.path) : undefined,
+        secure: args.secure !== undefined ? Boolean(args.secure) : undefined,
+        httpOnly: args.httpOnly !== undefined ? Boolean(args.httpOnly) : undefined,
+        sameSite: args.sameSite as chrome.cookies.SameSiteStatus | undefined,
+        expirationDate: args.expirationDate !== undefined ? Number(args.expirationDate) : undefined,
+      };
+      const cookie = await chrome.cookies.set(details);
+      if (!cookie) return { error: 'Failed to set cookie.' };
+      return { cookie: { name: cookie.name, domain: cookie.domain, path: cookie.path } };
+    } catch (e) {
+      return { error: `Failed to set cookie: ${e instanceof Error ? e.message : String(e)}` };
+    }
+  },
+};
+
 export const deleteCookie: ToolDefinition = {
   name: 'delete_cookie',
   description: 'Delete a named cookie for a URL (requires cookie permission).',
@@ -102,5 +150,6 @@ export const windowCookieTools = [
   createWindow,
   closeWindow,
   getCookies,
+  setCookie,
   deleteCookie,
 ];

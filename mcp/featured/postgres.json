@@ -1,0 +1,36 @@
+{
+  "id": "postgres",
+  "name": "Postgres",
+  "icon": "https://cdn.simpleicons.org/postgresql",
+  "description": "Query your database in natural language",
+  "longDescription": "Point BrowseCortex at a Postgres database and ask questions in plain English. The AI inspects your schema, writes and runs read queries, and explains results—great for quick analytics and debugging.",
+  "category": "data",
+  "tier": "featured",
+  "version": "1.0",
+  "author": "BrowseCortex",
+  "submittedBy": null,
+  "url": "https://your-mcp-host.example.com/postgres/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/modelcontextprotocol/servers/tree/main/src/postgres",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "Bearer Token",
+    "placeholder": "token...",
+    "helperUrl": "https://github.com/modelcontextprotocol/servers/tree/main/src/postgres",
+    "helperText": "Token your Postgres MCP host expects in the Authorization header"
+  },
+  "tools": [
+    "list_tables",
+    "describe_table",
+    "run_query",
+    "explain_query"
+  ],
+  "examplePrompts": [
+    "How many users signed up last week?",
+    "Show me the schema for the orders table",
+    "Find the top 10 customers by revenue",
+    "What's the average order value by month?",
+    "List tables that reference the products table"
+  ]
+}

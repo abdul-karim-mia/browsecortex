@@ -1,0 +1,36 @@
+{
+  "id": "context7",
+  "name": "Context7",
+  "icon": "https://cdn.simpleicons.org/context7",
+  "description": "Search docs and code examples for any library with up-to-date context",
+  "longDescription": "Context7 provides real-time documentation and code examples for popular libraries and frameworks. Search across thousands of packages and get relevant, version-aware context for your coding tasks.",
+  "category": "code",
+  "tier": "featured",
+  "version": "1.0",
+  "author": "Upstash",
+  "submittedBy": "admin",
+  "url": "https://mcp.context7.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://context7.com/docs",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "Context7 API Key",
+    "placeholder": "ctx7sk_...",
+    "helperUrl": "https://context7.com/dashboard",
+    "helperText": "Create an API key at context7.com/dashboard (starts with ctx7sk_)"
+  },
+  "tools": [
+    "resolve-library-id",
+    "get-library-docs",
+    "search-code-examples"
+  ],
+  "examplePrompts": [
+    "Find the latest Next.js routing documentation",
+    "Show me code examples for React hooks",
+    "Get the TypeScript types for Vercel AI SDK",
+    "Search for TanStack Query mutation patterns",
+    "Find authentication examples for Clerk",
+    "Get the API reference for Prisma Client"
+  ]
+}

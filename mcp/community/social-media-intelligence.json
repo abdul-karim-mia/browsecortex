@@ -1,0 +1,24 @@
+{
+  "id": "social-media-intelligence",
+  "name": "Social Media Intelligence",
+  "icon": "https://cdn.simpleicons.org/social",
+  "description": "Cross-platform social media intelligence. Trend volume and growth signals. Free key at trendsmcp.ai",
+  "longDescription": "Cross-platform social media intelligence. Trend volume and growth signals. Free key at trendsmcp.ai",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.trendsmcp",
+  "submittedBy": "ai.trendsmcp",
+  "url": "https://social-media.api.trendsmcp.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://trendsmcp.ai",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token. Get your free API key at https://trendsmcp.ai"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "waystation-jira",
+  "name": "Waystation \u2014 Jira",
+  "icon": "https://cdn.simpleicons.org/jira",
+  "description": "Track issues, manage projects, and streamline workflows in Jira.",
+  "longDescription": "Track issues, manage projects, and streamline workflows in Jira.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.3.1",
+  "author": "ai.waystation",
+  "submittedBy": "ai.waystation",
+  "url": "https://waystation.ai/jira/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/waystation-ai/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

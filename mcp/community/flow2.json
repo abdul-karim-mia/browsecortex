@@ -1,0 +1,19 @@
+{
+  "id": "flow2",
+  "name": "Flow2",
+  "icon": "https://cdn.simpleicons.org/flow",
+  "description": "Design mobile-first presentations \u2014 create, edit, preview, and publish from your AI.",
+  "longDescription": "Design mobile-first presentations \u2014 create, edit, preview, and publish from your AI.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "co.flow2",
+  "submittedBy": "co.flow2",
+  "url": "https://mcp.flow2.co/",
+  "transport": "streamable_http",
+  "docsUrl": "https://flow2.co",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

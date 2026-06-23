@@ -1,0 +1,19 @@
+{
+  "id": "tabula",
+  "name": "Tabula",
+  "icon": "https://cdn.simpleicons.org/tabula",
+  "description": "Bar-first MCP server for Tabula chart authoring, PNG rendering, and editor handoff.",
+  "longDescription": "Bar-first MCP server for Tabula chart authoring, PNG rendering, and editor handoff.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "click.tabula.www",
+  "submittedBy": "click.tabula.www",
+  "url": "https://www.tabula.click/api/mcp/stream",
+  "transport": "streamable_http",
+  "docsUrl": "https://www.tabula.click/docs/tabula-mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

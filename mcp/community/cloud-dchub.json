@@ -1,0 +1,19 @@
+{
+  "id": "cloud-dchub",
+  "name": "DC Hub",
+  "icon": "https://cdn.simpleicons.org/cloud",
+  "description": "Data center intelligence: 20,000+ facilities, M&A deals, site scoring, and market analytics.",
+  "longDescription": "Data center intelligence: 20,000+ facilities, M&A deals, site scoring, and market analytics.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "cloud.dchub",
+  "submittedBy": "cloud.dchub",
+  "url": "https://dchub.cloud/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/azmartone67/dchub-backend",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

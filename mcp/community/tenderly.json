@@ -1,0 +1,19 @@
+{
+  "id": "tenderly",
+  "name": "Tenderly",
+  "icon": "https://cdn.simpleicons.org/tenderly",
+  "description": "Tenderly MCP server for blockchain dev \u2014 simulate, debug, and test on 70+ networks.",
+  "longDescription": "Tenderly MCP server for blockchain dev \u2014 simulate, debug, and test on 70+ networks.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "co.tenderly",
+  "submittedBy": "co.tenderly",
+  "url": "https://mcp.tenderly.co/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

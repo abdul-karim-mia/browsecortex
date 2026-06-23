@@ -1,0 +1,24 @@
+{
+  "id": "us-national-weather-service",
+  "name": "US National Weather Service",
+  "icon": "https://cdn.simpleicons.org/weather",
+  "description": "Provide real-time and forecast weather information for locations in the United States using natura\u2026",
+  "longDescription": "Provide real-time and forecast weather information for locations in the United States using natura\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@smithery-ai/national-weather-service/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/smithery-ai/mcp-servers",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for Smithery authentication"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "waystation-miro",
+  "name": "Waystation \u2014 Miro",
+  "icon": "https://cdn.simpleicons.org/miro",
+  "description": "Collaborate on visual boards with your team using Miro integration.",
+  "longDescription": "Collaborate on visual boards with your team using Miro integration.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.3.1",
+  "author": "ai.waystation",
+  "submittedBy": "ai.waystation",
+  "url": "https://waystation.ai/miro/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/waystation-ai/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

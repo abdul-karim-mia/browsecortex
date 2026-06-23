@@ -1,0 +1,51 @@
+{
+  "id": "sanity",
+  "name": "Sanity",
+  "icon": "https://cdn.simpleicons.org/sanity",
+  "description": "Query content, manage schemas, run GROQ queries, and deploy studio changes",
+  "longDescription": "Official Sanity MCP server for interacting with Sanity CMS. Execute GROQ queries, explore schemas, manage documents, create and update content, deploy schema changes, and manage projects/datasets/API keys. Supports both OAuth and API token authentication.",
+  "category": "content",
+  "tier": "featured",
+  "version": "1.0",
+  "author": "Sanity",
+  "submittedBy": "admin",
+  "url": "https://mcp.sanity.io",
+  "transport": "streamable_http",
+  "docsUrl": "https://www.sanity.io/docs/ai/mcp-server",
+  "auth": "oauth",
+  "authFallback": "api_key",
+  "oauthConfig": {
+    "authUrl": "https://www.sanity.io/oauth/authorize",
+    "tokenUrl": "https://www.sanity.io/oauth/token",
+    "revokeUrl": "https://www.sanity.io/manage",
+    "scopes": ["read", "write", "manage"]
+  },
+  "apiKeyConfig": {
+    "label": "Sanity API Token",
+    "placeholder": "sk...",
+    "helperUrl": "https://www.sanity.io/manage",
+    "helperText": "Create an API token at sanity.io/manage with appropriate permissions"
+  },
+  "tools": [
+    "query",
+    "get_document",
+    "create_document",
+    "update_document",
+    "delete_document",
+    "get_schema",
+    "list_datasets",
+    "create_dataset",
+    "deploy_schema",
+    "list_projects",
+    "get_project",
+    "manage_api_keys"
+  ],
+  "examplePrompts": [
+    "Run a GROQ query to find all published posts",
+    "Get the schema for the article document type",
+    "Create a new blog post with title and content",
+    "List all datasets in my project",
+    "Deploy schema changes to production",
+    "Get the API keys for my project"
+  ]
+}

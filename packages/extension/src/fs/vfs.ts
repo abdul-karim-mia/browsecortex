@@ -70,10 +70,59 @@ export async function createFolder(conversationId: string, path: string): Promis
   return folder;
 }
 
+export async function exists(conversationId: string, path: string): Promise<boolean> {
+  return !!(await findByPath(conversationId, path));
+}
+
+export async function getInfo(conversationId: string, path: string): Promise<VFile> {
+  const file = await findByPath(conversationId, path);
+  if (!file) throw new Error(`Not found: ${path}`);
+  return file;
+}
+
+export async function copy(conversationId: string, from: string, to: string): Promise<void> {
+  const file = await findByPath(conversationId, from);
+  if (!file) throw new Error(`Not found: ${from}`);
+
+  const normTo = normalize(to);
+  const destFile = await findByPath(conversationId, normTo);
+  let targetPath = normTo;
+
+  if (destFile?.isFolder) {
+    targetPath = normalize(normTo + '/' + file.name);
+  }
+
+  if (await findByPath(conversationId, targetPath)) {
+    throw new Error(`Destination already exists: ${targetPath}`);
+  }
+
+  const all = await Storage.files.byConversation(conversationId);
+
+  if (file.isFolder) {
+    const toCopy = all
+      .filter((f) => f.path === file.path || f.path.startsWith(file.path + '/'))
+      .sort((a, b) => a.path.length - b.path.length);
+
+    for (const f of toCopy) {
+      const rel = f.path.slice(file.path.length);
+      const newPath = normalize(targetPath + rel);
+
+      if (f.isFolder) {
+        await createFolder(conversationId, newPath);
+      } else {
+        await createFile(conversationId, newPath, f.content ?? '');
+      }
+    }
+  } else {
+    await createFile(conversationId, targetPath, file.content ?? '');
+  }
+}
+
 export async function createFile(
   conversationId: string,
   path: string,
   content: string,
+  encoding?: 'utf-8' | 'base64',
 ): Promise<VFile> {
   if (await isStorageFull()) {
     throw new Error('Storage is nearly full — export and delete some files before creating more.');
@@ -81,16 +130,26 @@ export async function createFile(
   if (await findByPath(conversationId, path)) throw new Error(`File already exists: ${path}`);
   const parentId = await ensureParent(conversationId, path);
   const now = new Date().toISOString();
+
+  let finalContent = content;
+  if (encoding === 'base64') {
+    try {
+      finalContent = atob(content);
+    } catch (err) {
+      throw new Error(`Invalid base64 content: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
   const file: VFile = {
     id: crypto.randomUUID(),
     conversationId,
     name: baseName(path),
     path: normalize(path),
     parentId,
-    content,
+    content: finalContent,
     isFolder: false,
     mimeType: guessMime(path),
-    size: content.length,
+    size: finalContent.length,
     createdAt: now,
     updatedAt: now,
   };
@@ -98,25 +157,93 @@ export async function createFile(
   return file;
 }
 
-export async function readFile(conversationId: string, path: string): Promise<string> {
+function bytesToBase64(bytes: Uint8Array): string {
+  let binary = '';
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
+}
+
+export async function readFile(
+  conversationId: string,
+  path: string,
+  options?: {
+    encoding?: 'utf-8' | 'base64';
+    lines?: [number, number];
+    bytes?: [number, number];
+  },
+): Promise<string> {
   const file = await findByPath(conversationId, path);
   if (!file || file.isFolder) throw new Error(`File not found: ${path}`);
-  return file.content ?? '';
+
+  let content = file.content ?? '';
+
+  if (options?.lines) {
+    const [startLine, endLine] = options.lines;
+    const lines = content.split(/\r?\n/);
+    const slicedLines = lines.slice(Math.max(0, startLine - 1), Math.max(0, endLine));
+    const lineEnding = content.includes('\r\n') ? '\r\n' : '\n';
+    content = slicedLines.join(lineEnding);
+  }
+
+  if (options?.bytes) {
+    const [startByte, endByte] = options.bytes;
+    content = content.slice(Math.max(0, startByte), Math.max(0, endByte + 1));
+  }
+
+  if (options?.encoding === 'base64') {
+    try {
+      content = btoa(content);
+    } catch (err) {
+      content = bytesToBase64(new TextEncoder().encode(content));
+    }
+  }
+
+  return content;
 }
 
 export async function updateFile(
   conversationId: string,
   path: string,
   content: string,
-  append: boolean,
+  options?: {
+    append?: boolean;
+    prepend?: boolean;
+    find?: string;
+    replace?: string;
+    insertAtLine?: number;
+  },
 ): Promise<VFile> {
   const file = await findByPath(conversationId, path);
   if (!file || file.isFolder) {
-    if (append) return createFile(conversationId, path, content);
+    if (options?.append || options?.prepend || options?.insertAtLine !== undefined) {
+      return createFile(conversationId, path, content);
+    }
     throw new Error(`File not found: ${path}`);
   }
-  file.content = append ? (file.content ?? '') + content : content;
-  file.size = file.content.length;
+
+  let nextContent = file.content ?? '';
+
+  if (options?.find !== undefined && options?.replace !== undefined) {
+    nextContent = nextContent.replaceAll(options.find, options.replace);
+  } else if (options?.insertAtLine !== undefined) {
+    const lineEnding = nextContent.includes('\r\n') ? '\r\n' : '\n';
+    const lines = nextContent.split(/\r?\n/);
+    const idx = Math.max(0, Math.min(options.insertAtLine - 1, lines.length));
+    lines.splice(idx, 0, content);
+    nextContent = lines.join(lineEnding);
+  } else if (options?.prepend) {
+    nextContent = content + nextContent;
+  } else if (options?.append) {
+    nextContent = nextContent + content;
+  } else {
+    nextContent = content;
+  }
+
+  file.content = nextContent;
+  file.size = nextContent.length;
   file.updatedAt = new Date().toISOString();
   await Storage.files.save(file);
   return file;
@@ -125,21 +252,60 @@ export async function updateFile(
 export async function deleteFile(conversationId: string, path: string): Promise<void> {
   const file = await findByPath(conversationId, path);
   if (!file) throw new Error(`Not found: ${path}`);
-  // Delete the node and any descendants (for folders), within this conversation.
   const all = await Storage.files.byConversation(conversationId);
   const toDelete = all.filter((f) => f.path === file.path || f.path.startsWith(file.path + '/'));
   for (const f of toDelete) await Storage.files.remove(f.id);
 }
 
+function globToRegex(glob: string): RegExp {
+  const escaped = glob.replace(/[.+^${}()|[\]\\]/g, '\\$&');
+  const wildcards = escaped.replace(/\*/g, '.*').replace(/\?/g, '.');
+  return new RegExp(`^${wildcards}$`, 'i');
+}
+
 export async function listDir(
   conversationId: string,
   path: string,
-): Promise<{ name: string; isFolder: boolean; path: string }[]> {
+  options?: {
+    recurse?: boolean;
+    glob?: string;
+  },
+): Promise<{
+  name: string;
+  isFolder: boolean;
+  path: string;
+  size: number;
+  mimeType: string;
+  createdAt: string;
+  updatedAt: string;
+}[]> {
   const norm = normalize(path);
   const all = await Storage.files.byConversation(conversationId);
-  return all
-    .filter((f) => parentPath(f.path) === norm && f.path !== norm)
-    .map((f) => ({ name: f.name, isFolder: f.isFolder, path: f.path }));
+
+  let filtered = all.filter((f) => f.path !== norm);
+
+  if (options?.recurse) {
+    filtered = filtered.filter((f) =>
+      norm === '/' ? true : f.path.startsWith(norm + '/'),
+    );
+  } else {
+    filtered = filtered.filter((f) => parentPath(f.path) === norm);
+  }
+
+  if (options?.glob) {
+    const regex = globToRegex(options.glob);
+    filtered = filtered.filter((f) => regex.test(f.name));
+  }
+
+  return filtered.map((f) => ({
+    name: f.name,
+    isFolder: f.isFolder,
+    path: f.path,
+    size: f.size,
+    mimeType: f.mimeType,
+    createdAt: f.createdAt,
+    updatedAt: f.updatedAt,
+  }));
 }
 
 export async function move(conversationId: string, from: string, to: string): Promise<void> {
@@ -155,13 +321,46 @@ export async function move(conversationId: string, from: string, to: string): Pr
 export async function search(
   conversationId: string,
   query: string,
-): Promise<{ path: string; match: 'name' | 'content' }[]> {
+): Promise<{
+  path: string;
+  match: 'name' | 'content';
+  occurrences?: { line: number; text: string }[];
+}[]> {
   const q = query.toLowerCase();
   const all = await Storage.files.byConversation(conversationId);
-  const hits: { path: string; match: 'name' | 'content' }[] = [];
+  const hits: {
+    path: string;
+    match: 'name' | 'content';
+    occurrences?: { line: number; text: string }[];
+  }[] = [];
+
   for (const f of all) {
-    if (f.name.toLowerCase().includes(q)) hits.push({ path: f.path, match: 'name' });
-    else if (f.content?.toLowerCase().includes(q)) hits.push({ path: f.path, match: 'content' });
+    const nameMatch = f.name.toLowerCase().includes(q);
+    const occurrences: { line: number; text: string }[] = [];
+
+    if (f.content) {
+      const lines = f.content.split(/\r?\n/);
+      for (let i = 0; i < lines.length; i++) {
+        if (lines[i].toLowerCase().includes(q)) {
+          let text = lines[i];
+          if (text.length > 120) {
+            const idx = text.toLowerCase().indexOf(q);
+            const start = Math.max(0, idx - 40);
+            const end = Math.min(text.length, idx + query.length + 60);
+            text = (start > 0 ? '...' : '') + text.slice(start, end) + (end < text.length ? '...' : '');
+          }
+          occurrences.push({ line: i + 1, text });
+        }
+      }
+    }
+
+    if (nameMatch || occurrences.length > 0) {
+      hits.push({
+        path: f.path,
+        match: occurrences.length > 0 ? 'content' : 'name',
+        ...(occurrences.length > 0 ? { occurrences } : {}),
+      });
+    }
   }
   return hits;
 }

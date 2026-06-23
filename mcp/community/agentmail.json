@@ -1,0 +1,24 @@
+{
+  "id": "agentmail",
+  "name": "AgentMail",
+  "icon": "https://cdn.simpleicons.org/mail",
+  "description": "AgentMail is the email inbox API for AI agents. It gives agents their own email inboxes, like Gmail",
+  "longDescription": "AgentMail is the email inbox API for AI agents. It gives agents their own email inboxes, like Gmail",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/agentmail",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/agentmail-to/agentmail-smithery-mcp",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for Smithery authentication"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

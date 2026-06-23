@@ -7,12 +7,34 @@ const ctx: ToolContext = { getActiveTabId: async () => 1 };
 // Minimal chrome.tabs stub so open_tab's executor can run under node (no real
 // chrome global in this test environment).
 let nextTabId = 1000;
-(globalThis as unknown as { chrome?: unknown }).chrome = {
+(globalThis as unknown as { chrome?: any }).chrome = {
   tabs: {
     create: async (opts: { url: string }) => ({ id: nextTabId++, url: opts.url }),
     onRemoved: { addListener: () => {} },
     query: async () => [{ id: 1, windowId: 100 }],
+    get: async (id: number) => ({ id, windowId: 100 }),
     captureVisibleTab: async (windowId: number) => `data:image/png;base64,stub-data-${windowId}`,
+  },
+  runtime: {
+    sendMessage: async () => ({ ok: true }),
+    getURL: (path: string) => `chrome-extension://stub-id/${path}`,
+    getContexts: async () => [],
+    ContextType: {
+      OFFSCREEN_DOCUMENT: 'OFFSCREEN_DOCUMENT',
+    },
+  },
+  offscreen: {
+    createDocument: async () => {},
+    Reason: {
+      BLOBS: 'BLOBS',
+      CLIPBOARD: 'CLIPBOARD',
+    },
+  },
+  permissions: {
+    contains: async () => true,
+  },
+  scripting: {
+    executeScript: async () => [{ result: {} }],
   },
 };
 
@@ -127,5 +149,169 @@ describe('screenshot tools', () => {
     const result = await executeTool('screenshot_tab', {}, ctx);
     expect(result).toHaveProperty('dataUrl');
     expect((result as { dataUrl: string }).dataUrl).toContain('stub-data-100');
+  });
+});
+
+describe('clipboard tools', () => {
+  it('runs write_clipboard and broadcasts write message to offscreen', async () => {
+    let sentMessage: any = null;
+    (chrome.runtime.sendMessage as any) = vi.fn().mockImplementation(async (msg) => {
+      sentMessage = msg;
+      return { ok: true };
+    });
+
+    const result = await executeTool('write_clipboard', { text: 'hello world' }, ctx);
+    expect(result).toEqual({ written: true });
+    expect(sentMessage).toEqual({ type: 'clipboard_write', text: 'hello world' });
+  });
+
+  it('runs read_clipboard and requests read message from offscreen', async () => {
+    let sentMessage: any = null;
+    (chrome.runtime.sendMessage as any) = vi.fn().mockImplementation(async (msg) => {
+      sentMessage = msg;
+      return { ok: true, text: 'hello from clipboard' };
+    });
+
+    (chrome.permissions.contains as any) = vi.fn().mockResolvedValue(true);
+
+    const result = await executeTool('read_clipboard', {}, ctx);
+    expect(result).toEqual({ text: 'hello from clipboard' });
+    expect(sentMessage).toEqual({ type: 'clipboard_read' });
+  });
+});
+
+describe('new tools registration and execution', () => {
+  it('registers all 11 new tools', () => {
+    const list = [
+      'upload_file',
+      'save_page_as_pdf',
+      'inject_script',
+      'wait_for_condition',
+      'query_selector_all',
+      'get_dom_snapshot',
+      'get_console_logs',
+      'get_network_requests',
+      'get_element_screenshot',
+      'compare_screenshots',
+      'fetch_url',
+    ];
+    for (const name of list) {
+      expect(getTool(name)).toBeDefined();
+    }
+  });
+
+  it('runs query_selector_all and returns mocked elements', async () => {
+    const mockElements = [{ text: 'mock text', tagName: 'div' }];
+    (chrome.scripting.executeScript as any) = vi.fn().mockResolvedValue([{ result: mockElements }]);
+    const result = await executeTool('query_selector_all', { selector: 'div' }, ctx);
+    expect(result).toEqual({ elements: mockElements });
+  });
+
+  it('runs get_dom_snapshot and returns DOM snapshot', async () => {
+    const mockSnapshot = { tagName: 'body', attributes: {} };
+    (chrome.scripting.executeScript as any) = vi.fn().mockResolvedValue([{ result: mockSnapshot }]);
+    const result = await executeTool('get_dom_snapshot', { selector: 'body' }, ctx);
+    expect(result).toEqual({ snapshot: mockSnapshot });
+  });
+
+  it('runs fetch_url and returns the response', async () => {
+    const mockResponse = {
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers({ 'content-type': 'application/json' }),
+      json: async () => ({ ok: true }),
+      text: async () => '{"ok":true}',
+    };
+    const spy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(mockResponse as any);
+
+    const result = await executeTool('fetch_url', { url: 'https://api.example.com/data' }, ctx);
+    expect(result).toHaveProperty('status', 200);
+    expect(result).toHaveProperty('body');
+    expect((result as any).body).toEqual({ ok: true });
+    expect(spy).toHaveBeenCalledWith('https://api.example.com/data', {
+      method: 'GET',
+      headers: {},
+      body: undefined,
+    });
+    spy.mockRestore();
+  });
+});
+
+describe('batch 3 new tools and updates', () => {
+  it('registers new tools: set_cookie, move_tab, wait_for_url, clear_console_logs, clear_network_requests, get_page_html, screenshot_full_page', () => {
+    const list = [
+      'set_cookie',
+      'move_tab',
+      'wait_for_url',
+      'clear_console_logs',
+      'clear_network_requests',
+      'get_page_html',
+      'screenshot_full_page',
+    ];
+    for (const name of list) {
+      expect(getTool(name)).toBeDefined();
+    }
+  });
+
+  it('runs set_cookie', async () => {
+    const mockCookie = { name: 'test', domain: 'example.com', path: '/' };
+    (chrome.cookies as any) = {
+      set: vi.fn().mockResolvedValue(mockCookie),
+    };
+    (chrome.permissions.contains as any) = vi.fn().mockResolvedValue(true);
+
+    const result = await executeTool(
+      'set_cookie',
+      { url: 'https://example.com', name: 'test', value: '123' },
+      ctx
+    );
+    expect(result).toEqual({ cookie: { name: 'test', domain: 'example.com', path: '/' } });
+  });
+
+  it('runs move_tab', async () => {
+    (chrome.tabs.move as any) = vi.fn().mockResolvedValue({});
+    const result = await executeTool('move_tab', { tab_id: 123, index: 2, window_id: 456 }, ctx);
+    expect(result).toEqual({ moved: 123, index: 2, window_id: 456 });
+  });
+
+  it('runs wait_for_url (substring match)', async () => {
+    (chrome.tabs.get as any) = vi.fn().mockResolvedValue({ id: 1, url: 'https://example.com/dashboard' });
+    const result = await executeTool('wait_for_url', { url: '/dashboard', timeout_ms: 10 }, ctx);
+    expect(result).toEqual({ ok: true, url: 'https://example.com/dashboard' });
+  });
+
+  it('runs clear_console_logs', async () => {
+    (chrome.scripting.executeScript as any) = vi.fn().mockResolvedValue([{ result: undefined }]);
+    const result = await executeTool('clear_console_logs', {}, ctx);
+    expect(result).toEqual({ cleared: true });
+  });
+
+  it('runs clear_network_requests', async () => {
+    (chrome.scripting.executeScript as any) = vi.fn().mockResolvedValue([{ result: undefined }]);
+    const result = await executeTool('clear_network_requests', {}, ctx);
+    expect(result).toEqual({ cleared: true });
+  });
+
+  it('runs get_page_html', async () => {
+    (chrome.scripting.executeScript as any) = vi.fn().mockResolvedValue([{ result: '<div>test</div>' }]);
+    const result = await executeTool('get_page_html', { selector: '#content' }, ctx);
+    expect(result).toEqual({ html: '<div>test</div>' });
+  });
+
+  it('registers ocr_tesseract and ocr_native', () => {
+    expect(getTool('ocr_tesseract')).toBeDefined();
+    expect(getTool('ocr_native')).toBeDefined();
+  });
+
+  it('runs ocr_tesseract and returns text', async () => {
+    (chrome.runtime.sendMessage as any) = vi.fn().mockResolvedValue({ ok: true, text: 'detected text' });
+    const result = await executeTool('ocr_tesseract', { image: 'data:image/png;base64,stub' }, ctx);
+    expect(result).toEqual({ text: 'detected text' });
+  });
+
+  it('runs ocr_native and returns text', async () => {
+    (chrome.scripting.executeScript as any) = vi.fn().mockResolvedValue([{ result: { text: 'native detected text' } }]);
+    const result = await executeTool('ocr_native', { image: 'data:image/png;base64,stub' }, ctx);
+    expect(result).toEqual({ text: 'native detected text' });
   });
 });

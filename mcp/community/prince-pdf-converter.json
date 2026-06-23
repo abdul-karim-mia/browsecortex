@@ -1,0 +1,19 @@
+{
+  "id": "prince-pdf-converter",
+  "name": "Prince PDF Converter",
+  "icon": "https://cdn.simpleicons.org/pdf",
+  "description": "Convert HTML, Markdown, and XML to high-quality PDF documents using Prince",
+  "longDescription": "Convert HTML, Markdown, and XML to high-quality PDF documents using Prince",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "cloud.prince",
+  "submittedBy": "cloud.prince",
+  "url": "https://prince.cloud/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

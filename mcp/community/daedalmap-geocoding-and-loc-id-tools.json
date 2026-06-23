@@ -1,0 +1,19 @@
+{
+  "id": "daedalmap-geocoding-and-loc-id-tools",
+  "name": "DaedalMap Geocoding and Loc Id Tools",
+  "icon": "https://cdn.simpleicons.org/map",
+  "description": "Geocoding and reverse geocoding: coordinates and place names to administrative boundaries (loc_id).",
+  "longDescription": "Geocoding and reverse geocoding: coordinates and place names to administrative boundaries (loc_id).",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.1",
+  "author": "com.daedalmap",
+  "submittedBy": "com.daedalmap",
+  "url": "https://app.daedalmap.com/mcp/geography",
+  "transport": "streamable_http",
+  "docsUrl": "https://www.daedalmap.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,24 @@
+{
+  "id": "trilo",
+  "name": "Trilo",
+  "icon": "https://cdn.simpleicons.org/trilo",
+  "description": "Connect AI tools to Trilo workspaces \u2014 manage tasks, messages, pages, calendars, meetings, and more.",
+  "longDescription": "Connect AI tools to Trilo workspaces \u2014 manage tasks, messages, pages, calendars, meetings, and more.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "chat.trilo",
+  "submittedBy": "chat.trilo",
+  "url": "https://api.trilo.chat/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://trilo.chat",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for authentication. Generate a Personal Access Token (PAT) from Trilo Settings > API Tokens."
+  },
+  "tools": [],
+  "examplePrompts": []
+}

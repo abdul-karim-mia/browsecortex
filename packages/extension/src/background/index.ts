@@ -175,54 +175,110 @@ async function getActiveTabUrl(): Promise<string | undefined> {
   return tab?.url;
 }
 
+interface ActiveRun {
+  conversationId: string;
+  abortController: AbortController;
+  pendingAsk: ((answers: Record<string, unknown>) => void) | null;
+  send: (msg: ServerMessage) => void;
+  disconnectTimeout: ReturnType<typeof setTimeout> | null;
+  lastQuestions?: unknown;
+}
+
+let activeRun: ActiveRun | null = null;
+
 // Long-lived chat port (PLAN §23). One agent runs at a time per port (PLAN §48).
 chrome.runtime.onConnect.addListener((port) => {
   if (port.name !== PORT_NAME) return;
 
-  const send = (msg: ServerMessage) => {
+  const localSend = (msg: ServerMessage) => {
     try {
       port.postMessage(msg);
     } catch (e) {
       log.error('[chat:bg] postMessage threw (port likely disconnected)', e, msg);
     }
   };
+
+  const send = (msg: ServerMessage) => {
+    if (activeRun) {
+      activeRun.send(msg);
+    } else {
+      localSend(msg);
+    }
+  };
+
   setBadge('clear'); // panel is open — clear any pending indicator (PLAN §39)
-  let abortController: AbortController | null = null;
-  // Pending ask_user resolver — set while the loop waits for an answer (PLAN §18).
-  let pendingAsk: ((answers: Record<string, unknown>) => void) | null = null;
+
+  // Re-bind to active run if reconnecting
+  if (activeRun) {
+    log.debug('[chat:bg] reconnected to active run for conversation:', activeRun.conversationId);
+    if (activeRun.disconnectTimeout) {
+      clearTimeout(activeRun.disconnectTimeout);
+      activeRun.disconnectTimeout = null;
+    }
+    activeRun.send = localSend;
+    if (activeRun.pendingAsk && activeRun.lastQuestions !== undefined) {
+      activeRun.send({ type: 'ask_user', questions: activeRun.lastQuestions });
+    }
+  }
 
   const askUser = (questions: unknown): Promise<Record<string, unknown>> => {
-    send({ type: 'ask_user', questions });
+    if (activeRun) {
+      activeRun.lastQuestions = questions;
+      activeRun.send({ type: 'ask_user', questions });
+    } else {
+      localSend({ type: 'ask_user', questions });
+    }
     setBadge('error'); // '!' badge signals input needed (PLAN §39)
     notify('needsInput', 'BrowseCortex', 'The agent needs your input to continue.');
     return new Promise((resolve) => {
-      pendingAsk = resolve;
+      if (activeRun) {
+        activeRun.pendingAsk = resolve;
+      } else {
+        resolve({});
+      }
     });
   };
 
   port.onMessage.addListener(async (msg: ClientMessage) => {
     try {
       if (msg.type === 'abort') {
-        abortController?.abort();
-        pendingAsk?.({}); // unblock a waiting ask_user so the loop can wind down
-        pendingAsk = null;
+        if (activeRun) {
+          if (activeRun.disconnectTimeout) {
+            clearTimeout(activeRun.disconnectTimeout);
+          }
+          activeRun.abortController.abort();
+          activeRun.pendingAsk?.({});
+          activeRun.pendingAsk = null;
+          activeRun = null;
+        }
+        setRunningConversation(null);
         return;
       }
       if (msg.type === 'ask_user_response') {
-        pendingAsk?.(msg.answers);
-        pendingAsk = null;
+        if (activeRun) {
+          activeRun.pendingAsk?.(msg.answers);
+          activeRun.pendingAsk = null;
+          activeRun.lastQuestions = undefined;
+        }
         return;
       }
       if (msg.type !== 'send') return;
 
-      if (abortController) {
+      if (activeRun) {
         log.warn('[chat:bg] rejected send — agent already running');
-        send({ type: 'error', message: 'An agent is already running. Stop it first.' });
+        localSend({ type: 'error', message: 'An agent is already running. Stop it first.' });
         return;
       }
 
       // Set before any await to prevent concurrent runs from double-submit.
-      abortController = new AbortController();
+      const abortController = new AbortController();
+      activeRun = {
+        conversationId: msg.conversationId,
+        abortController,
+        pendingAsk: null,
+        send: localSend,
+        disconnectTimeout: null,
+      };
       setBadge('running');
       setAgentActive(true);
       setRunningConversation(msg.conversationId);
@@ -232,7 +288,7 @@ chrome.runtime.onConnect.addListener((port) => {
         log.error('[chat:bg] resolveActive failed', resolved.error);
         send({ type: 'error', message: resolved.error });
         send({ type: 'done' });
-        abortController = null;
+        activeRun = null;
         setAgentActive(false);
         setRunningConversation(null);
         return;
@@ -341,7 +397,12 @@ chrome.runtime.onConnect.addListener((port) => {
         send({ type: 'done' });
       } finally {
         stopKeepAlive();
-        abortController = null;
+        if (activeRun) {
+          if (activeRun.disconnectTimeout) {
+            clearTimeout(activeRun.disconnectTimeout);
+          }
+          activeRun = null;
+        }
         setAgentActive(false);
         setRunningConversation(null);
       }
@@ -355,7 +416,12 @@ chrome.runtime.onConnect.addListener((port) => {
       } catch (sendErr) {
         log.error('[chat:bg] failed to report outer error to panel', sendErr);
       }
-      abortController = null;
+      if (activeRun) {
+        if (activeRun.disconnectTimeout) {
+          clearTimeout(activeRun.disconnectTimeout);
+        }
+        activeRun = null;
+      }
       setAgentActive(false);
       setRunningConversation(null);
     }
@@ -367,10 +433,19 @@ chrome.runtime.onConnect.addListener((port) => {
     }
     // Resolve any in-flight ask_user before aborting — otherwise the promise
     // leaks forever when the panel disconnects mid-question (H-EXT-3).
-    pendingAsk?.({});
-    pendingAsk = null;
-    abortController?.abort();
-    abortController = null;
-    setRunningConversation(null);
+    // Wait, if it's a transient disconnect, we do NOT want to abort immediately.
+    // We set a timeout to check if a reconnect happened.
+    if (activeRun && activeRun.send === localSend) {
+      activeRun.disconnectTimeout = setTimeout(() => {
+        log.debug('[chat:bg] disconnect grace period expired, aborting run');
+        if (activeRun && activeRun.send === localSend) {
+          activeRun.pendingAsk?.({});
+          activeRun.pendingAsk = null;
+          activeRun.abortController.abort();
+          activeRun = null;
+          setRunningConversation(null);
+        }
+      }, 3000);
+    }
   });
 });

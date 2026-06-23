@@ -1,0 +1,19 @@
+{
+  "id": "abmeter",
+  "name": "ABMeter",
+  "icon": "https://cdn.simpleicons.org/abmeter",
+  "description": "Feature flagging and A/B testing platform with AI-first experimentation workflows.",
+  "longDescription": "Feature flagging and A/B testing platform with AI-first experimentation workflows.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "ai.abmeter",
+  "submittedBy": "ai.abmeter",
+  "url": "https://mcp.abmeter.ai",
+  "transport": "streamable_http",
+  "docsUrl": "https://abmeter.ai",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

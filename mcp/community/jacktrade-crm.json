@@ -1,0 +1,19 @@
+{
+  "id": "jacktrade-crm",
+  "name": "JackTrade CRM",
+  "icon": "https://cdn.simpleicons.org/crm",
+  "description": "Search customers, manage quotes, work orders, action items, and calendar events for your business",
+  "longDescription": "Search customers, manage quotes, work orders, action items, and calendar events for your business",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0-dev",
+  "author": "co.jacktrade",
+  "submittedBy": "co.jacktrade",
+  "url": "https://frostsa2.ed1.jacktrade.xyz/api/v2/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/devcham/jacktrade",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "bridge-town",
+  "name": "Bridge Town",
+  "icon": "https://cdn.simpleicons.org/bridge",
+  "description": "Build financial models as code. Cloud execution, GSheets MCP, version control, collaboration.",
+  "longDescription": "Build financial models as code. Cloud execution, GSheets MCP, version control, collaboration.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "builders.bridgetown",
+  "submittedBy": "builders.bridgetown",
+  "url": "https://api.bridgetown.builders/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://bridgetown.builders",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

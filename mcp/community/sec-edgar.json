@@ -1,0 +1,24 @@
+{
+  "id": "sec-edgar",
+  "name": "SEC EDGAR",
+  "icon": "https://cdn.simpleicons.org/secedgar",
+  "description": "Provide AI assistants with real-time access to official SEC EDGAR filings and financial data. Enab\u2026",
+  "longDescription": "Provide AI assistants with real-time access to official SEC EDGAR filings and financial data. Enab\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "1.14.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@plainyogurt21/sec-edgar-mcp/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/plainyogurt21/sec-edgar-mcp",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for Smithery authentication"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

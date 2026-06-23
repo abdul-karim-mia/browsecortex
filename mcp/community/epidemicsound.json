@@ -1,0 +1,19 @@
+{
+  "id": "epidemicsound",
+  "name": "Epidemicsound",
+  "icon": "https://cdn.simpleicons.org/epidemicsound",
+  "description": "Cloud-hosted MCP server for Epidemic Sound",
+  "longDescription": "Cloud-hosted MCP server for Epidemic Sound",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.epidemicsound",
+  "submittedBy": "com.epidemicsound",
+  "url": "https://www.epidemicsound.com/a/mcp-server/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://www.epidemicsound.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

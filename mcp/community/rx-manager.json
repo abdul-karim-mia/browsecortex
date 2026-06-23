@@ -1,0 +1,19 @@
+{
+  "id": "rx-manager",
+  "name": "RX Manager",
+  "icon": "https://cdn.simpleicons.org/pharmacy",
+  "description": "Live US drug acquisition costs (CMS NADAC) for AI assistants. Free, no auth, weekly data.",
+  "longDescription": "Live US drug acquisition costs (CMS NADAC) for AI assistants. Free, no auth, weekly data.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "ai.rxmanager",
+  "submittedBy": "ai.rxmanager",
+  "url": "https://mcp.rxmanager.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://rxmanager.ai",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

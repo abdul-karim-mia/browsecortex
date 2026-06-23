@@ -1,0 +1,19 @@
+{
+  "id": "creative-claw",
+  "name": "Creative Claw",
+  "icon": "https://cdn.simpleicons.org/creative",
+  "description": "On-brand creative studio for AI agents: images, video, audio, and 3D.",
+  "longDescription": "On-brand creative studio for AI agents: images, video, audio, and 3D.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "co.creativeclaw",
+  "submittedBy": "co.creativeclaw",
+  "url": "https://app.creativeclaw.co/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/CreativeClawCo/creative-claw-marketplace",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

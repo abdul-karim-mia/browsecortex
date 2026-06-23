@@ -1,0 +1,19 @@
+{
+  "id": "iox-cloud",
+  "name": "IOX Cloud",
+  "icon": "https://cdn.simpleicons.org/cloud",
+  "description": "Deploy MCP servers and AI agents in seconds. AI generates code, deploy globally.",
+  "longDescription": "Deploy MCP servers and AI agents in seconds. AI generates code, deploy globally.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "cloud.iox",
+  "submittedBy": "cloud.iox",
+  "url": "https://iox-dispatch.matt-merutech.workers.dev/mcp?worker={project_slug}",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/meruada/iox-cloud",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

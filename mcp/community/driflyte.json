@@ -1,0 +1,19 @@
+{
+  "id": "driflyte",
+  "name": "Driflyte",
+  "icon": "https://cdn.simpleicons.org/driflyte",
+  "description": "Driflyte MCP server which lets AI assistants query topic-specific knowledge from web and GitHub.",
+  "longDescription": "Driflyte MCP server which lets AI assistants query topic-specific knowledge from web and GitHub.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.0.18",
+  "author": "com.driflyte",
+  "submittedBy": "com.driflyte",
+  "url": "https://mcp.driflyte.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/serkan-ozal/driflyte-mcp-server",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

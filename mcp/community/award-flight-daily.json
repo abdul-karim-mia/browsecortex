@@ -1,0 +1,19 @@
+{
+  "id": "award-flight-daily",
+  "name": "Award Flight Daily",
+  "icon": "https://cdn.simpleicons.org/airline",
+  "description": "Official airline award MCP. Search 12.3M+ award flights across 48 loyalty programs.",
+  "longDescription": "Official airline award MCP. Search 12.3M+ award flights across 48 loyalty programs.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.26.0",
+  "author": "com.awardflightdaily",
+  "submittedBy": "com.awardflightdaily",
+  "url": "https://awardflightdaily.com/mcp-server/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/eCriswell7/award-flight-daily-mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

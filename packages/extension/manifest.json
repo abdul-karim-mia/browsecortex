@@ -20,6 +20,14 @@
     "default_path": "src/sidepanel/index.html"
   },
   "options_page": "src/settings/index.html",
+  "content_scripts": [
+    {
+      "js": ["src/content/page-spy.ts"],
+      "matches": ["<all_urls>"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    }
+  ],
   "permissions": [
     "tabs",
     "tabGroups",
@@ -44,7 +52,8 @@
   ],
   "optional_permissions": [
     "clipboardRead",
-    "cookies"
+    "cookies",
+    "identity"
   ],
   "host_permissions": [
     "<all_urls>",
@@ -67,5 +76,11 @@
       "description": "Start a new conversation"
     }
   },
+  "web_accessible_resources": [
+    {
+      "resources": ["tesseract/*"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "default_locale": "en"
 }

@@ -1,0 +1,49 @@
+{
+  "id": "datadog",
+  "name": "Datadog",
+  "icon": "https://cdn.simpleicons.org/datadog",
+  "description": "Query logs, metrics, traces, monitors, dashboards, and security signals",
+  "longDescription": "Official Datadog MCP server providing structured access to observability data. Query APM traces, logs, metrics, monitors, dashboards, security signals, and more. Supports both OAuth and API key + Application key authentication for headless environments.",
+  "category": "devops",
+  "tier": "featured",
+  "version": "1.0",
+  "author": "Datadog",
+  "submittedBy": "admin",
+  "url": "https://mcp.datadoghq.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://docs.datadoghq.com/mcp_server/",
+  "auth": "oauth",
+  "authFallback": "api_key",
+  "oauthConfig": {
+    "authUrl": "https://app.datadoghq.com/oauth/authorize",
+    "tokenUrl": "https://app.datadoghq.com/oauth/token",
+    "revokeUrl": "https://app.datadoghq.com/organization-settings/api-keys",
+    "scopes": ["read", "write"]
+  },
+  "apiKeyConfig": {
+    "label": "Datadog API Key + Application Key",
+    "placeholder": "DD_API_KEY, DD_APPLICATION_KEY",
+    "helperUrl": "https://app.datadoghq.com/organization-settings/api-keys",
+    "helperText": "Create scoped API key and Application key from a service account with minimal permissions"
+  },
+  "tools": [
+    "query_logs",
+    "query_metrics",
+    "query_traces",
+    "list_monitors",
+    "get_monitor",
+    "create_monitor",
+    "list_dashboards",
+    "get_dashboard",
+    "list_security_signals",
+    "query_rum"
+  ],
+  "examplePrompts": [
+    "Show me error logs from the last hour",
+    "Get CPU usage metrics for my services",
+    "List all triggered monitors",
+    "Find traces with high latency",
+    "Show security signals for my environment",
+    "Get RUM performance data for my app"
+  ]
+}

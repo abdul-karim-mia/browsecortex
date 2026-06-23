@@ -1,0 +1,19 @@
+{
+  "id": "presentations-ai",
+  "name": "Presentations AI",
+  "icon": "https://cdn.simpleicons.org/slides",
+  "description": "Presentations.AI MCP server \u2014 create designed slide decks from a topic, text, or document.",
+  "longDescription": "Presentations.AI MCP server \u2014 create designed slide decks from a topic, text, or document.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.presentations",
+  "submittedBy": "ai.presentations",
+  "url": "https://api.presentations.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://presentations.ai",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

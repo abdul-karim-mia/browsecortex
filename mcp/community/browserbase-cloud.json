@@ -1,0 +1,24 @@
+{
+  "id": "browserbase-cloud",
+  "name": "Browserbase Cloud",
+  "icon": "https://cdn.simpleicons.org/browser",
+  "description": "Automate cloud browsers to navigate websites, interact with elements, and extract structured data.\u2026",
+  "longDescription": "Automate cloud browsers to navigate websites, interact with elements, and extract structured data.\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "2.0.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@ImRonAI/mcp-server-browserbase/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/ImRonAI/mcp-server-browserbase",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for Smithery authentication"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

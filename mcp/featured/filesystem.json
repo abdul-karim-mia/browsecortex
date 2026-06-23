@@ -1,0 +1,32 @@
+{
+  "id": "filesystem",
+  "name": "Filesystem",
+  "icon": "https://cdn.simpleicons.org/files",
+  "description": "Read and write local files via a relay",
+  "longDescription": "Expose a folder on your machine to BrowseCortex through a local MCP relay. The AI can list, read, and write files in that folder—handy for saving research, drafting notes, or processing local documents.",
+  "category": "local",
+  "tier": "featured",
+  "version": "1.0",
+  "author": "BrowseCortex",
+  "submittedBy": null,
+  "url": "http://localhost:3000/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [
+    "list_directory",
+    "read_file",
+    "write_file",
+    "create_directory",
+    "move_file",
+    "search_files"
+  ],
+  "examplePrompts": [
+    "Save this summary to ~/notes/research.md",
+    "List the files in my Downloads folder",
+    "Read my todo.txt and tell me what's left",
+    "Append this link to my reading list file",
+    "Find all markdown files mentioning 'budget'"
+  ]
+}

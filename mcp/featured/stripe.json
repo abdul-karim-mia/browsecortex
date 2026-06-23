@@ -1,0 +1,48 @@
+{
+  "id": "stripe",
+  "name": "Stripe",
+  "icon": "https://cdn.simpleicons.org/stripe",
+  "description": "Manage payments, customers, subscriptions, and products via Stripe API",
+  "longDescription": "Official Stripe MCP server for interacting with Stripe APIs. Create and manage customers, payments, subscriptions, products, prices, refunds, and more. Use Restricted API Keys to limit agent permissions to exactly what's needed. Supports both remote (mcp.stripe.com) and local (@stripe/mcp) deployment.",
+  "category": "finance",
+  "tier": "featured",
+  "version": "1.0",
+  "author": "Stripe",
+  "submittedBy": "admin",
+  "url": "https://mcp.stripe.com",
+  "transport": "streamable_http",
+  "docsUrl": "https://docs.stripe.com/mcp",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "Stripe Secret Key (Restricted API Key recommended)",
+    "placeholder": "sk_test_... or sk_live_...",
+    "helperUrl": "https://dashboard.stripe.com/apikeys",
+    "helperText": "Create a Restricted API Key at dashboard.stripe.com/apikeys with minimal required permissions"
+  },
+  "tools": [
+    "create_customer",
+    "list_customers",
+    "get_customer",
+    "update_customer",
+    "create_payment_intent",
+    "list_payment_intents",
+    "create_subscription",
+    "list_subscriptions",
+    "create_product",
+    "list_products",
+    "create_price",
+    "list_prices",
+    "create_refund",
+    "list_refunds",
+    "create_checkout_session"
+  ],
+  "examplePrompts": [
+    "Create a new customer with email john@example.com",
+    "List all active subscriptions",
+    "Create a $29.99/month subscription plan",
+    "Refund the last payment for customer cus_123",
+    "Create a checkout session for product prod_abc",
+    "Show me failed payments from last week"
+  ]
+}

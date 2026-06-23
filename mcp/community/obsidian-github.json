@@ -1,0 +1,24 @@
+{
+  "id": "obsidian-github",
+  "name": "Obsidian GitHub",
+  "icon": "https://cdn.simpleicons.org/obsidian",
+  "description": "Connect AI assistants to your GitHub-hosted Obsidian vault to seamlessly access, search, and analy\u2026",
+  "longDescription": "Connect AI assistants to your GitHub-hosted Obsidian vault to seamlessly access, search, and analy\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "0.4.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@Hint-Services/obsidian-github-mcp/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/Hint-Services/obsidian-github-mcp",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for Smithery authentication"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

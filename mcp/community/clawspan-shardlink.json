@@ -1,0 +1,19 @@
+{
+  "id": "clawspan-shardlink",
+  "name": "ClawSpan ShardLink",
+  "icon": "https://cdn.simpleicons.org/link",
+  "description": "Agent-first task marketplace MCP \u2014 discover, claim, and deliver paid workspace tasks.",
+  "longDescription": "Agent-first task marketplace MCP \u2014 discover, claim, and deliver paid workspace tasks.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "cloud.clawspan",
+  "submittedBy": "cloud.clawspan",
+  "url": "https://shardlink-control-plane-6phhkg3f2q-ts.a.run.app/v1/mcp/streamable",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/Axialon/ShardLink",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

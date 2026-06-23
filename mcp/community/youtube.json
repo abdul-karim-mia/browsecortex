@@ -1,0 +1,34 @@
+{
+  "id": "youtube",
+  "name": "YouTube",
+  "icon": "https://cdn.simpleicons.org/youtube",
+  "description": "Provide token-optimized, structured YouTube data to enhance your LLM applications. Access efficien\u2026",
+  "longDescription": "Token-optimized YouTube data MCP server. Access video details, search videos, get transcripts, channel statistics, trending videos, and comments. Designed for efficient LLM consumption with minimal token usage.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.2.6",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@kirbah/mcp-youtube/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/kirbah/mcp-youtube",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [
+    "getVideoDetails",
+    "searchVideos",
+    "getTranscripts",
+    "getChannelStatistics",
+    "getChannelTopVideos",
+    "getTrendingVideos",
+    "getVideoCategories",
+    "getVideoComments"
+  ],
+  "examplePrompts": [
+    "Get details for this YouTube video",
+    "Search for tutorials about React",
+    "Get the transcript of this video",
+    "Show me trending videos in the US",
+    "Get statistics for this YouTube channel"
+  ]
+}

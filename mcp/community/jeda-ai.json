@@ -1,0 +1,19 @@
+{
+  "id": "jeda-ai",
+  "name": "Jeda AI",
+  "icon": "https://cdn.simpleicons.org/jeda",
+  "description": "Visual AI for strategic thinking \u2014 SWOT, flowcharts, mindmaps, Gantt diagrams as polished SVG.",
+  "longDescription": "Visual AI for strategic thinking \u2014 SWOT, flowcharts, mindmaps, Gantt diagrams as polished SVG.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.23.19",
+  "author": "ai.jeda",
+  "submittedBy": "ai.jeda",
+  "url": "https://mcp.jeda.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://jeda.ai",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

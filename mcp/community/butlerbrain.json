@@ -1,0 +1,19 @@
+{
+  "id": "butlerbrain",
+  "name": "Butlerbrain",
+  "icon": "https://cdn.simpleicons.org/robotframework",
+  "description": "Persistent memory for AI assistants. Save once; recall from Claude, ChatGPT, or any MCP client.",
+  "longDescription": "Persistent memory for AI assistants. Save once; recall from Claude, ChatGPT, or any MCP client.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.butlerbrain",
+  "submittedBy": "ai.butlerbrain",
+  "url": "https://api.butlerbrain.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://butlerbrain.ai",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

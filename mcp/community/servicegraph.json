@@ -1,0 +1,19 @@
+{
+  "id": "servicegraph",
+  "name": "Servicegraph",
+  "icon": "https://cdn.simpleicons.org/service",
+  "description": "Search 100k+ US professional-services firms by industry, services, location, size, ratings.",
+  "longDescription": "Search 100k+ US professional-services firms by industry, services, location, size, ratings.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "co.servicegraph.mcp",
+  "submittedBy": "co.servicegraph.mcp",
+  "url": "https://mcp.servicegraph.co",
+  "transport": "streamable_http",
+  "docsUrl": "https://servicegraph.co",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

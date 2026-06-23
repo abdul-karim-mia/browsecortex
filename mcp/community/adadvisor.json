@@ -1,0 +1,24 @@
+{
+  "id": "adadvisor",
+  "name": "AdAdvisor",
+  "icon": "https://cdn.simpleicons.org/googleads",
+  "description": "Query Meta Ads performance data \u2014 accounts, campaigns, ad sets, ads, metrics & settings.",
+  "longDescription": "Query Meta Ads performance data \u2014 accounts, campaigns, ad sets, ads, metrics & settings.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.adadvisor",
+  "submittedBy": "ai.adadvisor",
+  "url": "https://api.adadvisor.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://www.adadvisor.ai?utm_source=mcp-registry",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token (adv_sk_...). Get key: https://www.adadvisor.ai/docs/user-guide/managing-api-keys?utm_source=mcp-registry"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "calmseo",
+  "name": "CalmSEO",
+  "icon": "https://cdn.simpleicons.org/seo",
+  "description": "SEO MCP server for keyword research, SERP analysis, audits, and Search Console workflows.",
+  "longDescription": "SEO MCP server for keyword research, SERP analysis, audits, and Search Console workflows.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "com.calmseo",
+  "submittedBy": "com.calmseo",
+  "url": "https://mcp.calmseo.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://calmseo.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "close",
+  "name": "Close",
+  "icon": "https://cdn.simpleicons.org/close",
+  "description": "Close CRM to manage your sales pipeline. Learn more at https://close.com or https://mcp.close.com",
+  "longDescription": "Close CRM to manage your sales pipeline. Learn more at https://close.com or https://mcp.close.com",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.close",
+  "submittedBy": "com.close",
+  "url": "https://mcp.close.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

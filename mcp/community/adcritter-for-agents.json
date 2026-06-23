@@ -1,0 +1,19 @@
+{
+  "id": "adcritter-for-agents",
+  "name": "AdCritter for Agents",
+  "icon": "https://cdn.simpleicons.org/adcritter",
+  "description": "Operate the AdCritter ads platform: campaigns, creatives, audiences, and reporting.",
+  "longDescription": "Operate the AdCritter ads platform: campaigns, creatives, audiences, and reporting.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "com.adcritter",
+  "submittedBy": "com.adcritter",
+  "url": "https://mcp.adcritter.com/mcp/agent",
+  "transport": "streamable_http",
+  "docsUrl": "https://adcritter.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

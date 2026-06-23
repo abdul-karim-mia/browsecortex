@@ -1,0 +1,52 @@
+{
+  "id": "ahrefs",
+  "name": "Ahrefs",
+  "icon": "https://cdn.simpleicons.org/ahrefs",
+  "description": "SEO data: Site Explorer, Keywords Explorer, Rank Tracker, Site Audit via MCP",
+  "longDescription": "Official Ahrefs MCP server for accessing SEO data. Requires Lite plan or higher. Provides Site Explorer (backlinks, organic traffic), Keywords Explorer (volume, difficulty), Rank Tracker, Site Audit, and Content Explorer. Authenticate via OAuth or generate an MCP-specific API key in Account Settings > API Keys.",
+  "category": "marketing",
+  "tier": "featured",
+  "version": "1.0",
+  "author": "Ahrefs",
+  "submittedBy": "admin",
+  "url": "https://api.ahrefs.com/mcp/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://docs.ahrefs.com/en/mcp/docs/introduction",
+  "auth": "oauth",
+  "authFallback": "api_key",
+  "oauthConfig": {
+    "authUrl": "https://app.ahrefs.com/oauth/authorize",
+    "tokenUrl": "https://api.ahrefs.com/oauth/token",
+    "revokeUrl": "https://app.ahrefs.com/account/api-keys",
+    "scopes": ["read"]
+  },
+  "apiKeyConfig": {
+    "label": "Ahrefs MCP Key",
+    "placeholder": "ahrefs_mcp_...",
+    "helperUrl": "https://app.ahrefs.com/account/api-keys",
+    "helperText": "Generate an MCP key in Account Settings > API Keys (tagged with 'MCP' scope)"
+  },
+  "tools": [
+    "site_explorer_overview",
+    "site_explorer_backlinks",
+    "site_explorer_organic_keywords",
+    "site_explorer_top_pages",
+    "keywords_explorer_overview",
+    "keywords_explorer_volume_history",
+    "keywords_explorer_matching_terms",
+    "keywords_explorer_questions",
+    "rank_tracker_overview",
+    "rank_tracker_history",
+    "site_audit_overview",
+    "site_audit_issues",
+    "content_explorer_search"
+  ],
+  "examplePrompts": [
+    "Get backlink profile for example.com",
+    "Find keyword volume for 'SEO tools' in US",
+    "Show organic keywords for competitor.com",
+    "Track rankings for my target keywords",
+    "Run a site audit for technical issues",
+    "Find top content for 'digital marketing'"
+  ]
+}

@@ -10,6 +10,42 @@ async function resolveTabId(args: Record<string, unknown>, getActive: () => Prom
   return getActive();
 }
 
+export async function findFrameId(tabId: number, frameSelector?: string): Promise<number | undefined> {
+  if (!frameSelector) return 0;
+  try {
+    const [res] = await chrome.scripting.executeScript({
+      target: { tabId, frameIds: [0] },
+      func: (selector: string) => {
+        const el = document.querySelector(selector);
+        if (!el || el.tagName !== 'IFRAME') return null;
+        const iframe = el as HTMLIFrameElement;
+        try {
+          return new URL(iframe.src, window.location.href).href;
+        } catch {
+          return iframe.src;
+        }
+      },
+      args: [frameSelector],
+    });
+
+    const iframeUrl = res?.result as string | null;
+    if (!iframeUrl) return undefined;
+
+    const frames = await chrome.webNavigation.getAllFrames({ tabId });
+    if (!frames) return undefined;
+    const normalize = (u: string) => u.split('#')[0].replace(/\/$/, '');
+    const targetNorm = normalize(iframeUrl);
+    
+    let match = frames.find((f) => normalize(f.url) === targetNorm);
+    if (!match) {
+      match = frames.find((f) => f.url.includes(targetNorm) || targetNorm.includes(f.url));
+    }
+    return match?.frameId;
+  } catch {
+    return undefined;
+  }
+}
+
 export const clickElement: ToolDefinition = {
   name: 'click_element',
   description:
@@ -25,15 +61,24 @@ export const clickElement: ToolDefinition = {
         description: 'Visible text of the element (alternative to selector).',
       },
       tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe containing the element.' },
     },
   },
   destructive: false,
   timeout: 'page_interact',
   async execute(args, ctx) {
     const tabId = await resolveTabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(tabId, String(args.frame_selector));
+      if (resolved === undefined) {
+        return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      }
+      targetFrameId = resolved;
+    }
     const annotationId = typeof args.annotation_id === 'number' ? args.annotation_id : null;
     const [res] = await chrome.scripting.executeScript({
-      target: { tabId },
+      target: { tabId, frameIds: [targetFrameId] },
       func: (annId: number | null, selector: string | null, text: string | null) => {
         // Inline finder — injected functions cannot reference outer-scope helpers.
         const el = (() => {
@@ -86,6 +131,7 @@ export const fillInput: ToolDefinition = {
       selector: { type: 'string' },
       value: { type: 'string' },
       tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe containing the input.' },
     },
     required: ['selector', 'value'],
   },
@@ -93,8 +139,16 @@ export const fillInput: ToolDefinition = {
   timeout: 'page_interact',
   async execute(args, ctx) {
     const tabId = await resolveTabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(tabId, String(args.frame_selector));
+      if (resolved === undefined) {
+        return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      }
+      targetFrameId = resolved;
+    }
     const [res] = await chrome.scripting.executeScript({
-      target: { tabId },
+      target: { tabId, frameIds: [targetFrameId] },
       func: (selector: string, value: string) => {
         const el = document.querySelector(selector) as HTMLElement | null;
         if (!el) return { found: false };
@@ -151,14 +205,23 @@ export const scrollPage: ToolDefinition = {
       direction: { type: 'string', enum: ['up', 'down', 'top', 'bottom'] },
       selector: { type: 'string', description: 'Scroll this element into view instead.' },
       tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe to scroll.' },
     },
   },
   destructive: false,
   timeout: 'page_interact',
   async execute(args, ctx) {
     const tabId = await resolveTabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(tabId, String(args.frame_selector));
+      if (resolved === undefined) {
+        return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      }
+      targetFrameId = resolved;
+    }
     const [res] = await chrome.scripting.executeScript({
-      target: { tabId },
+      target: { tabId, frameIds: [targetFrameId] },
       func: (direction: string | null, selector: string | null) => {
         if (selector) {
           const el = document.querySelector(selector);
@@ -186,15 +249,27 @@ export const submitForm: ToolDefinition = {
   description: 'Submit the form matching a CSS selector (or the form containing it).',
   parameters: {
     type: 'object',
-    properties: { selector: { type: 'string' }, tab_id: { type: 'number' } },
+    properties: {
+      selector: { type: 'string' },
+      tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe containing the form.' },
+    },
     required: ['selector'],
   },
   destructive: true,
   timeout: 'page_interact',
   async execute(args, ctx) {
     const tabId = await resolveTabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(tabId, String(args.frame_selector));
+      if (resolved === undefined) {
+        return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      }
+      targetFrameId = resolved;
+    }
     const [res] = await chrome.scripting.executeScript({
-      target: { tabId },
+      target: { tabId, frameIds: [targetFrameId] },
       func: (selector: string) => {
         const el = document.querySelector(selector);
         const form = (
@@ -217,7 +292,11 @@ export const findTextOnPage: ToolDefinition = {
   description: 'Check whether some text appears on the page and return surrounding context.',
   parameters: {
     type: 'object',
-    properties: { query: { type: 'string' }, tab_id: { type: 'number' } },
+    properties: {
+      query: { type: 'string' },
+      tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe to search within.' },
+    },
     required: ['query'],
   },
   destructive: false,
@@ -225,8 +304,16 @@ export const findTextOnPage: ToolDefinition = {
   timeout: 'page_read',
   async execute(args, ctx) {
     const tabId = await resolveTabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(tabId, String(args.frame_selector));
+      if (resolved === undefined) {
+        return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      }
+      targetFrameId = resolved;
+    }
     const [res] = await chrome.scripting.executeScript({
-      target: { tabId },
+      target: { tabId, frameIds: [targetFrameId] },
       func: (query: string) => {
         const body = document.body?.innerText ?? '';
         const idx = body.toLowerCase().indexOf(query.toLowerCase());

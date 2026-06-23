@@ -1,0 +1,19 @@
+{
+  "id": "callendar",
+  "name": "Callendar",
+  "icon": "https://cdn.simpleicons.org/calendar",
+  "description": "WhatsApp\u00ae reminders and rescheduling for Calendly. Public read-only MCP endpoint.",
+  "longDescription": "WhatsApp\u00ae reminders and rescheduling for Calendly. Public read-only MCP endpoint.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "co.callendar",
+  "submittedBy": "co.callendar",
+  "url": "https://app.callendar.de/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://callendar.co/",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

@@ -16,7 +16,7 @@ describe('renderMarkdown', () => {
   it('renders fenced code blocks with contents escaped', () => {
     const html = renderMarkdown('```js\nconst x = 1 < 2;\n```');
     expect(html).toContain('<pre');
-    expect(html).toContain('&lt; 2');
+    expect(html).toContain('&lt; <span class="text-amber-600 dark:text-amber-400">2</span>');
   });
 
   it('renders unordered and ordered lists', () => {
@@ -33,5 +33,13 @@ describe('renderMarkdown', () => {
   it('renders headings offset by one (# → h2, ## → h3) to avoid h1 in-panel', () => {
     expect(renderMarkdown('# Title')).toContain('<h2>Title</h2>');
     expect(renderMarkdown('## Title')).toContain('<h3>Title</h3>');
+  });
+
+  it('renders markdown tables as HTML tables', () => {
+    const tableMd = '| Header 1 | Header 2 |\n|---|---|\n| Value 1 | Value 2 |';
+    const html = renderMarkdown(tableMd);
+    expect(html).toContain('<table');
+    expect(html).toContain('Header 1</th>');
+    expect(html).toContain('Value 1</td>');
   });
 });

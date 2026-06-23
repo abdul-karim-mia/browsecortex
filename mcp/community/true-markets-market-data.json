@@ -1,0 +1,19 @@
+{
+  "id": "true-markets-market-data",
+  "name": "True Markets Market Data",
+  "icon": "https://cdn.simpleicons.org/finance",
+  "description": "Real-time crypto market data",
+  "longDescription": "Real-time crypto market data",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "co.truemarkets",
+  "submittedBy": "co.truemarkets",
+  "url": "https://mcp.truemarkets.co/marketdata/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://truemarkets.co",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

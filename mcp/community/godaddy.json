@@ -1,0 +1,29 @@
+{
+  "id": "godaddy",
+  "name": "GoDaddy",
+  "icon": "https://cdn.simpleicons.org/godaddy",
+  "description": "Search domain availability and find domain suggestions (no auth required)",
+  "longDescription": "Official GoDaddy MCP server for domain search and availability checks. Exposes public domain APIs with no authentication required. Find available domains based on keywords, check specific domain availability with pricing. Read-only; purchases and account management on godaddy.com. Rate limited via distributed quota tracking.",
+  "category": "utility",
+  "tier": "community",
+  "version": "1.0",
+  "author": "GoDaddy",
+  "submittedBy": "admin",
+  "url": "https://api.godaddy.com/v1/domains/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://developer.godaddy.com/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [
+    "search_domains",
+    "check_availability"
+  ],
+  "examplePrompts": [
+    "Is mycoolstartup.com available?",
+    "Find available domains for a sustainable fashion brand",
+    "Check availability for myidea.com, myidea.ai, myidea.dev",
+    "Suggest alternatives to taken domain techcompany.io",
+    "Search domains related to 'ai assistant'",
+    "Get pricing for available .ai domains"
+  ]
+}

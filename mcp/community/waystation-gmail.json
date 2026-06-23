@@ -1,0 +1,19 @@
+{
+  "id": "waystation-gmail",
+  "name": "Waystation \u2014 Gmail",
+  "icon": "https://cdn.simpleicons.org/gmail",
+  "description": "Read emails, send messages, and manage labels in your Gmail account.",
+  "longDescription": "Read emails, send messages, and manage labels in your Gmail account.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.3.1",
+  "author": "ai.waystation",
+  "submittedBy": "ai.waystation",
+  "url": "https://waystation.ai/gmail/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/waystation-ai/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

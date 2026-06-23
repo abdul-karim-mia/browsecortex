@@ -1,0 +1,19 @@
+{
+  "id": "crypto-price",
+  "name": "Crypto Price",
+  "icon": "https://cdn.simpleicons.org/bitcoin",
+  "description": "Provide real-time cryptocurrency price data and market analysis.",
+  "longDescription": "Provide real-time cryptocurrency price data and market analysis.",
+  "category": "community",
+  "tier": "community",
+  "version": "2.1.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@truss44/mcp-crypto-price/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/truss44/mcp-crypto-price",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

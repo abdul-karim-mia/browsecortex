@@ -1,0 +1,24 @@
+{
+  "id": "pubmed-search",
+  "name": "PubMed Search",
+  "icon": "https://cdn.simpleicons.org/pubmed",
+  "description": "Search PubMed with precision using keyword and journal filters and smart sorting. Uncover MeSH ter\u2026",
+  "longDescription": "Search PubMed with precision using keyword and journal filters and smart sorting. Uncover MeSH ter\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "1.14.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@lineex/pubmed-mcp-smithery/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/lineex/pubmed-mcp-smithery",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for Smithery authentication"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

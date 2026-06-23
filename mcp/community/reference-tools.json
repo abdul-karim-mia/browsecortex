@@ -1,0 +1,24 @@
+{
+  "id": "reference-tools",
+  "name": "Reference Tools",
+  "icon": "https://cdn.simpleicons.org/reference",
+  "description": "Provide your AI coding tools with token-efficient access to up-to-date technical documentation for\u2026",
+  "longDescription": "Provide your AI coding tools with token-efficient access to up-to-date technical documentation for\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "3.0.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@ref-tools/ref-tools-mcp/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/ref-tools/ref-tools-mcp",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for Smithery authentication"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

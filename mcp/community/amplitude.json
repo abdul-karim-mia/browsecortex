@@ -1,0 +1,19 @@
+{
+  "id": "amplitude",
+  "name": "Amplitude",
+  "icon": "https://cdn.simpleicons.org/amplitude",
+  "description": "Search, access, and get insights on your Amplitude data",
+  "longDescription": "Search, access, and get insights on your Amplitude data",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.amplitude",
+  "submittedBy": "com.amplitude",
+  "url": "https://mcp.amplitude.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

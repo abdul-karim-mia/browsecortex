@@ -1,0 +1,19 @@
+{
+  "id": "xray-vision",
+  "name": "XRay Vision",
+  "icon": "https://cdn.simpleicons.org/xray",
+  "description": "AI-powered codebase analysis \u2014 call graphs, security, dead code, complexity. 150+ tools.",
+  "longDescription": "AI-powered codebase analysis \u2014 call graphs, security, dead code, complexity. 150+ tools.",
+  "category": "community",
+  "tier": "community",
+  "version": "2.1.0",
+  "author": "com.emtailabs",
+  "submittedBy": "com.emtailabs",
+  "url": "https://mcp.emtailabs.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

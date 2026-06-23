@@ -1,0 +1,19 @@
+{
+  "id": "avalara-developer-documentation",
+  "name": "Avalara Developer Documentation",
+  "icon": "https://cdn.simpleicons.org/avalara",
+  "description": "Avalara developer documentation, integration guides, and code examples",
+  "longDescription": "Provides access to Avalara developer documentation, integration guides, and code examples",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.1",
+  "author": "com.avalara",
+  "submittedBy": "com.avalara",
+  "url": "https://mcp.avalara.com/docs",
+  "transport": "streamable_http",
+  "docsUrl": "https://developer.avalara.com/mcp-servers/docs",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

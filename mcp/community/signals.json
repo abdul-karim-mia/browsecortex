@@ -1,0 +1,19 @@
+{
+  "id": "signals",
+  "name": "Signals",
+  "icon": "https://cdn.simpleicons.org/signal",
+  "description": "Deduplicated, entity-resolved funding rounds, acquisitions, and exec moves as MCP tools.",
+  "longDescription": "Deduplicated, entity-resolved funding rounds, acquisitions, and exec moves as MCP tools.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.datahyena",
+  "submittedBy": "com.datahyena",
+  "url": "https://api.datahyena.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://datahyena.com/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

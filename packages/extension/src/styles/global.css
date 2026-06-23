@@ -130,3 +130,19 @@ body {
 .synapse-dot {
   animation: synapse-flash 1.2s ease-in-out infinite;
 }
+
+/* Checkered pattern background for transparent images */
+.checkered-pattern {
+  background-color: #ffffff;
+  background-image: linear-gradient(45deg, #f3f4f6 25%, transparent 25%, transparent 75%, #f3f4f6 75%),
+                    linear-gradient(45deg, #f3f4f6 25%, #ffffff 25%, #ffffff 75%, #f3f4f6 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+}
+.dark .checkered-pattern {
+  background-color: #1f2937;
+  background-image: linear-gradient(45deg, #111827 25%, transparent 25%, transparent 75%, #111827 75%),
+                    linear-gradient(45deg, #111827 25%, #1f2937 25%, #1f2937 75%, #111827 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+}

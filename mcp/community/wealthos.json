@@ -1,0 +1,19 @@
+{
+  "id": "wealthos",
+  "name": "Wealthos",
+  "icon": "https://cdn.simpleicons.org/finance",
+  "description": "Plan your financial future with AI: track net worth, manage budgets, and forecast scenarios.",
+  "longDescription": "Plan your financial future with AI: track net worth, manage budgets, and forecast scenarios.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "cc.wealthos",
+  "submittedBy": "cc.wealthos",
+  "url": "https://mcp.wealthos.cc",
+  "transport": "streamable_http",
+  "docsUrl": "https://wealthos.cc/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

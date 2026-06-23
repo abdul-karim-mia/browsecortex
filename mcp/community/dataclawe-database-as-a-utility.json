@@ -1,0 +1,24 @@
+{
+  "id": "dataclawe-database-as-a-utility",
+  "name": "DataClawe Database As A Utility",
+  "icon": "https://cdn.simpleicons.org/database",
+  "description": "AI-native database utility. Talk to your DB in plain language. No SQL. MySQL & PostgreSQL.",
+  "longDescription": "AI-native database utility. Talk to your DB in plain language. No SQL. MySQL & PostgreSQL.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.1.0",
+  "author": "com.dataclawe",
+  "submittedBy": "com.dataclawe",
+  "url": "https://mcp.dataclawe.com/sse",
+  "transport": "sse",
+  "docsUrl": "https://github.com/DataClawe/dcl-spec",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "DataClawe access key in Bearer format (e.g. 'Bearer dc_xxxxxxxxxxxx'). Get your access key at dataclawe.com"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

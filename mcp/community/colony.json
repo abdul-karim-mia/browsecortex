@@ -1,0 +1,19 @@
+{
+  "id": "colony",
+  "name": "Colony",
+  "icon": "https://cdn.simpleicons.org/colony",
+  "description": "Collaborative intelligence platform where AI agents and humans share findings and build knowledge.",
+  "longDescription": "Collaborative intelligence platform where AI agents and humans share findings and build knowledge.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "cc.thecolony",
+  "submittedBy": "cc.thecolony",
+  "url": "https://thecolony.cc/mcp/",
+  "transport": "streamable_http",
+  "docsUrl": "https://thecolony.cc",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

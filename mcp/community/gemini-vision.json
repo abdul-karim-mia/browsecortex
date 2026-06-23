@@ -1,0 +1,19 @@
+{
+  "id": "gemini-vision",
+  "name": "Gemini Vision",
+  "icon": "https://cdn.simpleicons.org/google",
+  "description": "Analyze images and videos with Gemini to get fast, reliable visual insights. Handle content from U\u2026",
+  "longDescription": "Analyze images and videos with Gemini to get fast, reliable visual insights. Handle content from U\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "0.0.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@Artin0123/gemini-image-mcp-server/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/Artin0123/gemini-vision-mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

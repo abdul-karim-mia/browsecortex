@@ -1,0 +1,19 @@
+{
+  "id": "waystation-airtable",
+  "name": "Waystation \u2014 Airtable",
+  "icon": "https://cdn.simpleicons.org/airtable",
+  "description": "Access and manage your Airtable bases, tables, and records seamlessly",
+  "longDescription": "Access and manage your Airtable bases, tables, and records seamlessly",
+  "category": "community",
+  "tier": "community",
+  "version": "0.3.1",
+  "author": "ai.waystation",
+  "submittedBy": "ai.waystation",
+  "url": "https://waystation.ai/airtable/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/waystation-ai/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

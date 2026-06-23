@@ -1,0 +1,19 @@
+{
+  "id": "bidsparq",
+  "name": "BidSparq",
+  "icon": "https://cdn.simpleicons.org/bidsparq",
+  "description": "Search U.S. federal, state, and local RFPs, subaward primes, pricing, and vendor data.",
+  "longDescription": "Search U.S. federal, state, and local RFPs, subaward primes, pricing, and vendor data.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.2.0",
+  "author": "com.bidsparq",
+  "submittedBy": "com.bidsparq",
+  "url": "https://bidsparq.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://bidsparq.com/learn/mcp-setup",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

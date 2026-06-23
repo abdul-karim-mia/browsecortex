@@ -1,0 +1,19 @@
+{
+  "id": "buyersense",
+  "name": "Buyersense",
+  "icon": "https://cdn.simpleicons.org/shoppingcart",
+  "description": "MCP server for the BuyerSense API. Get buyer signals from any MCP client.",
+  "longDescription": "MCP server for the BuyerSense API. Get buyer signals from any MCP client.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "ai.buyersense",
+  "submittedBy": "ai.buyersense",
+  "url": "https://mcp.buyersense.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

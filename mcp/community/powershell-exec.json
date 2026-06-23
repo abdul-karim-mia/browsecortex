@@ -1,0 +1,24 @@
+{
+  "id": "powershell-exec",
+  "name": "PowerShell Exec",
+  "icon": "https://cdn.simpleicons.org/powershell",
+  "description": "Execute PowerShell commands securely with controlled timeouts and input validation. Retrieve syste\u2026",
+  "longDescription": "Execute PowerShell commands securely with controlled timeouts and input validation. Retrieve syste\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "1.13.1",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@DynamicEndpoints/powershell-exec-mcp-server/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/DynamicEndpoints/PowerShell-Exec-MCP-Server",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for Smithery authentication"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "amber",
+  "name": "Amber",
+  "icon": "https://cdn.simpleicons.org/amber",
+  "description": "Long-term memory for AI assistants. Store facts, search by meaning, auto-categorize.",
+  "longDescription": "Long-term memory for AI assistants. Store facts, search by meaning, auto-categorize.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.ambermem",
+  "submittedBy": "com.ambermem",
+  "url": "https://mcp.ambermem.com",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/LowEntry/lowentry-mcp-memory",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

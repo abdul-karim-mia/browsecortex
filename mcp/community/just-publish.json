@@ -1,0 +1,19 @@
+{
+  "id": "just-publish",
+  "name": "Just Publish",
+  "icon": "https://cdn.simpleicons.org/publish",
+  "description": "Publish a static website (HTML, CSS, JS, images) to a live public URL straight from chat.",
+  "longDescription": "Publish a static website (HTML, CSS, JS, images) to a live public URL straight from chat.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "ai.justpublish",
+  "submittedBy": "ai.justpublish",
+  "url": "https://mcp.justpublish.ai/",
+  "transport": "streamable_http",
+  "docsUrl": "https://justpublish.ai",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

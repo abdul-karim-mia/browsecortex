@@ -1,0 +1,19 @@
+{
+  "id": "clutch-co",
+  "name": "Clutch",
+  "icon": "https://cdn.simpleicons.org/clutch",
+  "description": "Trusted B2B service providers with verified client reviews",
+  "longDescription": "Trusted B2B service providers with verified client reviews",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "co.clutch",
+  "submittedBy": "co.clutch",
+  "url": "https://bot.clutch.co/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

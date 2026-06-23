@@ -1,0 +1,19 @@
+{
+  "id": "cc-accrue",
+  "name": "Accrue",
+  "icon": "https://cdn.simpleicons.org/finance",
+  "description": "Stablecoin Yield Index (SYX) and live USDC vault APYs across Ethereum, Base, Arbitrum.",
+  "longDescription": "Stablecoin Yield Index (SYX) and live USDC vault APYs across Ethereum, Base, Arbitrum.",
+  "category": "community",
+  "tier": "community",
+  "version": "2.0.0",
+  "author": "cc.accrue",
+  "submittedBy": "cc.accrue",
+  "url": "https://accrue.cc/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://accrue.cc",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

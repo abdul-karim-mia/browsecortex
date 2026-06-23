@@ -1,0 +1,19 @@
+{
+  "id": "valid",
+  "name": "Valid",
+  "icon": "https://cdn.simpleicons.org/check",
+  "description": "Conversational access to advertising performance data, creative analysis, and campaign insights",
+  "longDescription": "Conversational access to advertising performance data, creative analysis, and campaign insights",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "co.valid",
+  "submittedBy": "co.valid",
+  "url": "https://mcp.valid.co/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://clients.valid.co",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "districts",
+  "name": "Districts",
+  "icon": "https://cdn.simpleicons.org/map",
+  "description": "K-12 school district data for all 50 US states. Enrollment, demographics, and academics.",
+  "longDescription": "K-12 school district data for all 50 US states. Enrollment, demographics, and academics.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.edusignal",
+  "submittedBy": "ai.edusignal",
+  "url": "https://edusignal.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

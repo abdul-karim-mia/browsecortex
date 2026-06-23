@@ -1,0 +1,19 @@
+{
+  "id": "datasignals-lab",
+  "name": "Datasignals Lab",
+  "icon": "https://cdn.simpleicons.org/chart",
+  "description": "13 scored financial & market-data tools for AI agents in one MCP endpoint (SEC, FDA, crypto).",
+  "longDescription": "13 scored financial & market-data tools for AI agents in one MCP endpoint (SEC, FDA, crypto).",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.datasignalslab",
+  "submittedBy": "com.datasignalslab",
+  "url": "https://datasignalslab--datasignals-mcp.apify.actor/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://datasignalslab.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

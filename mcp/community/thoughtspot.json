@@ -1,0 +1,19 @@
+{
+  "id": "thoughtspot",
+  "name": "Thoughtspot",
+  "icon": "https://cdn.simpleicons.org/thoughtspot",
+  "description": "MCP Server for ThoughtSpot - provides OAuth authentication and tools for querying data",
+  "longDescription": "MCP Server for ThoughtSpot - provides OAuth authentication and tools for querying data",
+  "category": "community",
+  "tier": "community",
+  "version": "0.5.0",
+  "author": "app.thoughtspot",
+  "submittedBy": "app.thoughtspot",
+  "url": "https://agent.thoughtspot.app/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/thoughtspot/mcp-server",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

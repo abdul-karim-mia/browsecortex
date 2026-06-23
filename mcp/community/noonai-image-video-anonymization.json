@@ -1,0 +1,19 @@
+{
+  "id": "noonai-image-video-anonymization",
+  "name": "NoonAI Image/Video Anonymization",
+  "icon": "https://cdn.simpleicons.org/noonai",
+  "description": "Remote MCP for image/video anonymization, face/body/license-plate masking, and de-identification.",
+  "longDescription": "Remote MCP for image/video anonymization, face/body/license-plate masking, and de-identification.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.1",
+  "author": "com.dyndns-server.noon-ai",
+  "submittedBy": "com.dyndns-server.noon-ai",
+  "url": "https://noon-ai.dyndns-server.com/image-video-anonymization-mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://noon-ai.dyndns-server.com/mcp-proof",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

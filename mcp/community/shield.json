@@ -1,0 +1,19 @@
+{
+  "id": "shield",
+  "name": "Shield",
+  "icon": "https://cdn.simpleicons.org/shield",
+  "description": "Trust verification for MCP servers. Check scores, scan for security issues, search 4,200+ servers.",
+  "longDescription": "Trust verification for MCP servers. Check scores, scan for security issues, search 4,200+ servers.",
+  "category": "community",
+  "tier": "community",
+  "version": "2.0.0",
+  "author": "com.craftedtrust",
+  "submittedBy": "com.craftedtrust",
+  "url": "https://mcp.craftedtrust.com/api/v1/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/cybercraftsolutionsllc/trust-gated-agent-example",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

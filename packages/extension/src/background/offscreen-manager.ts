@@ -23,8 +23,8 @@ export async function ensureOffscreen(): Promise<void> {
   creating = chrome.offscreen
     .createDocument({
       url,
-      reasons: [chrome.offscreen.Reason.BLOBS],
-      justification: 'Keep the service worker alive during long agent tasks.',
+      reasons: [chrome.offscreen.Reason.BLOBS, chrome.offscreen.Reason.CLIPBOARD],
+      justification: 'Keep the service worker alive during long agent tasks and handle clipboard operations.',
     })
     // Surface failures (quota/permissions) instead of silently degrading the
     // keep-alive — otherwise long tasks get killed with no diagnostic (H-EXT-6).

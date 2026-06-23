@@ -1,0 +1,19 @@
+{
+  "id": "mymlh",
+  "name": "Mymlh",
+  "icon": "https://cdn.simpleicons.org/mymlh",
+  "description": "OAuth-enabled MyMLH MCP server for accessing MyMLH data.",
+  "longDescription": "OAuth-enabled MyMLH MCP server for accessing MyMLH data.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ci.git",
+  "submittedBy": "ci.git",
+  "url": "https://mymlh-mcp.git.ci/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/wei/mymlh-mcp-server",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

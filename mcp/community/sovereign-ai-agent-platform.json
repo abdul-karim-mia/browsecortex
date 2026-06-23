@@ -1,0 +1,19 @@
+{
+  "id": "sovereign-ai-agent-platform",
+  "name": "TheProtocol Sovereign AI",
+  "icon": "https://cdn.simpleicons.org/robotframework",
+  "description": "Sovereign AI agent platform. 19 tools: discovery, transfers, staking, governance. A2A v1.0.",
+  "longDescription": "Sovereign AI agent platform. 19 tools: discovery, transfers, staking, governance. A2A v1.0.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "cloud.theprotocol",
+  "submittedBy": "cloud.theprotocol",
+  "url": "https://api.theprotocol.cloud/mcp/sse",
+  "transport": "sse",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

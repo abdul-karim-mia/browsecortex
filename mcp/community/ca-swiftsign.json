@@ -1,0 +1,19 @@
+{
+  "id": "ca-swiftsign",
+  "name": "SwiftSign",
+  "icon": "https://cdn.simpleicons.org/docusign",
+  "description": "E-signatures for agents: mint a sandbox key, send PDFs, track status, download the sealed result.",
+  "longDescription": "E-signatures for agents: mint a sandbox key, send PDFs, track status, download the sealed result.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.5.2",
+  "author": "ca.swiftsign",
+  "submittedBy": "ca.swiftsign",
+  "url": "https://swiftsign.ca/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://swiftsign.ca",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

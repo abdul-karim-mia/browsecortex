@@ -1,0 +1,24 @@
+{
+  "id": "adweave-meta-ads",
+  "name": "AdWeave Meta Ads",
+  "icon": "https://cdn.simpleicons.org/meta",
+  "description": "Meta Ads MCP server with 47 tools for campaigns, creatives, audiences, and insights.",
+  "longDescription": "Meta Ads MCP server with 47 tools for campaigns, creatives, audiences, and insights.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.adweave",
+  "submittedBy": "ai.adweave",
+  "url": "https://mcp.adweave.ai/meta-ads-mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token using your AdWeave API key (aw_ prefix)"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

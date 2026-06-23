@@ -1,0 +1,19 @@
+{
+  "id": "waystation-teams",
+  "name": "Waystation \u2014 Teams",
+  "icon": "https://cdn.simpleicons.org/microsoftteams",
+  "description": "Collaborate, chat, and manage meetings in Microsoft Teams.",
+  "longDescription": "Collaborate, chat, and manage meetings in Microsoft Teams.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.3.1",
+  "author": "ai.waystation",
+  "submittedBy": "ai.waystation",
+  "url": "https://waystation.ai/teams/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/waystation-ai/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

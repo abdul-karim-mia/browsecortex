@@ -1,0 +1,19 @@
+{
+  "id": "avalara-avatax",
+  "name": "Avalara AvaTax",
+  "icon": "https://cdn.simpleicons.org/avalara",
+  "description": "Access Avalara AvaTax API for tax calculation, transactions, nexus management, and compliance",
+  "longDescription": "Access Avalara AvaTax API for tax calculation, transactions, nexus management, and compliance",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.avalara",
+  "submittedBy": "com.avalara",
+  "url": "https://mcp.avalara.com/avatax",
+  "transport": "streamable_http",
+  "docsUrl": "https://developer.avalara.com/mcp-servers/avatax",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

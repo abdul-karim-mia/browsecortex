@@ -1,0 +1,19 @@
+{
+  "id": "heyspark",
+  "name": "HeySpark",
+  "icon": "https://cdn.simpleicons.org/spark",
+  "description": "Search and discover local businesses. 30+ categories with verified contact info, hours, and reviews.",
+  "longDescription": "Search and discover local businesses. 30+ categories with verified contact info, hours, and reviews.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "co.heyspark.mcp",
+  "submittedBy": "co.heyspark.mcp",
+  "url": "https://mcp.heyspark.co/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/jhibird/HeySpark-MCP",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

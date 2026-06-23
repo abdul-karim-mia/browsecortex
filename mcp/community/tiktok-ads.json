@@ -1,0 +1,19 @@
+{
+  "id": "tiktok-ads",
+  "name": "Tiktok Ads",
+  "icon": "https://cdn.simpleicons.org/tiktok",
+  "description": "TikTok Ads automation with AI: analyze performance, manage campaigns, optimize creatives.",
+  "longDescription": "TikTok Ads automation with AI: analyze performance, manage campaigns, optimize creatives.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "co.pipeboard",
+  "submittedBy": "co.pipeboard",
+  "url": "https://tiktok-ads.mcp.pipeboard.co/",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

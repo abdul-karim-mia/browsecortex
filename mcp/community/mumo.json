@@ -1,0 +1,19 @@
+{
+  "id": "mumo",
+  "name": "Mumo",
+  "icon": "https://cdn.simpleicons.org/mumo",
+  "description": "Consult a multi-model panel on contested decisions via MCP: architecture, plan review, strategy.",
+  "longDescription": "Consult a multi-model panel on contested decisions via MCP: architecture, plan review, strategy.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "chat.mumo",
+  "submittedBy": "chat.mumo",
+  "url": "https://mumo.chat/api/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/mumo-chat/mumo-mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

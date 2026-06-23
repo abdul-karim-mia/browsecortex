@@ -1,0 +1,19 @@
+{
+  "id": "dynamic-feed",
+  "name": "Dynamic Feed",
+  "icon": "https://cdn.simpleicons.org/rss",
+  "description": "Fresh data AI models lack: live LLM pricing, MCP registry, service status, and AI news.",
+  "longDescription": "Fresh data AI models lack: live LLM pricing, MCP registry, service status, and AI news.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.4.0",
+  "author": "ai.dynamicfeed",
+  "submittedBy": "ai.dynamicfeed",
+  "url": "https://dynamicfeed.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://dynamicfeed.ai",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

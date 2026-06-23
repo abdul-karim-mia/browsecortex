@@ -1,0 +1,24 @@
+{
+  "id": "attio-crm",
+  "name": "Attio CRM",
+  "icon": "https://cdn.simpleicons.org/attio",
+  "description": "your Attio CRM data through natural language querie\u2026",
+  "longDescription": "Enable AI assistants to interact directly with your Attio CRM data through natural language querie\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "0.2.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@kesslerio/attio-mcp-server/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/kesslerio/attio-mcp-server",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for Smithery authentication"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

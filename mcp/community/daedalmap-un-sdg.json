@@ -1,0 +1,19 @@
+{
+  "id": "daedalmap-un-sdg",
+  "name": "DaedalMap UN SDG",
+  "icon": "https://cdn.simpleicons.org/map",
+  "description": "UN SDG country indicators across all 17 goals: poverty, health, education, climate. Free.",
+  "longDescription": "UN SDG country indicators across all 17 goals: poverty, health, education, climate. Free.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.1",
+  "author": "com.daedalmap",
+  "submittedBy": "com.daedalmap",
+  "url": "https://app.daedalmap.com/mcp/un_sdg",
+  "transport": "streamable_http",
+  "docsUrl": "https://www.daedalmap.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

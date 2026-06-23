@@ -1,0 +1,19 @@
+{
+  "id": "devcycle",
+  "name": "DevCycle",
+  "icon": "https://cdn.simpleicons.org/devcycle",
+  "description": "DevCycle MCP server for feature flag management",
+  "longDescription": "DevCycle MCP server for feature flag management",
+  "category": "community",
+  "tier": "community",
+  "version": "6.0.2",
+  "author": "com.devcycle",
+  "submittedBy": "com.devcycle",
+  "url": "https://mcp.devcycle.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

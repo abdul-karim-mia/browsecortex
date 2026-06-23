@@ -1,0 +1,19 @@
+{
+  "id": "waystation-postgres",
+  "name": "Waystation \u2014 Postgres",
+  "icon": "https://cdn.simpleicons.org/postgresql",
+  "description": "Connect to your PostgreSQL database to query data and schemas.",
+  "longDescription": "Connect to your PostgreSQL database to query data and schemas.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.3.1",
+  "author": "ai.waystation",
+  "submittedBy": "ai.waystation",
+  "url": "https://waystation.ai/postgres/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/waystation-ai/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

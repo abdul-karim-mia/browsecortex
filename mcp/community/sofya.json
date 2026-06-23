@@ -1,0 +1,24 @@
+{
+  "id": "sofya",
+  "name": "Sofya",
+  "icon": "https://cdn.simpleicons.org/sofya",
+  "description": "Web search, fetch, extract, and research for AI agents. Markdown output + AI-synthesized answers.",
+  "longDescription": "Web search, fetch, extract, and research for AI agents. Markdown output + AI-synthesized answers.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.27.0",
+  "author": "co.sofya",
+  "submittedBy": "co.sofya",
+  "url": "https://sofya.co/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://sofya.co",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token. Use your Sofya API key prefixed with 'Bearer ' (e.g. 'Bearer sk_...'). Get one at https://sofya.co."
+  },
+  "tools": [],
+  "examplePrompts": []
+}

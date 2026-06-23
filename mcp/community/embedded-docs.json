@@ -1,0 +1,19 @@
+{
+  "id": "embedded-docs",
+  "name": "Embedded Docs",
+  "icon": "https://cdn.simpleicons.org/document",
+  "description": "Page-cited retrieval over primary-source embedded/firmware references for coding agents.",
+  "longDescription": "Page-cited retrieval over primary-source embedded/firmware references for coding agents.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.byteask",
+  "submittedBy": "ai.byteask",
+  "url": "https://mcp.byteask.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://docs.byteask.ai/embedded",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

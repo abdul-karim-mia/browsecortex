@@ -1,0 +1,19 @@
+{
+  "id": "talent-ecosystem",
+  "name": "Talent Ecosystem",
+  "icon": "https://cdn.simpleicons.org/talent",
+  "description": "BizGigz Talent Ecosystem - AI-powered recruiting, interviews, onboarding, learning, and deal rooms",
+  "longDescription": "BizGigz Talent Ecosystem - AI-powered recruiting, interviews, onboarding, learning, and deal rooms",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.bizgigz",
+  "submittedBy": "com.bizgigz",
+  "url": "https://bizgigz.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://bizgigz.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

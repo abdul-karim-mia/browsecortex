@@ -1,0 +1,19 @@
+{
+  "id": "financial-research",
+  "name": "Financial Research",
+  "icon": "https://cdn.simpleicons.org/finance",
+  "description": "Analyze stocks with summaries, price targets, and analyst recommendations. Track SEC filings, divi\u2026",
+  "longDescription": "Analyze stocks with summaries, price targets, and analyst recommendations. Track SEC filings, divi\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "1.15.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@hollaugo/financial-research-mcp-server/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/hollaugo/tutorials",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

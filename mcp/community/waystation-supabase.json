@@ -1,0 +1,19 @@
+{
+  "id": "waystation-supabase",
+  "name": "Waystation \u2014 Supabase",
+  "icon": "https://cdn.simpleicons.org/supabase",
+  "description": "Connect to your Supabase database to query data and schemas.",
+  "longDescription": "Connect to your Supabase database to query data and schemas.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.3.1",
+  "author": "ai.waystation",
+  "submittedBy": "ai.waystation",
+  "url": "https://waystation.ai/supabase/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/waystation-ai/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

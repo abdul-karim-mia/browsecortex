@@ -1,0 +1,19 @@
+{
+  "id": "scope-aec-preview",
+  "name": "Scope (AEC) Preview",
+  "icon": "https://cdn.simpleicons.org/scope",
+  "description": "AEC subcontractor vendor procurement plumbing layer. Preview - V3 launches 2027.",
+  "longDescription": "AEC subcontractor vendor procurement plumbing layer. Preview - V3 launches 2027.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.1",
+  "author": "bid.scope",
+  "submittedBy": "bid.scope",
+  "url": "https://scope.bid/api/mcp/aec",
+  "transport": "streamable_http",
+  "docsUrl": "https://scope.bid/mcp/aec",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

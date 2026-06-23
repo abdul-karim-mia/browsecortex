@@ -1,0 +1,19 @@
+{
+  "id": "devexpress-documentation",
+  "name": "DevExpress Documentation",
+  "icon": "https://cdn.simpleicons.org/devexpress",
+  "description": "Streamable HTTP MCP server for DevExpress documentation search and retrieval.",
+  "longDescription": "Streamable HTTP MCP server for DevExpress documentation search and retrieval.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.2",
+  "author": "com.devexpress",
+  "submittedBy": "com.devexpress",
+  "url": "https://api.devexpress.com/mcp/docs",
+  "transport": "streamable_http",
+  "docsUrl": "https://docs.devexpress.com/GeneralInformation/405551/help-resources/dev-express-documentation-mcp-server-configure-an-ai-powered-assistant",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

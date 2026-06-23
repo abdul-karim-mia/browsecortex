@@ -1,0 +1,19 @@
+{
+  "id": "callingly",
+  "name": "Callingly",
+  "icon": "https://cdn.simpleicons.org/phone",
+  "description": "Lets AI agents get leads on the phone: call, send SMS, and schedule callbacks for sales teams.",
+  "longDescription": "Lets AI agents get leads on the phone: call, send SMS, and schedule callbacks for sales teams.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.callingly",
+  "submittedBy": "com.callingly",
+  "url": "https://api.callingly.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://callingly.com/features/mcp/",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

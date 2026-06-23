@@ -1,0 +1,19 @@
+{
+  "id": "prompts",
+  "name": ".prompts",
+  "icon": "https://cdn.simpleicons.org/chat",
+  "description": ".prompts, the home to all your AI prompts, everywhere you need them.",
+  "longDescription": ".prompts, the home to all your AI prompts, everywhere you need them.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.0.1",
+  "author": "com.dotprompts",
+  "submittedBy": "com.dotprompts",
+  "url": "https://dotprompts.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://dotprompts.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

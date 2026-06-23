@@ -1,0 +1,19 @@
+{
+  "id": "web-search-api",
+  "name": "Keenable Web Search",
+  "icon": "https://cdn.simpleicons.org/search",
+  "description": "Live web search and clean-markdown page fetch over the Keenable web index.",
+  "longDescription": "Live web search and clean-markdown page fetch over the Keenable web index.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "ai.keenable",
+  "submittedBy": "ai.keenable",
+  "url": "https://api.keenable.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

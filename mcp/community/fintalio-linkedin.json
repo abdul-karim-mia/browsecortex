@@ -1,0 +1,24 @@
+{
+  "id": "fintalio-linkedin",
+  "name": "Fintalio LinkedIn",
+  "icon": "https://cdn.simpleicons.org/linkedin",
+  "description": "LinkedIn outreach MCP server \u2014 19 tools for AI agents to prospect, sequence, and manage contacts.",
+  "longDescription": "LinkedIn outreach MCP server \u2014 19 tools for AI agents to prospect, sequence, and manage contacts.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.fintalio",
+  "submittedBy": "com.fintalio",
+  "url": "https://fintalio.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://fintalio.com",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token from Fintalio dashboard (Settings \u2192 API Keys)"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

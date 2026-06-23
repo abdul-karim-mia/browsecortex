@@ -1,0 +1,19 @@
+{
+  "id": "adbloop-meta-ads",
+  "name": "Adbloop Meta Ads",
+  "icon": "https://cdn.simpleicons.org/meta",
+  "description": "Safe bulk Meta ads: launch 150+ campaigns from Drive folders with spend guardrails and validation.",
+  "longDescription": "Safe bulk Meta ads: launch 150+ campaigns from Drive folders with spend guardrails and validation.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.3.0",
+  "author": "com.adbloop",
+  "submittedBy": "com.adbloop",
+  "url": "https://mcp.adbloop.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://mcp.adbloop.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

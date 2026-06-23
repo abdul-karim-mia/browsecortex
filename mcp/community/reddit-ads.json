@@ -1,0 +1,24 @@
+{
+  "id": "reddit-ads",
+  "name": "Reddit Ads",
+  "icon": "https://cdn.simpleicons.org/reddit",
+  "description": "Manage Reddit advertising across accounts, campaigns, ad groups, posts, and ads. List accounts, fu\u2026",
+  "longDescription": "Manage Reddit advertising across accounts, campaigns, ad groups, posts, and ads. List accounts, fu\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@BigVik193/reddit-ads-mcp/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/BigVik193/reddit-ads-mcp",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for Smithery authentication"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,24 @@
+{
+  "id": "scrapegraph-ai",
+  "name": "ScrapeGraph AI",
+  "icon": "https://cdn.simpleicons.org/scrapegraph",
+  "description": "enterprise-grade reliabili\u2026",
+  "longDescription": "Enable language models to perform advanced AI-powered web scraping with enterprise-grade reliabili\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "1.16.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@ScrapeGraphAI/scrapegraph-mcp/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/ScrapeGraphAI/scrapegraph-mcp",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for Smithery authentication"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

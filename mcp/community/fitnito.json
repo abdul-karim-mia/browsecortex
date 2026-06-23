@@ -1,0 +1,19 @@
+{
+  "id": "fitnito",
+  "name": "Fitnito",
+  "icon": "https://cdn.simpleicons.org/fitness",
+  "description": "Manage a gym or studio: schedule classes, members, passes, memberships, staff and bookings.",
+  "longDescription": "Manage a gym or studio: schedule classes, members, passes, memberships, staff and bookings.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.fitnito",
+  "submittedBy": "com.fitnito",
+  "url": "https://mcp.fitnito.com/",
+  "transport": "streamable_http",
+  "docsUrl": "https://fitnito.com/developers",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

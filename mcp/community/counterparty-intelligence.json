@@ -1,0 +1,19 @@
+{
+  "id": "counterparty-intelligence",
+  "name": "Counterparty Intelligence",
+  "icon": "https://cdn.simpleicons.org/intelligence",
+  "description": "Check who your agent is about to pay over x402: real service, relayer, treasury, or buyer.",
+  "longDescription": "Check who your agent is about to pay over x402: real service, relayer, treasury, or buyer.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.crestsystems",
+  "submittedBy": "ai.crestsystems",
+  "url": "https://data.crestsystems.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://crestsystems.ai/intelligence",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

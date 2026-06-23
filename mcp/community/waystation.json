@@ -1,0 +1,19 @@
+{
+  "id": "waystation",
+  "name": "Waystation",
+  "icon": "https://cdn.simpleicons.org/waystation",
+  "description": "Ultimate toolbox to connect your LLM to popular productivity tools such as Monday, AirTable, Slack",
+  "longDescription": "Ultimate toolbox to connect your LLM to popular productivity tools such as Monday, AirTable, Slack",
+  "category": "community",
+  "tier": "community",
+  "version": "0.3.1",
+  "author": "ai.waystation",
+  "submittedBy": "ai.waystation",
+  "url": "https://waystation.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/waystation-ai/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

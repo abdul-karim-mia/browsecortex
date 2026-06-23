@@ -7,6 +7,7 @@
  * `click_element({ annotation_id: n })` — far more reliable than CSS selectors.
  */
 import type { ToolDefinition } from '../types';
+import { findFrameId } from './interaction';
 
 async function resolveTabId(args: Record<string, unknown>, getActive: () => Promise<number>) {
   const id = args.tab_id;
@@ -20,20 +21,52 @@ export const annotatePage: ToolDefinition = {
     'Number all interactive elements (buttons, links, inputs) on the active tab with ' +
     'visible [n] labels and return a structural map. Then click by id with ' +
     'click_element({ annotation_id: n }). Use before interacting with a complex page.',
-  parameters: { type: 'object', properties: { tab_id: { type: 'number' } } },
+  parameters: {
+    type: 'object',
+    properties: {
+      tab_id: { type: 'number' },
+      element_types: {
+        type: 'array',
+        items: { type: 'string' },
+        description: 'Optional list of specific element types to annotate e.g. ["button", "a", "input"].',
+      },
+      selector: { type: 'string', description: 'Optional CSS selector of a container to scope annotation within.' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe.' },
+    },
+  },
   destructive: false,
   timeout: 'page_interact',
   async execute(args, ctx) {
-    const tabId = await resolveTabId(args, ctx.getActiveTabId);
+    const tabIdVal = await resolveTabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(tabIdVal, String(args.frame_selector));
+      if (resolved === undefined) return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      targetFrameId = resolved;
+    }
+    const elementTypes = args.element_types as string[] | undefined;
+    const containerSelector = args.selector ? String(args.selector) : undefined;
+
     const [res] = await chrome.scripting.executeScript({
-      target: { tabId },
-      func: () => {
+      target: { tabId: tabIdVal, frameIds: [targetFrameId] },
+      func: (types?: string[], containerSel?: string) => {
         const w = window as unknown as { __bmAnnotations?: Element[] };
-        // Clear any prior badges.
         document.querySelectorAll('[data-bm-badge]').forEach((b) => b.remove());
 
-        const selector = 'a,button,input,textarea,select,[role="button"],[role="link"],summary';
-        const els = Array.from(document.querySelectorAll<HTMLElement>(selector)).filter((el) => {
+        let selector = 'a,button,input,textarea,select,[role="button"],[role="link"],summary';
+        if (types && types.length > 0) {
+          selector = types.map(t => {
+            const term = t.trim().toLowerCase();
+            if (term === 'button') return 'button,[role="button"]';
+            if (term === 'link' || term === 'a') return 'a,[role="link"]';
+            return term;
+          }).join(',');
+        }
+
+        const container = containerSel ? document.querySelector(containerSel) : document;
+        if (!container) return [];
+
+        const els = Array.from(container.querySelectorAll<HTMLElement>(selector)).filter((el) => {
           const r = el.getBoundingClientRect();
           const style = getComputedStyle(el);
           return (
@@ -80,6 +113,7 @@ export const annotatePage: ToolDefinition = {
         });
         return map;
       },
+      args: [elementTypes, containerSelector],
     });
     const elements = (res?.result as unknown[]) ?? [];
     return { count: elements.length, elements };
@@ -88,14 +122,26 @@ export const annotatePage: ToolDefinition = {
 
 export const clearAnnotations: ToolDefinition = {
   name: 'clear_annotations',
-  description: 'Remove the numbered [n] annotation badges from the active tab.',
-  parameters: { type: 'object', properties: { tab_id: { type: 'number' } } },
+  description: 'Remove the numbered [n] annotation badges from the active tab or a specific iframe.',
+  parameters: {
+    type: 'object',
+    properties: {
+      tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe.' },
+    },
+  },
   destructive: false,
   timeout: 'page_interact',
   async execute(args, ctx) {
-    const tabId = await resolveTabId(args, ctx.getActiveTabId);
+    const tabIdVal = await resolveTabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(tabIdVal, String(args.frame_selector));
+      if (resolved === undefined) return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      targetFrameId = resolved;
+    }
     await chrome.scripting.executeScript({
-      target: { tabId },
+      target: { tabId: tabIdVal, frameIds: [targetFrameId] },
       func: () => document.querySelectorAll('[data-bm-badge]').forEach((b) => b.remove()),
     });
     return { cleared: true };

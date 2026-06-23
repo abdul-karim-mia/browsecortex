@@ -1,0 +1,19 @@
+{
+  "id": "gateway",
+  "name": "Duvera Gateway",
+  "icon": "https://cdn.simpleicons.org/gateway",
+  "description": "Governed AI actions with signed, verifiable receipts: free keyless reads, human-approved writes.",
+  "longDescription": "Governed AI actions with signed, verifiable receipts: free keyless reads, human-approved writes.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.duvera",
+  "submittedBy": "ai.duvera",
+  "url": "https://app.duvera.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://duvera.ai",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

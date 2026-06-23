@@ -1,0 +1,19 @@
+{
+  "id": "explorium",
+  "name": "Explorium",
+  "icon": "https://cdn.simpleicons.org/explorium",
+  "description": "Access live company and contact data from Explorium's AgentSource B2B platform.",
+  "longDescription": "Access live company and contact data from Explorium's AgentSource B2B platform.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.explorium",
+  "submittedBy": "ai.explorium",
+  "url": "https://mcp-github-registry.explorium.ai/sse",
+  "transport": "sse",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

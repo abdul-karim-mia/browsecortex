@@ -1,0 +1,19 @@
+{
+  "id": "infranodus",
+  "name": "InfraNodus",
+  "icon": "https://cdn.simpleicons.org/infranodus",
+  "description": "Map text into knowledge graphs to create a structured representation of conceptual relations and t\u2026",
+  "longDescription": "Map text into knowledge graphs to create a structured representation of conceptual relations and t\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@infranodus/mcp-server-infranodus/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/infranodus/mcp-server-infranodus",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

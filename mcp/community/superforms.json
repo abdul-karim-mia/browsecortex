@@ -1,0 +1,19 @@
+{
+  "id": "superforms",
+  "name": "Superforms",
+  "icon": "https://cdn.simpleicons.org/form",
+  "description": "Human-input bridge for AI agents with voice-first answer links, MCP tools, and HTTP APIs.",
+  "longDescription": "Human-input bridge for AI agents with voice-first answer links, MCP tools, and HTTP APIs.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "co.superforms",
+  "submittedBy": "co.superforms",
+  "url": "https://superforms.co/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/brentgilmore/superforms-v2",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

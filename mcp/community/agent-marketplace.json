@@ -1,0 +1,19 @@
+{
+  "id": "agent-marketplace",
+  "name": "BizGigz Agent Marketplace",
+  "icon": "https://cdn.simpleicons.org/robotframework",
+  "description": "BizGigz Agent Marketplace - register AI agents, manage API keys, and discover MCP capabilities",
+  "longDescription": "BizGigz Agent Marketplace - register AI agents, manage API keys, and discover MCP capabilities",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.bizgigz",
+  "submittedBy": "com.bizgigz",
+  "url": "https://agents.bizgigz.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://agents.bizgigz.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

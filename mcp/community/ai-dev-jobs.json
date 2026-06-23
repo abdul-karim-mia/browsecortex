@@ -1,0 +1,19 @@
+{
+  "id": "ai-dev-jobs",
+  "name": "AI Dev Jobs",
+  "icon": "https://cdn.simpleicons.org/github",
+  "description": "Specialized job board for AI/ML engineers. Search curated roles.",
+  "longDescription": "Specialized job board for AI/ML engineers. Search curated roles.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.aidevboard",
+  "submittedBy": "com.aidevboard",
+  "url": "https://aidevboard.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://aidevboard.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

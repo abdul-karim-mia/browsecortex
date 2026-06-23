@@ -1,0 +1,24 @@
+{
+  "id": "fetch",
+  "name": "Fetch",
+  "icon": "https://cdn.simpleicons.org/download",
+  "description": "A simple tool that performs a fetch request to a webpage.",
+  "longDescription": "A simple tool that performs a fetch request to a webpage.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@smithery-ai/fetch/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/smithery-ai/mcp-servers",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for Smithery authentication"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

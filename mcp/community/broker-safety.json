@@ -1,0 +1,19 @@
+{
+  "id": "broker-safety",
+  "name": "Broker Safety",
+  "icon": "https://cdn.simpleicons.org/security",
+  "description": "MCP server offering regulator-sourced legitimacy checks on investment entities by name or URL.",
+  "longDescription": "MCP server offering regulator-sourced legitimacy checks on investment entities by name or URL.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.brokerchooser",
+  "submittedBy": "com.brokerchooser",
+  "url": "https://mcp.brokerchooser.com/servers/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

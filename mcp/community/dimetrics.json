@@ -1,0 +1,19 @@
+{
+  "id": "dimetrics",
+  "name": "Dimetrics",
+  "icon": "https://cdn.simpleicons.org/chart",
+  "description": "HPC lease economics, datacenter power, debt linkage, and political risk for miners and neoclouds.",
+  "longDescription": "HPC lease economics, datacenter power, debt linkage, and political risk for miners and neoclouds.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.dimetrics",
+  "submittedBy": "ai.dimetrics",
+  "url": "https://www.dimetrics.ai/api/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://www.dimetrics.ai/docs/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

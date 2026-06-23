@@ -1,0 +1,19 @@
+{
+  "id": "oura-ring",
+  "name": "Oura Ring",
+  "icon": "https://cdn.simpleicons.org/oura",
+  "description": "Connect your Oura Ring account and enable access to your wellness data in apps and automations. In\u2026",
+  "longDescription": "Connect your Oura Ring account and enable access to your wellness data in apps and automations. In\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "1.16.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@eliu243/oura-mcp-server/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/eliu243/oura-mcp-server",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

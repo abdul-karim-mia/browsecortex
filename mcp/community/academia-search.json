@@ -1,0 +1,24 @@
+{
+  "id": "academia-search",
+  "name": "Academia Search",
+  "icon": "https://cdn.simpleicons.org/googlescholar",
+  "description": "Search arXiv and ACL Anthology, retrieve citations and references, and browse web sources to accel\u2026",
+  "longDescription": "Search arXiv and ACL Anthology, retrieve citations and references, and browse web sources to accel\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "1.14.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@IlyaGusev/academia_mcp/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/IlyaGusev/academia_mcp",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for Smithery authentication"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

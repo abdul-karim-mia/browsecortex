@@ -1,0 +1,19 @@
+{
+  "id": "attrove",
+  "name": "Attrove",
+  "icon": "https://cdn.simpleicons.org/attrove",
+  "description": "Query your users' Gmail, Slack, and Calendar with AI \u2014 Plaid for productivity apps",
+  "longDescription": "Query your users' Gmail, Slack, and Calendar with AI \u2014 Plaid for productivity apps",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.10",
+  "author": "com.attrove",
+  "submittedBy": "com.attrove",
+  "url": "https://api.attrove.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://docs.attrove.com/mcp.html",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,24 @@
+{
+  "id": "gleanit",
+  "name": "Gleanit",
+  "icon": "https://cdn.simpleicons.org/search",
+  "description": "Search, read, and write highlights, notes, screenshots, collections, projects, and tags in Gleanit.",
+  "longDescription": "Search, read, and write highlights, notes, screenshots, collections, projects, and tags in Gleanit.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "co.gleanit",
+  "submittedBy": "co.gleanit",
+  "url": "https://api.gleanit.co/api/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/govannes/glean",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token: OAuth access token (recommended) or glean_ API key from Settings \u2192 MCP"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

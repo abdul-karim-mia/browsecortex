@@ -1,0 +1,19 @@
+{
+  "id": "waystation-office",
+  "name": "Waystation \u2014 Office",
+  "icon": "https://cdn.simpleicons.org/microsoft",
+  "description": "Create, edit, and collaborate on Office documents and spreadsheets.",
+  "longDescription": "Create, edit, and collaborate on Office documents and spreadsheets.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.3.1",
+  "author": "ai.waystation",
+  "submittedBy": "ai.waystation",
+  "url": "https://waystation.ai/office/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/waystation-ai/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

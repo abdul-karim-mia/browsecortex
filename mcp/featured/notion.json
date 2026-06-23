@@ -1,0 +1,45 @@
+{
+  "id": "notion",
+  "name": "Notion",
+  "icon": "https://cdn.simpleicons.org/notion",
+  "description": "Search pages, create docs, update databases",
+  "longDescription": "Connect your Notion workspace so the AI can search across pages, draft new documents, append to existing ones, and read or update database rows—turning research on any page into a saved note instantly.",
+  "category": "productivity",
+  "tier": "featured",
+  "version": "1.0",
+  "author": "BrowseCortex",
+  "submittedBy": null,
+  "url": "https://mcp.notion.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://developers.notion.com",
+  "auth": "oauth",
+  "authFallback": "api_key",
+  "oauthConfig": {
+    "authUrl": "https://api.notion.com/v1/oauth/authorize",
+    "tokenUrl": "https://api.notion.com/v1/oauth/token",
+    "revokeUrl": "https://www.notion.so/my-integrations",
+    "scopes": []
+  },
+  "apiKeyConfig": {
+    "label": "Notion Internal Integration Token",
+    "placeholder": "ntn_...",
+    "helperUrl": "https://www.notion.so/my-integrations",
+    "helperText": "Create an internal integration and share the pages you want to access"
+  },
+  "tools": [
+    "search",
+    "get_page",
+    "create_page",
+    "update_page",
+    "append_block",
+    "query_database",
+    "create_database_row"
+  ],
+  "examplePrompts": [
+    "Save a summary of this article to my Reading database",
+    "Find my notes about the Q3 roadmap",
+    "Create a meeting-notes page for today",
+    "Add this task to my project tracker",
+    "What's on my Notion to-do list?"
+  ]
+}

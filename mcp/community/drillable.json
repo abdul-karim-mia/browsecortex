@@ -1,0 +1,19 @@
+{
+  "id": "drillable",
+  "name": "Drillable",
+  "icon": "https://cdn.simpleicons.org/drill",
+  "description": "A multi-domain reference corpus where every answer drills down to its cited, verified source.",
+  "longDescription": "A multi-domain reference corpus where every answer drills down to its cited, verified source.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "com.drillable",
+  "submittedBy": "com.drillable",
+  "url": "https://mcp.drillable.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://drillable.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

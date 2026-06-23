@@ -1,0 +1,19 @@
+{
+  "id": "cash-flow-frog",
+  "name": "Cash Flow Frog",
+  "icon": "https://cdn.simpleicons.org/cash",
+  "description": "Cash flow forecasting: manage scenarios, projections, and bank accounts for your company.",
+  "longDescription": "Cash flow forecasting: manage scenarios, projections, and bank accounts for your company.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.cashflowfrog.mcp",
+  "submittedBy": "com.cashflowfrog.mcp",
+  "url": "https://mcp.cashflowfrog.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

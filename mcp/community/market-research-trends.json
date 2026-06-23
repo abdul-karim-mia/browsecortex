@@ -1,0 +1,24 @@
+{
+  "id": "market-research-trends",
+  "name": "Market Research Trends",
+  "icon": "https://cdn.simpleicons.org/chart",
+  "description": "See if a market is heating or cooling. Trend volume and growth signals. Free key at trendsmcp.ai",
+  "longDescription": "See if a market is heating or cooling. Trend volume and growth signals. Free key at trendsmcp.ai",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.trendsmcp",
+  "submittedBy": "ai.trendsmcp",
+  "url": "https://market-research.api.trendsmcp.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://trendsmcp.ai",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token. Get your free API key at https://trendsmcp.ai"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

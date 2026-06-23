@@ -1,0 +1,19 @@
+{
+  "id": "okahu",
+  "name": "Okahu",
+  "icon": "https://cdn.simpleicons.org/okahu",
+  "description": "Cloud hosted Okahu MCP server that helps you manage genAI trace data",
+  "longDescription": "Cloud hosted Okahu MCP server that helps you manage genAI trace data",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "co.okahu.mcp-registry",
+  "submittedBy": "co.okahu.mcp-registry",
+  "url": "https://mcp.okahu.co",
+  "transport": "sse",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

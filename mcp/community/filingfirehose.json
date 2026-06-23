@@ -1,0 +1,19 @@
+{
+  "id": "filingfirehose",
+  "name": "FilingFirehose",
+  "icon": "https://cdn.simpleicons.org/document",
+  "description": "SEC EDGAR filings parsed: 8-K body-text classification, 13D activist tagging, S-3 ATM detection.",
+  "longDescription": "SEC EDGAR filings parsed: 8-K body-text classification, 13D activist tagging, S-3 ATM detection.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "com.filingfirehose",
+  "submittedBy": "com.filingfirehose",
+  "url": "https://filingfirehose.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://filingfirehose.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

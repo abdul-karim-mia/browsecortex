@@ -1,0 +1,24 @@
+{
+  "id": "amazon-trends",
+  "name": "Amazon Trends",
+  "icon": "https://cdn.simpleicons.org/amazon",
+  "description": "Amazon product search demand over time, with growth for any keyword. Free key at trendsmcp.ai",
+  "longDescription": "Amazon product search demand over time, with growth for any keyword. Free key at trendsmcp.ai",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.3",
+  "author": "ai.trendsmcp",
+  "submittedBy": "ai.trendsmcp",
+  "url": "https://amazon.api.trendsmcp.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://trendsmcp.ai",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token. Get your free API key at https://trendsmcp.ai"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "contrastapi",
+  "name": "ContrastAPI",
+  "icon": "https://cdn.simpleicons.org/contrast",
+  "description": "29 security tools for AI agents \u2014 CVE, OSINT, threat intel, code security. No API key needed.",
+  "longDescription": "29 security tools for AI agents \u2014 CVE, OSINT, threat intel, code security. No API key needed.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.contrastcyber",
+  "submittedBy": "com.contrastcyber",
+  "url": "https://api.contrastcyber.com/mcp/",
+  "transport": "streamable_http",
+  "docsUrl": "https://api.contrastcyber.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

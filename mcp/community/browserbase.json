@@ -1,0 +1,24 @@
+{
+  "id": "browserbase",
+  "name": "Browserbase",
+  "icon": "https://cdn.simpleicons.org/browser",
+  "description": "i\u2026",
+  "longDescription": "Provides cloud browser automation capabilities using Stagehand and Browserbase, enabling LLMs to i\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "2.0.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@browserbasehq/mcp-browserbase/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/browserbase/mcp-server-browserbase",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for Smithery authentication"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

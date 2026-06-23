@@ -1,0 +1,19 @@
+{
+  "id": "clootrack",
+  "name": "Clootrack",
+  "icon": "https://cdn.simpleicons.org/clootrack",
+  "description": "Analyze customer feedback at scale \u2014 reviews, surveys, calls. AI-powered themes and sentiment.",
+  "longDescription": "Analyze customer feedback at scale \u2014 reviews, surveys, calls. AI-powered themes and sentiment.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.clootrack",
+  "submittedBy": "com.clootrack",
+  "url": "https://mcp.clootrack.com",
+  "transport": "streamable_http",
+  "docsUrl": "https://www.clootrack.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

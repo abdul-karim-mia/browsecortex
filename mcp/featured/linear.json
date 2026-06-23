@@ -1,0 +1,45 @@
+{
+  "id": "linear",
+  "name": "Linear",
+  "icon": "https://cdn.simpleicons.org/linear",
+  "description": "Create issues, track sprints, manage your backlog",
+  "longDescription": "Wire up Linear so the AI can file bugs from what it sees on a page, search and update issues, move tickets across your workflow, and summarize what's in flight for the current cycle.",
+  "category": "code",
+  "tier": "featured",
+  "version": "1.0",
+  "author": "BrowseCortex",
+  "submittedBy": null,
+  "url": "https://mcp.linear.app/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://developers.linear.app",
+  "auth": "oauth",
+  "authFallback": "api_key",
+  "oauthConfig": {
+    "authUrl": "https://linear.app/oauth/authorize",
+    "tokenUrl": "https://api.linear.app/oauth/token",
+    "revokeUrl": "https://linear.app/settings/api",
+    "scopes": ["read", "write"]
+  },
+  "apiKeyConfig": {
+    "label": "Linear API Key",
+    "placeholder": "lin_api_...",
+    "helperUrl": "https://linear.app/settings/api",
+    "helperText": "Create a personal API key in Linear settings"
+  },
+  "tools": [
+    "create_issue",
+    "update_issue",
+    "search_issues",
+    "get_issue",
+    "list_teams",
+    "list_projects",
+    "add_comment"
+  ],
+  "examplePrompts": [
+    "File a bug for the layout glitch on this page",
+    "What issues are assigned to me this cycle?",
+    "Move issue ENG-204 to In Progress",
+    "Summarize what's left in the current sprint",
+    "Create a project for the redesign work"
+  ]
+}

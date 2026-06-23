@@ -1,0 +1,19 @@
+{
+  "id": "eztexting",
+  "name": "Eztexting",
+  "icon": "https://cdn.simpleicons.org/sms",
+  "description": "Official EZTexting MCP server: SMS/MMS messaging, contacts, workflows, and account administration.",
+  "longDescription": "Official EZTexting MCP server: SMS/MMS messaging, contacts, workflows, and account administration.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.3.0",
+  "author": "com.eztexting",
+  "submittedBy": "com.eztexting",
+  "url": "https://mcp.eztexting.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://gitlab.com/eztexting/mcp-server",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

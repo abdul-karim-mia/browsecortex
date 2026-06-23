@@ -1,0 +1,24 @@
+{
+  "id": "exa-code",
+  "name": "Exa Code",
+  "icon": "https://cdn.simpleicons.org/exa",
+  "description": "Find open-source libraries and fetch contextual code snippets by version to accelerate development\u2026",
+  "longDescription": "Find open-source libraries and fetch contextual code snippets by version to accelerate development\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "0.0.1",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@exa-labs/exa-code-mcp/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/exa-labs/exa-code-mcp",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for Smithery authentication"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

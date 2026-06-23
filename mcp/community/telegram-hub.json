@@ -1,0 +1,19 @@
+{
+  "id": "telegram-hub",
+  "name": "Telegram Hub",
+  "icon": "https://cdn.simpleicons.org/telegram",
+  "description": "Access your Telegram chats and messages via MCP tools. More connectors coming soon.",
+  "longDescription": "Access your Telegram chats and messages via MCP tools. More connectors coming soon.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "church.ai.mcp",
+  "submittedBy": "church.ai.mcp",
+  "url": "https://mcp.ai.church/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

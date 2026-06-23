@@ -32,14 +32,23 @@ export const fsCreateFile: ToolDefinition = {
   description: "Create a file in this conversation's workspace at an absolute path with content.",
   parameters: {
     type: 'object',
-    properties: { path: { type: 'string' }, content: { type: 'string' } },
+    properties: {
+      path: { type: 'string' },
+      content: { type: 'string' },
+      encoding: { type: 'string', enum: ['utf-8', 'base64'], description: 'Content encoding (default: utf-8).' },
+    },
     required: ['path', 'content'],
   },
   destructive: false,
   timeout: 'file',
   execute: (args, ctx) =>
     scoped(ctx, async (cid) => {
-      const f = await vfs.createFile(cid, String(args.path), String(args.content ?? ''));
+      const f = await vfs.createFile(
+        cid,
+        String(args.path),
+        String(args.content ?? ''),
+        args.encoding as 'utf-8' | 'base64',
+      );
       return { created: f.path };
     }),
 };
@@ -47,12 +56,37 @@ export const fsCreateFile: ToolDefinition = {
 export const fsReadFile: ToolDefinition = {
   name: 'fs_read_file',
   description: "Read a file from this conversation's workspace.",
-  parameters: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] },
+  parameters: {
+    type: 'object',
+    properties: {
+      path: { type: 'string' },
+      encoding: { type: 'string', enum: ['utf-8', 'base64'], description: 'Returned encoding (default: utf-8).' },
+      lines: {
+        type: 'array',
+        items: { type: 'integer' },
+        minItems: 2,
+        maxItems: 2,
+        description: 'Read only specific lines [startLine, endLine] (1-based, inclusive).',
+      },
+      bytes: {
+        type: 'array',
+        items: { type: 'integer' },
+        minItems: 2,
+        maxItems: 2,
+        description: 'Read only specific bytes [startByte, endByte] (0-based, inclusive).',
+      },
+    },
+    required: ['path'],
+  },
   destructive: false,
   timeout: 'file',
   execute: (args, ctx) =>
     scoped(ctx, async (cid) => {
-      const content = await vfs.readFile(cid, String(args.path));
+      const content = await vfs.readFile(cid, String(args.path), {
+        encoding: args.encoding as 'utf-8' | 'base64',
+        lines: args.lines as [number, number] | undefined,
+        bytes: args.bytes as [number, number] | undefined,
+      });
       const truncated = content.length > FS_READ_LIMIT;
       return {
         content: truncated ? content.slice(0, FS_READ_LIMIT) : content,
@@ -63,15 +97,19 @@ export const fsReadFile: ToolDefinition = {
 
 export const fsUpdateFile: ToolDefinition = {
   name: 'fs_update_file',
-  description: "Overwrite or append to a file in this conversation's workspace.",
+  description: "Overwrite, append, prepend, insert at line, or search/replace a file in this conversation's workspace.",
   parameters: {
     type: 'object',
     properties: {
       path: { type: 'string' },
-      content: { type: 'string' },
+      content: { type: 'string', description: 'Content to write/append/prepend/insert (optional if using find/replace).' },
       append: { type: 'boolean', description: 'Append instead of overwrite (default false).' },
+      prepend: { type: 'boolean', description: 'Prepend instead of overwrite (default false).' },
+      find: { type: 'string', description: 'Find pattern for search/replace.' },
+      replace: { type: 'string', description: 'Replacement string.' },
+      insertAtLine: { type: 'integer', description: 'Insert content at this 1-based line number.' },
     },
-    required: ['path', 'content'],
+    required: ['path'],
   },
   destructive: false,
   timeout: 'file',
@@ -80,8 +118,14 @@ export const fsUpdateFile: ToolDefinition = {
       const f = await vfs.updateFile(
         cid,
         String(args.path),
-        String(args.content),
-        args.append === true,
+        args.content !== undefined ? String(args.content) : '',
+        {
+          append: args.append === true,
+          prepend: args.prepend === true,
+          find: args.find !== undefined ? String(args.find) : undefined,
+          replace: args.replace !== undefined ? String(args.replace) : undefined,
+          insertAtLine: args.insertAtLine !== undefined ? Number(args.insertAtLine) : undefined,
+        },
       );
       return { updated: f.path, size: f.size };
     }),
@@ -115,12 +159,24 @@ export const fsCreateFolder: ToolDefinition = {
 
 export const fsList: ToolDefinition = {
   name: 'fs_list',
-  description: "List files and folders at a path in this conversation's workspace.",
-  parameters: { type: 'object', properties: { path: { type: 'string' } } },
+  description: "List files and folders at a path in this conversation's workspace, with metadata.",
+  parameters: {
+    type: 'object',
+    properties: {
+      path: { type: 'string' },
+      recurse: { type: 'boolean', description: 'List files recursively (default false).' },
+      glob: { type: 'string', description: 'Filter entries by glob pattern (e.g. *.json).' },
+    },
+  },
   destructive: false,
   timeout: 'file',
   execute: (args, ctx) =>
-    scoped(ctx, async (cid) => ({ entries: await vfs.listDir(cid, String(args.path ?? '/')) })),
+    scoped(ctx, async (cid) => ({
+      entries: await vfs.listDir(cid, String(args.path ?? '/'), {
+        recurse: args.recurse === true,
+        glob: args.glob ? String(args.glob) : undefined,
+      }),
+    })),
 };
 
 export const fsMove: ToolDefinition = {
@@ -142,7 +198,7 @@ export const fsMove: ToolDefinition = {
 
 export const fsSearch: ToolDefinition = {
   name: 'fs_search',
-  description: "Search this conversation's workspace by file name or content.",
+  description: "Search this conversation's workspace by file name or content, returning line occurrences.",
   parameters: { type: 'object', properties: { query: { type: 'string' } }, required: ['query'] },
   destructive: false,
   timeout: 'file',
@@ -160,10 +216,6 @@ export const fsExport: ToolDefinition = {
     scoped(ctx, async (cid) => {
       const content = await vfs.readFile(cid, String(args.path));
       const name = String(args.path).split('/').pop() || 'file.txt';
-      // Encode UTF-8 bytes to base64 directly. The old `unescape(encodeURIComponent())`
-      // trick is deprecated and corrupts supplementary-plane chars/emoji (H-EXT-8).
-      // (createObjectURL isn't available in the MV3 service worker, so we stay on
-      // a data: URL.)
       const dataUrl = `data:text/plain;charset=utf-8;base64,${bytesToBase64(
         new TextEncoder().encode(content),
       )}`;
@@ -206,6 +258,54 @@ export const fsCreateZip: ToolDefinition = {
     }),
 };
 
+export const fsExists: ToolDefinition = {
+  name: 'fs_exists',
+  description: "Check if a file or folder exists in this conversation's workspace.",
+  parameters: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] },
+  destructive: false,
+  timeout: 'file',
+  execute: (args, ctx) =>
+    scoped(ctx, async (cid) => ({ exists: await vfs.exists(cid, String(args.path)) })),
+};
+
+export const fsGetInfo: ToolDefinition = {
+  name: 'fs_get_info',
+  description: "Get size, timestamps, mimeType, and metadata for a file/folder.",
+  parameters: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] },
+  destructive: false,
+  timeout: 'file',
+  execute: (args, ctx) =>
+    scoped(ctx, async (cid) => {
+      const info = await vfs.getInfo(cid, String(args.path));
+      return {
+        name: info.name,
+        path: info.path,
+        size: info.size,
+        isFolder: info.isFolder,
+        mimeType: info.mimeType,
+        createdAt: info.createdAt,
+        updatedAt: info.updatedAt,
+      };
+    }),
+};
+
+export const fsCopy: ToolDefinition = {
+  name: 'fs_copy',
+  description: "Copy a file or folder to a new location in this conversation's workspace.",
+  parameters: {
+    type: 'object',
+    properties: { from: { type: 'string' }, to: { type: 'string' } },
+    required: ['from', 'to'],
+  },
+  destructive: false,
+  timeout: 'file',
+  execute: (args, ctx) =>
+    scoped(ctx, async (cid) => {
+      await vfs.copy(cid, String(args.from), String(args.to));
+      return { copied: String(args.from), to: String(args.to) };
+    }),
+};
+
 export const filesystemTools = [
   fsCreateFile,
   fsReadFile,
@@ -217,4 +317,7 @@ export const filesystemTools = [
   fsSearch,
   fsExport,
   fsCreateZip,
+  fsExists,
+  fsGetInfo,
+  fsCopy,
 ];

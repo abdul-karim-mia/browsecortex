@@ -1,0 +1,24 @@
+{
+  "id": "news-sentiment-trends",
+  "name": "News Sentiment Trends",
+  "icon": "https://cdn.simpleicons.org/news",
+  "description": "News sentiment scores over time, with growth for any topic. Free key at trendsmcp.ai",
+  "longDescription": "News sentiment scores over time, with growth for any topic. Free key at trendsmcp.ai",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.1",
+  "author": "ai.trendsmcp",
+  "submittedBy": "ai.trendsmcp",
+  "url": "https://news-sentiment.api.trendsmcp.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://trendsmcp.ai",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token. Get your free API key at https://trendsmcp.ai"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "superdocs",
+  "name": "Superdocs",
+  "icon": "https://cdn.simpleicons.org/document",
+  "description": "Edit, draft, summarize, export styled .docx/PDF/HTML/MD/RTF via 21 MCP tools + 4 prompts.",
+  "longDescription": "Edit, draft, summarize, export styled .docx/PDF/HTML/MD/RTF via 21 MCP tools + 4 prompts.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "app.superdocs",
+  "submittedBy": "app.superdocs",
+  "url": "https://api.superdocs.app/mcp/",
+  "transport": "streamable_http",
+  "docsUrl": "https://superdocs.app",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

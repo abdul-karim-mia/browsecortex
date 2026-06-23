@@ -1,0 +1,19 @@
+{
+  "id": "appsflyer",
+  "name": "AppsFlyer",
+  "icon": "https://cdn.simpleicons.org/appsflyer",
+  "description": "Analyze your campaigns any way you want, with AI.",
+  "longDescription": "Analyze your campaigns any way you want, with AI.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.appsflyer",
+  "submittedBy": "com.appsflyer",
+  "url": "https://mcp.appsflyer.com/auth/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://www.appsflyer.com/",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

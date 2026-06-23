@@ -1,0 +1,19 @@
+{
+  "id": "bridgetoagent-ai-readiness",
+  "name": "BridgeToAgent AI Readiness",
+  "icon": "https://cdn.simpleicons.org/robotframework",
+  "description": "Is a website ready for AI shopping agents? Readiness score (0-100) + agent shopping simulation.",
+  "longDescription": "Is a website ready for AI shopping agents? Readiness score (0-100) + agent shopping simulation.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.bridgetoagent",
+  "submittedBy": "com.bridgetoagent",
+  "url": "https://www.bridgetoagent.com/api/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://www.bridgetoagent.com/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

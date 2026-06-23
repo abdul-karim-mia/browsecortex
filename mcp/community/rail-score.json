@@ -1,0 +1,19 @@
+{
+  "id": "rail-score",
+  "name": "Rail Score",
+  "icon": "https://cdn.simpleicons.org/rail",
+  "description": "Responsible-AI guardrails for agents: scoring, prompt-injection & PII detection, DPDP compliance.",
+  "longDescription": "Responsible-AI guardrails for agents: scoring, prompt-injection & PII detection, DPDP compliance.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.responsibleailabs",
+  "submittedBy": "ai.responsibleailabs",
+  "url": "https://mcp.responsibleailabs.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://responsibleailabs.ai",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

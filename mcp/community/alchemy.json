@@ -1,0 +1,19 @@
+{
+  "id": "alchemy",
+  "name": "Alchemy",
+  "icon": "https://cdn.simpleicons.org/alchemy",
+  "description": "Alchemy's hosted MCP server for blockchain APIs and onchain data.",
+  "longDescription": "Alchemy's hosted MCP server for blockchain APIs and onchain data.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.2.2",
+  "author": "com.alchemy",
+  "submittedBy": "com.alchemy",
+  "url": "https://mcp.alchemy.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

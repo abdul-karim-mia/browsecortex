@@ -1,0 +1,19 @@
+{
+  "id": "axiom",
+  "name": "Axiom",
+  "icon": "https://cdn.simpleicons.org/axiom",
+  "description": "List datasets, schemas, run APL queries, and use prompts for exploration, anomalies, and monitoring.",
+  "longDescription": "List datasets, schemas, run APL queries, and use prompts for exploration, anomalies, and monitoring.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "co.axiom",
+  "submittedBy": "co.axiom",
+  "url": "https://mcp.axiom.co/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/axiomhq/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

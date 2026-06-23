@@ -1,0 +1,24 @@
+{
+  "id": "aca-automated-client-acquisition",
+  "name": "ACA Automated Client Acquisition",
+  "icon": "https://cdn.simpleicons.org/robotframework",
+  "description": "AI content generation, lead management, and multi-channel outreach campaigns.",
+  "longDescription": "AI content generation, lead management, and multi-channel outreach campaigns.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.automatedclientacquisition.www",
+  "submittedBy": "com.automatedclientacquisition.www",
+  "url": "https://www.automatedclientacquisition.com/api/mcp",
+  "transport": "sse",
+  "docsUrl": "https://www.automatedclientacquisition.com",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "API key from ACA dashboard (Settings > MCP / API). Format: Bearer cf_live_..."
+  },
+  "tools": [],
+  "examplePrompts": []
+}

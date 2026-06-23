@@ -1,0 +1,24 @@
+{
+  "id": "metrifyr",
+  "name": "Metrifyr",
+  "icon": "https://cdn.simpleicons.org/chart",
+  "description": "Query Google Analytics 4, Search Console, GTM & AdSense with natural language from MCP clients.",
+  "longDescription": "Query Google Analytics 4, Search Console, GTM & AdSense with natural language from MCP clients.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.1",
+  "author": "cloud.metrifyr",
+  "submittedBy": "cloud.metrifyr",
+  "url": "https://mcp.metrifyr.cloud/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://www.metrifyr.cloud/",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token \u2014 either an OAuth 2.1 access token or a Metrifyr API key. Obtain an API key from your Metrifyr dashboard at https://www.metrifyr.cloud/"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

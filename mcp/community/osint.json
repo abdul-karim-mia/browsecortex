@@ -1,0 +1,19 @@
+{
+  "id": "osint",
+  "name": "OSINT",
+  "icon": "https://cdn.simpleicons.org/search",
+  "description": "Agent-ready US power data: capacity, generation, capacity factor (EIA), cited to source.",
+  "longDescription": "Agent-ready US power data: capacity, generation, capacity factor (EIA), cited to source.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "build.exascale",
+  "submittedBy": "build.exascale",
+  "url": "https://api.exascale.build/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

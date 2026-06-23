@@ -1,0 +1,19 @@
+{
+  "id": "scope-claims-preview",
+  "name": "Scope (Claims) Preview",
+  "icon": "https://cdn.simpleicons.org/scope",
+  "description": "Insurance claims-side vendor procurement (IMEs, IA, surveillance). Preview - V2 launches Q3 2026.",
+  "longDescription": "Insurance claims-side vendor procurement (IMEs, IA, surveillance). Preview - V2 launches Q3 2026.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.1",
+  "author": "bid.scope",
+  "submittedBy": "bid.scope",
+  "url": "https://scope.bid/api/mcp/claims",
+  "transport": "streamable_http",
+  "docsUrl": "https://scope.bid/mcp/claims",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

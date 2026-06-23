@@ -1,0 +1,24 @@
+{
+  "id": "reddit-user",
+  "name": "Reddit User",
+  "icon": "https://cdn.simpleicons.org/reddit",
+  "description": "Browse and manage Reddit posts, comments, and threads. Fetch user activity, explore hot/new/rising\u2026",
+  "longDescription": "Browse and manage Reddit posts, comments, and threads. Fetch user activity, explore hot/new/rising\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@BigVik193/reddit-user-mcp/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/BigVik193/reddit-user-mcp",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for Smithery authentication"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

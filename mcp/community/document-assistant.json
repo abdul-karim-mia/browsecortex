@@ -1,0 +1,19 @@
+{
+  "id": "document-assistant",
+  "name": "Document Assistant",
+  "icon": "https://cdn.simpleicons.org/document",
+  "description": "Convert files between formats without quality loss. Speed up your workflow with fast, reliable con\u2026",
+  "longDescription": "Convert files between formats without quality loss. Speed up your workflow with fast, reliable con\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "1.14.1",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@proflulab/documentassistant/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

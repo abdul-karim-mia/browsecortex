@@ -1,0 +1,19 @@
+{
+  "id": "bizverify",
+  "name": "BizVerify",
+  "icon": "https://cdn.simpleicons.org/business",
+  "description": "KYB for AI agents: verify business registrations from MCP clients.",
+  "longDescription": "KYB for AI agents: verify business registrations from MCP clients.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "co.bizverify",
+  "submittedBy": "co.bizverify",
+  "url": "https://api.bizverify.co/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://bizverify.co/mcp/",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,24 @@
+{
+  "id": "network-calculator",
+  "name": "Network Calculator",
+  "icon": "https://cdn.simpleicons.org/calculator",
+  "description": "Look up DNS information for any domain to troubleshoot issues and gather insights. Get fast, relia\u2026",
+  "longDescription": "Look up DNS information for any domain to troubleshoot issues and gather insights. Get fast, relia\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "1.13.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@ramadasmr/networkcalc-mcp/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/ramadasmr/networkcalc-mcp",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for Smithery authentication"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

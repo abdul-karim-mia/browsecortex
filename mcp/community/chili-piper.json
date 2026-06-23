@@ -1,0 +1,19 @@
+{
+  "id": "chili-piper",
+  "name": "Chili Piper",
+  "icon": "https://cdn.simpleicons.org/chilipiper",
+  "description": "Manage Chili Piper scheduling links, meetings, routing rules, and teams. Admin only. Experimental.",
+  "longDescription": "Manage Chili Piper scheduling links, meetings, routing rules, and teams. Admin only. Experimental.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.chilipiper",
+  "submittedBy": "com.chilipiper",
+  "url": "https://fire.chilipiper.com/api/fire-edge/v1/org/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

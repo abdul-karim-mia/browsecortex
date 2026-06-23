@@ -1,0 +1,19 @@
+{
+  "id": "trends",
+  "name": "Trends",
+  "icon": "https://cdn.simpleicons.org/chart",
+  "description": "Real-time trend data from Google, YouTube, TikTok, Reddit, Amazon, Wikipedia, npm, Steam, and more.",
+  "longDescription": "Real-time trend data from Google, YouTube, TikTok, Reddit, Amazon, Wikipedia, npm, Steam, and more.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.trendsmcp",
+  "submittedBy": "ai.trendsmcp",
+  "url": "https://api.trendsmcp.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://trendsmcp.ai",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

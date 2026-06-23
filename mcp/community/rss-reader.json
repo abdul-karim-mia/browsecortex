@@ -1,0 +1,24 @@
+{
+  "id": "rss-reader",
+  "name": "RSS Reader",
+  "icon": "https://cdn.simpleicons.org/rss",
+  "description": "Track and browse RSS feeds with ease. Fetch the latest entries from any feed URL and extract full\u2026",
+  "longDescription": "Track and browse RSS feeds with ease. Fetch the latest entries from any feed URL and extract full\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@kwp-lab/rss-reader-mcp/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/kwp-lab/rss-reader-mcp",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for Smithery authentication"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

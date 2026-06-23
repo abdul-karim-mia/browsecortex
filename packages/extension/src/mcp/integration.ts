@@ -14,12 +14,14 @@ export async function getMcpApiTools(): Promise<ApiToolDefinition[]> {
   const out: ApiToolDefinition[] = [];
   for (const server of servers) {
     if (!server.enabled) continue;
+    const disabled = new Set(server.disabledTools ?? []);
     for (const tool of server.tools) {
+      if (disabled.has(tool.name)) continue; // per-tool access control (plan §13)
       out.push({
         type: 'function',
         function: {
           name: mcpToolName(server.name, tool.name),
-          description: `[MCP:${server.name}] ${tool.description ?? tool.name}`,
+          description: `[MCP:${server.label ?? server.name}] ${tool.description ?? tool.name}`,
           parameters: tool.inputSchema ?? { type: 'object', properties: {} },
         },
       });
@@ -42,6 +44,8 @@ export async function executeMcpTool(
   const server = (await listServers()).find((s) => s.name === parsed.server);
   if (!server) return { error: `MCP server not found: ${parsed.server}` };
   if (!server.enabled) return { error: `MCP server disabled: ${parsed.server}` };
+  if (server.disabledTools?.includes(parsed.tool))
+    return { error: `MCP tool disabled by user: ${name}` };
   try {
     const result = await callTool(server, parsed.tool, args);
     return { result } as ToolResult;

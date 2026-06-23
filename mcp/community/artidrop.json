@@ -1,0 +1,19 @@
+{
+  "id": "artidrop",
+  "name": "Artidrop",
+  "icon": "https://cdn.simpleicons.org/artidrop",
+  "description": "The publishing layer for AI agents. Turn HTML and Markdown into shareable URLs instantly via MCP.",
+  "longDescription": "The publishing layer for AI agents. Turn HTML and Markdown into shareable URLs instantly via MCP.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.artidrop",
+  "submittedBy": "ai.artidrop",
+  "url": "https://artidrop.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

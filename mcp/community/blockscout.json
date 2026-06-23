@@ -1,0 +1,19 @@
+{
+  "id": "blockscout",
+  "name": "Blockscout Explorer",
+  "icon": "https://cdn.simpleicons.org/blockscout",
+  "description": "MCP server for Blockscout",
+  "longDescription": "MCP server for Blockscout",
+  "category": "community",
+  "tier": "community",
+  "version": "0.10.0",
+  "author": "com.blockscout",
+  "submittedBy": "com.blockscout",
+  "url": "https://mcp.blockscout.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/blockscout/mcp-server",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

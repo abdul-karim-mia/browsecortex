@@ -1,0 +1,40 @@
+{
+  "id": "apify",
+  "name": "Apify",
+  "icon": "https://cdn.simpleicons.org/apify",
+  "description": "Extract data from any website with thousands of scrapers, crawlers, and automations on Apify Store \u26a1",
+  "longDescription": "Official Apify MCP server for web scraping and automation. Search for Actors in Apify Store, call Actors, retrieve run results, manage datasets and key-value stores, and search Apify documentation.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.10.0",
+  "author": "com.apify",
+  "submittedBy": "com.apify",
+  "url": "https://mcp.apify.com/",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/apify/apify-mcp-server",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Apify API token for authentication with Apify platform services. For example 'Bearer <apify-api-token>'"
+  },
+  "tools": [
+    "search-actors",
+    "fetch-actor-details",
+    "call-actor",
+    "get-actor-run",
+    "get-dataset-items",
+    "get-key-value-store-record",
+    "abort-actor-run",
+    "search-apify-docs",
+    "fetch-apify-docs"
+  ],
+  "examplePrompts": [
+    "Search for web scraping Actors on Apify",
+    "Run the Web Scraper Actor on this URL",
+    "Get results from my last Actor run",
+    "List all my datasets",
+    "Search Apify docs for proxy configuration"
+  ]
+}

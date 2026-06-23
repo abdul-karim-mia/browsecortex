@@ -1,0 +1,19 @@
+{
+  "id": "atlassian-rovo",
+  "name": "Atlassian Rovo",
+  "icon": "https://cdn.simpleicons.org/atlassian",
+  "description": "Enables secure, permission-aware access to Atlassian Cloud products.",
+  "longDescription": "Enables secure, permission-aware access to Atlassian Cloud products.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.atlassian",
+  "submittedBy": "com.atlassian",
+  "url": "https://mcp.atlassian.com/v1/sse",
+  "transport": "sse",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

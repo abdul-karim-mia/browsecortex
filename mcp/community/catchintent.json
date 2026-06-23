@@ -1,0 +1,19 @@
+{
+  "id": "catchintent",
+  "name": "CatchIntent",
+  "icon": "https://cdn.simpleicons.org/target",
+  "description": "AI-native social listening. Monitor buying signals and run GTM workflows via natural language.",
+  "longDescription": "AI-native social listening. Monitor buying signals and run GTM workflows via natural language.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.1",
+  "author": "com.catchintent",
+  "submittedBy": "com.catchintent",
+  "url": "https://engine.catchintent.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,42 @@
+{
+  "id": "sentry",
+  "name": "Sentry",
+  "icon": "https://cdn.simpleicons.org/sentry",
+  "description": "Debug production errors, query issues, and analyze performance (local stdio with PAT)",
+  "longDescription": "Official Sentry MCP server for interacting with Sentry data. Query issues, get error details, analyze performance, and use AI-powered search. Requires local stdio transport with Sentry User Auth Token (remote endpoint is OAuth-only). Also requires an LLM provider (OpenAI or Anthropic) for AI-powered tools.",
+  "category": "devops",
+  "tier": "community",
+  "version": "1.0",
+  "author": "Sentry",
+  "submittedBy": "admin",
+  "url": "https://github.com/getsentry/sentry-mcp",
+  "transport": "stdio",
+  "docsUrl": "https://github.com/getsentry/sentry-mcp",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "Sentry User Auth Token",
+    "placeholder": "sntryu_...",
+    "helperUrl": "https://sentry.io/settings/account/api/auth-tokens/",
+    "helperText": "Create a User Auth Token at sentry.io/settings/account/api/auth-tokens/ with required scopes"
+  },
+  "tools": [
+    "get_issue",
+    "list_issues",
+    "search_issues",
+    "get_event",
+    "get_project_stats",
+    "get_release_stats",
+    "ai_search_issues",
+    "ai_explain_error",
+    "ai_suggest_fix"
+  ],
+  "examplePrompts": [
+    "Find the latest errors in my project",
+    "Explain the root cause of issue #1234",
+    "Search for errors related to 'database connection'",
+    "Show me performance regressions in the last deploy",
+    "Get stats for the 'web' project",
+    "Suggest a fix for this TypeError"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "packmind",
+  "name": "Packmind",
+  "icon": "https://cdn.simpleicons.org/packmind",
+  "description": "Packmind captures, scales, and enforces your organization's technical decisions.",
+  "longDescription": "Packmind captures, scales, and enforces your organization's technical decisions.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.packmind",
+  "submittedBy": "ai.packmind",
+  "url": "https://app.packmind.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/PackmindHub/packmind",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

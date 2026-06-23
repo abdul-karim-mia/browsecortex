@@ -1,0 +1,19 @@
+{
+  "id": "web-search",
+  "name": "Web Search",
+  "icon": "https://cdn.simpleicons.org/search",
+  "description": "Web search for AI agents \u2014 one tool across 6 engines, routed to the cheapest + cached.",
+  "longDescription": "Web search for AI agents \u2014 one tool across 6 engines, routed to the cheapest + cached.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "ai.groundroute",
+  "submittedBy": "ai.groundroute",
+  "url": "https://api.groundroute.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/PROJECT-B-26/groundroute-mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

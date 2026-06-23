@@ -1,0 +1,19 @@
+{
+  "id": "dns",
+  "name": "DNS",
+  "icon": "https://cdn.simpleicons.org/dns",
+  "description": "DNS & email security scanner \u2014 51 tools for SPF, DMARC, DKIM, DNSSEC, SSL, and more.",
+  "longDescription": "DNS & email security scanner \u2014 51 tools for SPF, DMARC, DKIM, DNSSEC, SSL, and more.",
+  "category": "community",
+  "tier": "community",
+  "version": "2.10.1",
+  "author": "com.blackveilsecurity",
+  "submittedBy": "com.blackveilsecurity",
+  "url": "https://dns-mcp.blackveilsecurity.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/MadaBurns/bv-mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

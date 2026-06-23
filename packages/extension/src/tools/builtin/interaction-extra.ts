@@ -3,6 +3,7 @@
  * click, checkbox/dropdown, key/text input, form inspection.
  */
 import type { ToolDefinition, ToolResult } from '../types';
+import { findFrameId } from './interaction';
 
 async function tabId(args: Record<string, unknown>, getActive: () => Promise<number>) {
   return typeof args.tab_id === 'number' ? args.tab_id : getActive();
@@ -10,11 +11,12 @@ async function tabId(args: Record<string, unknown>, getActive: () => Promise<num
 
 async function runInPage<A extends unknown[]>(
   id: number,
+  frameId: number,
   func: (...a: A) => unknown,
   args: A,
 ): Promise<ToolResult> {
   try {
-    const [res] = await chrome.scripting.executeScript({ target: { tabId: id }, func, args });
+    const [res] = await chrome.scripting.executeScript({ target: { tabId: id, frameIds: [frameId] }, func, args });
     return (res?.result as ToolResult) ?? { error: 'No result.' };
   } catch (e) {
     return { error: e instanceof Error ? e.message : String(e) };
@@ -23,50 +25,98 @@ async function runInPage<A extends unknown[]>(
 
 export const hoverElement: ToolDefinition = {
   name: 'hover_element',
-  description: 'Dispatch hover (mouseenter/mouseover) on an element by CSS selector.',
+  description: 'Dispatch hover (mouseenter/mouseover) on an element by CSS selector or annotation_id.',
   parameters: {
     type: 'object',
-    properties: { selector: { type: 'string' }, tab_id: { type: 'number' } },
-    required: ['selector'],
+    properties: {
+      selector: { type: 'string' },
+      annotation_id: { type: 'number', description: 'The [n] id from a prior annotate_page call.' },
+      tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe.' },
+    },
   },
   destructive: false,
   timeout: 'page_interact',
   async execute(args, ctx) {
+    if (args.selector === undefined && args.annotation_id === undefined) {
+      return { error: 'Either selector or annotation_id must be provided.' };
+    }
+    const tabIdVal = await tabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(tabIdVal, String(args.frame_selector));
+      if (resolved === undefined) return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      targetFrameId = resolved;
+    }
     return runInPage(
-      await tabId(args, ctx.getActiveTabId),
-      (selector: string) => {
-        const el = document.querySelector(selector);
+      tabIdVal,
+      targetFrameId,
+      (selector: string | null, annId: number | null) => {
+        const el = (() => {
+          if (annId !== null) {
+            const w = window as unknown as { __bmAnnotations?: Element[] };
+            return w.__bmAnnotations?.[annId - 1] as HTMLElement ?? null;
+          }
+          if (selector) {
+            return document.querySelector(selector) as HTMLElement ?? null;
+          }
+          return null;
+        })();
         if (!el) return { error: 'Element not found.' };
         for (const type of ['mouseenter', 'mouseover', 'mousemove']) {
           el.dispatchEvent(new MouseEvent(type, { bubbles: true }));
         }
         return { hovered: true };
       },
-      [String(args.selector)],
+      [(args.selector as string) ?? null, typeof args.annotation_id === 'number' ? args.annotation_id : null],
     );
   },
 };
 
 export const focusElement: ToolDefinition = {
   name: 'focus_element',
-  description: 'Focus an element (e.g. to open a dropdown) by CSS selector.',
+  description: 'Focus an element (e.g. to open a dropdown) by CSS selector or annotation_id.',
   parameters: {
     type: 'object',
-    properties: { selector: { type: 'string' }, tab_id: { type: 'number' } },
-    required: ['selector'],
+    properties: {
+      selector: { type: 'string' },
+      annotation_id: { type: 'number', description: 'The [n] id from a prior annotate_page call.' },
+      tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe.' },
+    },
   },
   destructive: false,
   timeout: 'page_interact',
   async execute(args, ctx) {
+    if (args.selector === undefined && args.annotation_id === undefined) {
+      return { error: 'Either selector or annotation_id must be provided.' };
+    }
+    const tabIdVal = await tabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(tabIdVal, String(args.frame_selector));
+      if (resolved === undefined) return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      targetFrameId = resolved;
+    }
     return runInPage(
-      await tabId(args, ctx.getActiveTabId),
-      (selector: string) => {
-        const el = document.querySelector<HTMLElement>(selector);
+      tabIdVal,
+      targetFrameId,
+      (selector: string | null, annId: number | null) => {
+        const el = (() => {
+          if (annId !== null) {
+            const w = window as unknown as { __bmAnnotations?: Element[] };
+            return w.__bmAnnotations?.[annId - 1] as HTMLElement ?? null;
+          }
+          if (selector) {
+            return document.querySelector<HTMLElement>(selector);
+          }
+          return null;
+        })();
         if (!el) return { error: 'Element not found.' };
         el.focus();
         return { focused: true };
       },
-      [String(args.selector)],
+      [(args.selector as string) ?? null, typeof args.annotation_id === 'number' ? args.annotation_id : null],
     );
   },
 };
@@ -77,14 +127,26 @@ function clickVariant(name: string, event: string, description: string): ToolDef
     description,
     parameters: {
       type: 'object',
-      properties: { selector: { type: 'string' }, tab_id: { type: 'number' } },
+      properties: {
+        selector: { type: 'string' },
+        tab_id: { type: 'number' },
+        frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe.' },
+      },
       required: ['selector'],
     },
     destructive: false,
     timeout: 'page_interact',
     async execute(args, ctx) {
+      const tabIdVal = await tabId(args, ctx.getActiveTabId);
+      let targetFrameId = 0;
+      if (args.frame_selector) {
+        const resolved = await findFrameId(tabIdVal, String(args.frame_selector));
+        if (resolved === undefined) return { error: `Iframe not found for selector: ${args.frame_selector}` };
+        targetFrameId = resolved;
+      }
       return runInPage(
-        await tabId(args, ctx.getActiveTabId),
+        tabIdVal,
+        targetFrameId,
         (selector: string, ev: string) => {
           const el = document.querySelector(selector);
           if (!el) return { error: 'Element not found.' };
@@ -110,24 +172,48 @@ export const rightClickElement = clickVariant(
 
 export const scrollToElement: ToolDefinition = {
   name: 'scroll_to_element',
-  description: 'Scroll an element into view by CSS selector.',
+  description: 'Scroll an element into view by CSS selector or annotation_id.',
   parameters: {
     type: 'object',
-    properties: { selector: { type: 'string' }, tab_id: { type: 'number' } },
-    required: ['selector'],
+    properties: {
+      selector: { type: 'string' },
+      annotation_id: { type: 'number', description: 'The [n] id from a prior annotate_page call.' },
+      tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe.' },
+    },
   },
   destructive: false,
   timeout: 'page_interact',
   async execute(args, ctx) {
+    if (args.selector === undefined && args.annotation_id === undefined) {
+      return { error: 'Either selector or annotation_id must be provided.' };
+    }
+    const tabIdVal = await tabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(tabIdVal, String(args.frame_selector));
+      if (resolved === undefined) return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      targetFrameId = resolved;
+    }
     return runInPage(
-      await tabId(args, ctx.getActiveTabId),
-      (selector: string) => {
-        const el = document.querySelector(selector);
+      tabIdVal,
+      targetFrameId,
+      (selector: string | null, annId: number | null) => {
+        const el = (() => {
+          if (annId !== null) {
+            const w = window as unknown as { __bmAnnotations?: Element[] };
+            return w.__bmAnnotations?.[annId - 1] as HTMLElement ?? null;
+          }
+          if (selector) {
+            return document.querySelector(selector);
+          }
+          return null;
+        })();
         if (!el) return { error: 'Element not found.' };
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return { scrolled: true };
       },
-      [String(args.selector)],
+      [(args.selector as string) ?? null, typeof args.annotation_id === 'number' ? args.annotation_id : null],
     );
   },
 };
@@ -141,14 +227,23 @@ export const setCheckbox: ToolDefinition = {
       selector: { type: 'string' },
       checked: { type: 'boolean' },
       tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe.' },
     },
     required: ['selector', 'checked'],
   },
   destructive: false,
   timeout: 'page_interact',
   async execute(args, ctx) {
+    const tabIdVal = await tabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(tabIdVal, String(args.frame_selector));
+      if (resolved === undefined) return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      targetFrameId = resolved;
+    }
     return runInPage(
-      await tabId(args, ctx.getActiveTabId),
+      tabIdVal,
+      targetFrameId,
       (selector: string, checked: boolean) => {
         const el = document.querySelector<HTMLInputElement>(selector);
         if (!el) return { error: 'Element not found.' };
@@ -169,14 +264,23 @@ export const selectDropdown: ToolDefinition = {
       selector: { type: 'string' },
       value: { type: 'string' },
       tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe.' },
     },
     required: ['selector', 'value'],
   },
   destructive: false,
   timeout: 'page_interact',
   async execute(args, ctx) {
+    const tabIdVal = await tabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(tabIdVal, String(args.frame_selector));
+      if (resolved === undefined) return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      targetFrameId = resolved;
+    }
     return runInPage(
-      await tabId(args, ctx.getActiveTabId),
+      tabIdVal,
+      targetFrameId,
       (selector: string, value: string) => {
         const el = document.querySelector<HTMLSelectElement>(selector);
         if (!el) return { error: 'Element not found.' };
@@ -198,14 +302,26 @@ export const getDropdownOptions: ToolDefinition = {
   description: 'List all options (value + label) of a <select> element.',
   parameters: {
     type: 'object',
-    properties: { selector: { type: 'string' }, tab_id: { type: 'number' } },
+    properties: {
+      selector: { type: 'string' },
+      tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe.' },
+    },
     required: ['selector'],
   },
   destructive: false,
   timeout: 'page_read',
   async execute(args, ctx) {
+    const tabIdVal = await tabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(tabIdVal, String(args.frame_selector));
+      if (resolved === undefined) return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      targetFrameId = resolved;
+    }
     return runInPage(
-      await tabId(args, ctx.getActiveTabId),
+      tabIdVal,
+      targetFrameId,
       (selector: string) => {
         const el = document.querySelector<HTMLSelectElement>(selector);
         if (!el) return { error: 'Element not found.' };
@@ -226,14 +342,23 @@ export const pressKey: ToolDefinition = {
       key: { type: 'string' },
       selector: { type: 'string' },
       tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe.' },
     },
     required: ['key'],
   },
   destructive: false,
   timeout: 'page_interact',
   async execute(args, ctx) {
+    const tabIdVal = await tabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(tabIdVal, String(args.frame_selector));
+      if (resolved === undefined) return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      targetFrameId = resolved;
+    }
     return runInPage(
-      await tabId(args, ctx.getActiveTabId),
+      tabIdVal,
+      targetFrameId,
       (key: string, selector: string | null) => {
         const el = selector
           ? document.querySelector<HTMLElement>(selector)
@@ -254,14 +379,26 @@ export const clearInput: ToolDefinition = {
   description: 'Clear the value of an input or textarea by CSS selector.',
   parameters: {
     type: 'object',
-    properties: { selector: { type: 'string' }, tab_id: { type: 'number' } },
+    properties: {
+      selector: { type: 'string' },
+      tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe.' },
+    },
     required: ['selector'],
   },
   destructive: false,
   timeout: 'page_interact',
   async execute(args, ctx) {
+    const tabIdVal = await tabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(tabIdVal, String(args.frame_selector));
+      if (resolved === undefined) return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      targetFrameId = resolved;
+    }
     return runInPage(
-      await tabId(args, ctx.getActiveTabId),
+      tabIdVal,
+      targetFrameId,
       (selector: string) => {
         const el = document.querySelector<HTMLInputElement | HTMLTextAreaElement>(selector);
         if (!el) return { error: 'Element not found.' };
@@ -278,13 +415,27 @@ export const getFormFields: ToolDefinition = {
   name: 'get_form_fields',
   description:
     'Detect form fields on the page: name, type, label, required flag, and current value.',
-  parameters: { type: 'object', properties: { tab_id: { type: 'number' } } },
+  parameters: {
+    type: 'object',
+    properties: {
+      tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe.' },
+    },
+  },
   destructive: false,
   readsExternal: true,
   timeout: 'page_read',
   async execute(args, ctx) {
+    const tabIdVal = await tabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(tabIdVal, String(args.frame_selector));
+      if (resolved === undefined) return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      targetFrameId = resolved;
+    }
     return runInPage(
-      await tabId(args, ctx.getActiveTabId),
+      tabIdVal,
+      targetFrameId,
       () => {
         const fields = Array.from(
           document.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(

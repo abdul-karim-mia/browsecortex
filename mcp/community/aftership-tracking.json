@@ -1,0 +1,19 @@
+{
+  "id": "aftership-tracking",
+  "name": "AfterShip Tracking",
+  "icon": "https://cdn.simpleicons.org/aftership",
+  "description": "Track packages across 1,300+ global carriers with real-time status and AI-powered delivery dates.",
+  "longDescription": "Track packages across 1,300+ global carriers with real-time status and AI-powered delivery dates.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.aftership.mcp",
+  "submittedBy": "com.aftership.mcp",
+  "url": "https://mcp.aftership.com/tracking/public",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

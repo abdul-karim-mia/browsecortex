@@ -1,0 +1,19 @@
+{
+  "id": "bright-data",
+  "name": "Bright Data",
+  "icon": "https://cdn.simpleicons.org/brightdata",
+  "description": "One MCP for the Web. Easily search, crawl, navigate, and extract websites without getting blocked.\u2026",
+  "longDescription": "One MCP for the Web. Easily search, crawl, navigate, and extract websites without getting blocked.\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@luminati-io/brightdata-mcp/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/brightdata/brightdata-mcp-sse",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

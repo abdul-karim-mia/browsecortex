@@ -1,0 +1,19 @@
+{
+  "id": "freddy",
+  "name": "Freddy",
+  "icon": "https://cdn.simpleicons.org/robot",
+  "description": "Connect your wearables, rings and training apps, then ask your AI about your own health data.",
+  "longDescription": "Connect your wearables, rings and training apps, then ask your AI about your own health data.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "coach.freddy",
+  "submittedBy": "coach.freddy",
+  "url": "https://freddy.coach/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://freddy.coach",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "cryptorefills",
+  "name": "Cryptorefills",
+  "icon": "https://cdn.simpleicons.org/bitcoin",
+  "description": "Buy gift cards and top-ups from the industry leader. 6000+ brands, 195 countries. 4.7\u2605, 98% CSAT",
+  "longDescription": "Buy gift cards and top-ups from the industry leader. 6000+ brands, 195 countries. 4.7\u2605, 98% CSAT",
+  "category": "community",
+  "tier": "community",
+  "version": "1.1",
+  "author": "com.cryptorefills",
+  "submittedBy": "com.cryptorefills",
+  "url": "https://api.cryptorefills.com/mcp/sse",
+  "transport": "sse",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

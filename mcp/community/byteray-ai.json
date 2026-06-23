@@ -1,0 +1,19 @@
+{
+  "id": "byteray-ai",
+  "name": "ByteRay AI",
+  "icon": "https://cdn.simpleicons.org/byteray",
+  "description": "AI-augmented binary vulnerability analysis with 38 MCP tools for taint tracing and zero-day hunting",
+  "longDescription": "AI-augmented binary vulnerability analysis with 38 MCP tools for taint tracing and zero-day hunting",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.byteray",
+  "submittedBy": "ai.byteray",
+  "url": "https://mcp.byteray.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://byteray.ai",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

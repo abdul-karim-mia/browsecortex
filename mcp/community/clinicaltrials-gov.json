@@ -1,0 +1,19 @@
+{
+  "id": "clinicaltrials-gov",
+  "name": "ClinicalTrials.gov",
+  "icon": "https://cdn.simpleicons.org/clinicaltrials",
+  "description": "Provide structured access to ClinicalTrials.gov data for searching, retrieving, and analyzing clin\u2026",
+  "longDescription": "Provide structured access to ClinicalTrials.gov data for searching, retrieving, and analyzing clin\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "1.16.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@plainyogurt21/clintrials-mcp/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

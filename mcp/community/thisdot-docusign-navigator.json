@@ -1,0 +1,19 @@
+{
+  "id": "thisdot-docusign-navigator",
+  "name": "Thisdot Docusign Navigator",
+  "icon": "https://cdn.simpleicons.org/docusign",
+  "description": "Secure Docusign Navigator integration for AI assistants to access and analyze agreement data.",
+  "longDescription": "Secure Docusign Navigator integration for AI assistants to access and analyze agreement data.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.2",
+  "author": "co.thisdot.docusign-navigator",
+  "submittedBy": "co.thisdot.docusign-navigator",
+  "url": "https://docusign-navigator.thisdot.co/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://docusign-navigator.thisdot.co",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

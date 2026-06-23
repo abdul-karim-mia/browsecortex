@@ -1,0 +1,24 @@
+{
+  "id": "raisekit",
+  "name": "RaiseKit",
+  "icon": "https://cdn.simpleicons.org/raisekit",
+  "description": "CRM for VC fundraising. Pipeline, Gmail drafts, deck signals, VC intel \u2014 from your AI.",
+  "longDescription": "CRM for VC fundraising. Pipeline, Gmail drafts, deck signals, VC intel \u2014 from your AI.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "co.raisekit",
+  "submittedBy": "co.raisekit",
+  "url": "https://raisekit.co/api/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://raisekit.co",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer <token>. Generate an agent token at https://raisekit.co/settings/agents"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

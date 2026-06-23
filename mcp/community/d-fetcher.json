@@ -1,0 +1,19 @@
+{
+  "id": "d-fetcher",
+  "name": "DFetcher",
+  "icon": "https://cdn.simpleicons.org/download",
+  "description": "Vitamin D synthesis calculator: sun position, UV, IU/min, time to dose, sunburn risk, daily window.",
+  "longDescription": "Vitamin D synthesis calculator: sun position, UV, IU/min, time to dose, sunburn risk, daily window.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.dfetcher",
+  "submittedBy": "com.dfetcher",
+  "url": "https://dfetcher.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://dfetcher.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

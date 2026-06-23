@@ -1,0 +1,19 @@
+{
+  "id": "curie-commerce",
+  "name": "Curie Commerce",
+  "icon": "https://cdn.simpleicons.org/commerce",
+  "description": "Search, compare in 3D, and buy products from 5.6M+ Shopify stores. Free tier; Pro adds checkout.",
+  "longDescription": "Search, compare in 3D, and buy products from 5.6M+ Shopify stores. Free tier; Pro adds checkout.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "co.curie",
+  "submittedBy": "co.curie",
+  "url": "https://chat.curie.app/api/mcp/global",
+  "transport": "sse",
+  "docsUrl": "https://chat.curie.app",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

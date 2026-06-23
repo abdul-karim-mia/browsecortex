@@ -1,0 +1,19 @@
+{
+  "id": "ainumbers-fintech-intelligence-suite",
+  "name": "AINumbers Fintech",
+  "icon": "https://cdn.simpleicons.org/fintech",
+  "description": "420+ client-side fintech tools (ISO 20022, AML, DORA, agentic payments) as MCP widgets. Zero PII.",
+  "longDescription": "420+ client-side fintech tools (ISO 20022, AML, DORA, agentic payments) as MCP widgets. Zero PII.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.2.0",
+  "author": "co.ainumbers",
+  "submittedBy": "co.ainumbers",
+  "url": "https://mcp.ainumbers.co/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://ainumbers.co",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

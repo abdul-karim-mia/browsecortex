@@ -37,6 +37,7 @@ import { askUser } from './builtin/ask-user';
 import { subagentTools } from './builtin/subagent';
 import { debuggerInteractionTools } from './builtin/debugger-interaction';
 import { externalAiTools } from './builtin/external-ai';
+import { ocrTools } from './builtin/ocr';
 
 const ALL_TOOLS: ToolDefinition[] = [
   ...tabTools,
@@ -60,6 +61,7 @@ const ALL_TOOLS: ToolDefinition[] = [
   ...skillTools,
   ...backupTools,
   ...miscTools,
+  ...ocrTools,
   runJavascript,
   askUser,
   ...subagentTools,

@@ -1,0 +1,19 @@
+{
+  "id": "adbutler",
+  "name": "AdButler",
+  "icon": "https://cdn.simpleicons.org/adbutler",
+  "description": "Manage AdButler campaigns, zones, ad items, VAST, and reports from Claude, ChatGPT, and Cursor.",
+  "longDescription": "Manage AdButler campaigns, zones, ad items, VAST, and reports from Claude, ChatGPT, and Cursor.",
+  "category": "community",
+  "tier": "community",
+  "version": "2.3.0",
+  "author": "com.adbutler",
+  "submittedBy": "com.adbutler",
+  "url": "https://mcp.adbutler.com/sse",
+  "transport": "sse",
+  "docsUrl": "https://github.com/adbutler/mcp-server",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

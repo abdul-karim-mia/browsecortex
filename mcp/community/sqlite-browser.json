@@ -1,0 +1,19 @@
+{
+  "id": "sqlite-browser",
+  "name": "SQLite Browser",
+  "icon": "https://cdn.simpleicons.org/database",
+  "description": "Explore, query, and inspect SQLite databases with ease. List tables, preview results, and view det\u2026",
+  "longDescription": "Explore, query, and inspect SQLite databases with ease. List tables, preview results, and view det\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "1.16.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@wgong/sqlite-mcp-server/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/wgong/sqlite-mcp-server",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

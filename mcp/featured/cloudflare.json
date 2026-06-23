@@ -1,0 +1,41 @@
+{
+  "id": "cloudflare",
+  "name": "Cloudflare",
+  "icon": "https://cdn.simpleicons.org/cloudflare",
+  "description": "Access the entire Cloudflare API (DNS, Workers, R2, Zero Trust) via 2 tools",
+  "longDescription": "Official Cloudflare API MCP server providing access to 2,500+ endpoints across DNS, Workers, R2, Zero Trust, and all other Cloudflare products through just two tools: search() and execute(). Uses Code Mode for token efficiency (~1K tokens vs 1M+ for native tools).",
+  "category": "devops",
+  "tier": "featured",
+  "version": "1.0",
+  "author": "Cloudflare",
+  "submittedBy": "admin",
+  "url": "https://mcp.cloudflare.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://developers.cloudflare.com/agents/model-context-protocol/cloudflare/servers-for-cloudflare/",
+  "auth": "oauth",
+  "authFallback": "api_key",
+  "oauthConfig": {
+    "authUrl": "https://dash.cloudflare.com/oauth/authorize",
+    "tokenUrl": "https://api.cloudflare.com/client/v4/oauth/token",
+    "revokeUrl": "https://dash.cloudflare.com/profile/api-tokens",
+    "scopes": ["account:read", "zone:read", "zone:edit"]
+  },
+  "apiKeyConfig": {
+    "label": "Cloudflare API Token",
+    "placeholder": "CF_API_TOKEN_...",
+    "helperUrl": "https://dash.cloudflare.com/profile/api-tokens",
+    "helperText": "Create an API token with required permissions (Account Resources: Read for auto-detect)"
+  },
+  "tools": [
+    "search",
+    "execute"
+  ],
+  "examplePrompts": [
+    "List all my DNS records for example.com",
+    "Create a new Worker script",
+    "Show R2 bucket usage statistics",
+    "Get Zero Trust access logs",
+    "Search for Cloudflare API endpoints for Pages",
+    "Execute a GraphQL query against Cloudflare Analytics"
+  ]
+}

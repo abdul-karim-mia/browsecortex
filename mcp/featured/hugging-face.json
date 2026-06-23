@@ -1,0 +1,41 @@
+{
+  "id": "hugging-face",
+  "name": "Hugging Face",
+  "icon": "https://cdn.simpleicons.org/huggingface",
+  "description": "Search models, datasets, Spaces, and run Gradio apps from the Hugging Face Hub",
+  "longDescription": "Official Hugging Face MCP server connecting AI assistants to the Hugging Face Hub. Search and explore models, datasets, Spaces, papers, and documentation. Run and manage Gradio Spaces as tools. Configure tools and Spaces at https://huggingface.co/settings/mcp",
+  "category": "ai",
+  "tier": "featured",
+  "version": "1.0",
+  "author": "Hugging Face",
+  "submittedBy": "admin",
+  "url": "https://huggingface.co/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://huggingface.co/docs/hub/hf-mcp-server",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "Hugging Face User Access Token",
+    "placeholder": "hf_...",
+    "helperUrl": "https://huggingface.co/settings/tokens",
+    "helperText": "Create a token at huggingface.co/settings/tokens with read/write scope"
+  },
+  "tools": [
+    "search_models",
+    "search_datasets",
+    "search_spaces",
+    "search_papers",
+    "search_docs",
+    "get_repo_details",
+    "run_space",
+    "manage_jobs"
+  ],
+  "examplePrompts": [
+    "Find the best LLM for code generation",
+    "Search for image classification datasets",
+    "Run the Whisper transcription Space",
+    "Get details for the Llama-3-8B model",
+    "Find papers about RAG architectures",
+    "Search Hugging Face docs for transformers pipelines"
+  ]
+}

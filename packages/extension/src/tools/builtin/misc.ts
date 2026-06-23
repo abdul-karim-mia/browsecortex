@@ -5,21 +5,83 @@
  */
 import type { ToolDefinition } from '../types';
 import { analyzeImage } from '@/agent/vision';
+import { ensureOffscreen } from '@/background/offscreen-manager';
+import * as vfs from '@/fs/vfs';
+import { runDbgSession } from './debugger-interaction';
 
 export const screenshotTab: ToolDefinition = {
   name: 'screenshot_tab',
-  description: 'Capture a screenshot of the visible area of the active tab (PNG data URL).',
-  parameters: { type: 'object', properties: {} },
+  description: 'Capture a screenshot of the visible area of the active tab (PNG data URL) or full page.',
+  parameters: {
+    type: 'object',
+    properties: {
+      tab_id: { type: 'number', description: 'The tab ID to capture.' },
+      full_page: { type: 'boolean', description: 'Whether to capture the entire scrollable page (requires debugger).' },
+      format: { type: 'string', enum: ['png', 'jpeg'], default: 'png', description: 'The format of the screenshot.' },
+      quality: { type: 'number', description: 'Compression quality for jpeg (0-100).' },
+    },
+  },
   destructive: false,
   timeout: 'page_read',
-  async execute() {
+  async execute(args, ctx) {
     try {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      const dataUrl = await chrome.tabs.captureVisibleTab(tab?.windowId, { format: 'png' });
-      return { dataUrl, note: 'Base64 PNG data URL of the visible viewport.' };
+      const tabIdVal = typeof args.tab_id === 'number' ? args.tab_id : await ctx.getActiveTabId();
+      if (args.full_page === true) {
+        const base64Data = await runDbgSession(tabIdVal, async (send) => {
+          const metrics = await send('Page.getLayoutMetrics', {});
+          const { width, height } = metrics.contentSize;
+
+          await send('Emulation.setDeviceMetricsOverride', {
+            width: Math.ceil(width),
+            height: Math.ceil(height),
+            deviceScaleFactor: 1,
+            mobile: false,
+          });
+
+          const res = await send('Page.captureScreenshot', {
+            format: args.format === 'jpeg' ? 'jpeg' : 'png',
+            quality: args.quality !== undefined ? Number(args.quality) : undefined,
+            captureBeyondViewport: true,
+          });
+
+          await send('Emulation.clearDeviceMetricsOverride', {});
+          return res.data;
+        });
+
+        const mime = args.format === 'jpeg' ? 'image/jpeg' : 'image/png';
+        return { dataUrl: `data:${mime};base64,${base64Data}`, note: 'Base64 data URL of the full rendered page.' };
+      }
+
+      const tab = await chrome.tabs.get(tabIdVal);
+      const captureOpts: { format: 'png' | 'jpeg'; quality?: number } = {
+        format: args.format === 'jpeg' ? 'jpeg' : 'png',
+      };
+      if (args.quality !== undefined && captureOpts.format === 'jpeg') {
+        captureOpts.quality = Number(args.quality);
+      }
+      const dataUrl = await chrome.tabs.captureVisibleTab(tab.windowId, captureOpts);
+      return { dataUrl, note: 'Base64 data URL of the visible viewport.' };
     } catch (e) {
       return { error: `Screenshot failed: ${e instanceof Error ? e.message : String(e)}` };
     }
+  },
+};
+
+export const screenshotFullPage: ToolDefinition = {
+  name: 'screenshot_full_page',
+  description: 'Capture a full-page screenshot (scrolling the entire page), returning a base64 data URL.',
+  parameters: {
+    type: 'object',
+    properties: {
+      tab_id: { type: 'number', description: 'The tab ID to capture.' },
+      format: { type: 'string', enum: ['png', 'jpeg'], default: 'png' },
+      quality: { type: 'number', description: 'Compression quality for jpeg (0-100).' },
+    },
+  },
+  destructive: false,
+  timeout: 'page_read',
+  async execute(args, ctx) {
+    return screenshotTab.execute({ ...args, full_page: true }, ctx);
   },
 };
 
@@ -33,23 +95,18 @@ export const writeClipboard: ToolDefinition = {
   },
   destructive: true,
   timeout: 'page_interact',
-  async execute(args, ctx) {
-    const tabId = await ctx.getActiveTabId();
-    const [res] = await chrome.scripting.executeScript({
-      target: { tabId },
-      func: async (text: string) => {
-        try {
-          await navigator.clipboard.writeText(text);
-          return { ok: true };
-        } catch (e) {
-          return { ok: false, error: String(e) };
-        }
-      },
-      args: [String(args.text)],
-    });
-    const data = res?.result as { ok: boolean; error?: string } | undefined;
-    if (!data?.ok) return { error: data?.error ?? 'Clipboard write failed.' };
-    return { written: true };
+  async execute(args) {
+    try {
+      await ensureOffscreen();
+      const res = await chrome.runtime.sendMessage({
+        type: 'clipboard_write',
+        text: String(args.text),
+      });
+      if (!res?.ok) return { error: res?.error ?? 'Clipboard write failed.' };
+      return { written: true };
+    } catch (e) {
+      return { error: `Clipboard write failed: ${e instanceof Error ? e.message : String(e)}` };
+    }
   },
 };
 
@@ -60,25 +117,21 @@ export const readClipboard: ToolDefinition = {
   destructive: false,
   readsExternal: true,
   timeout: 'page_interact',
-  async execute(_args, ctx) {
+  async execute() {
     const has = await chrome.permissions
       .contains({ permissions: ['clipboardRead'] })
       .catch(() => false);
     if (!has) return { error: 'Clipboard read permission not granted.' };
-    const tabId = await ctx.getActiveTabId();
-    const [res] = await chrome.scripting.executeScript({
-      target: { tabId },
-      func: async () => {
-        try {
-          return { ok: true, text: await navigator.clipboard.readText() };
-        } catch (e) {
-          return { ok: false, error: String(e) };
-        }
-      },
-    });
-    const data = res?.result as { ok: boolean; text?: string; error?: string } | undefined;
-    if (!data?.ok) return { error: data?.error ?? 'Clipboard read failed.' };
-    return { text: data.text };
+    try {
+      await ensureOffscreen();
+      const res = await chrome.runtime.sendMessage({
+        type: 'clipboard_read',
+      });
+      if (!res?.ok) return { error: res?.error ?? 'Clipboard read failed.' };
+      return { text: res.text };
+    } catch (e) {
+      return { error: `Clipboard read failed: ${e instanceof Error ? e.message : String(e)}` };
+    }
   },
 };
 
@@ -95,10 +148,10 @@ export const runJavascript: ToolDefinition = {
   destructive: true,
   timeout: 'page_interact',
   async execute(args, ctx) {
-    const tabId = await ctx.getActiveTabId();
+    const tabIdVal = await ctx.getActiveTabId();
     try {
       const [res] = await chrome.scripting.executeScript({
-        target: { tabId },
+        target: { tabId: tabIdVal },
         // ISOLATED world: shares the DOM but not the page's JS globals/functions,
         // shrinking the blast radius if a prompt-injected script is run (C-EXT-1).
         // Destructive + the loop's external-content guard already force a
@@ -182,10 +235,136 @@ export const sendNotification: ToolDefinition = {
   },
 };
 
+export const getElementScreenshot: ToolDefinition = {
+  name: 'get_element_screenshot',
+  description: 'Capture a screenshot of a specific element on the page (returned as a base64 PNG data URL).',
+  parameters: {
+    type: 'object',
+    properties: {
+      selector: { type: 'string', description: 'CSS selector of the element to capture.' },
+      tab_id: { type: 'number' },
+    },
+    required: ['selector'],
+  },
+  destructive: false,
+  timeout: 'page_read',
+  async execute(args, ctx) {
+    const tabIdVal = typeof args.tab_id === 'number' ? args.tab_id : await ctx.getActiveTabId();
+    const selector = String(args.selector);
+
+    const getRect = (sel: string) => {
+      const el = document.querySelector(sel);
+      if (!el) return null;
+      const rect = el.getBoundingClientRect();
+      return {
+        x: rect.left,
+        y: rect.top,
+        width: rect.width,
+        height: rect.height,
+        devicePixelRatio: window.devicePixelRatio,
+      };
+    };
+
+    try {
+      const [rectRes] = await chrome.scripting.executeScript({
+        target: { tabId: tabIdVal },
+        func: getRect,
+        args: [selector],
+      });
+      const rect = rectRes?.result as { x: number; y: number; width: number; height: number; devicePixelRatio: number } | null;
+      if (!rect) {
+        return { error: `Element not found for selector: ${selector}` };
+      }
+
+      const tab = await chrome.tabs.get(tabIdVal);
+      const dataUrl = await chrome.tabs.captureVisibleTab(tab.windowId, { format: 'png' });
+
+      await ensureOffscreen();
+      const res = await chrome.runtime.sendMessage({
+        type: 'crop_image',
+        dataUrl,
+        rect,
+      });
+
+      if (!res?.ok) {
+        return { error: res?.error ?? 'Cropping failed.' };
+      }
+
+      return { dataUrl: res.croppedDataUrl };
+    } catch (e) {
+      return { error: `Element screenshot failed: ${e instanceof Error ? e.message : String(e)}` };
+    }
+  },
+};
+
+export const compareScreenshots: ToolDefinition = {
+  name: 'compare_screenshots',
+  description:
+    'Compare two screenshots (baseline and current) and generate a pixel diff. ' +
+    'Images can be virtual filesystem paths (VFS) or base64 image data URLs.',
+  parameters: {
+    type: 'object',
+    properties: {
+      baseline: { type: 'string', description: 'Baseline image (VFS path or base64 Data URL).' },
+      current: { type: 'string', description: 'Current image (VFS path or base64 Data URL).' },
+    },
+    required: ['baseline', 'current'],
+  },
+  destructive: false,
+  timeout: 'page_read',
+  async execute(args, ctx) {
+    const resolveImage = async (val: string): Promise<string> => {
+      if (val.startsWith('data:image/')) return val;
+      if (ctx.conversationId) {
+        try {
+          const content = await vfs.readFile(ctx.conversationId, val);
+          if (content.startsWith('data:image/')) return content;
+        } catch {
+          // ignore
+        }
+      }
+      return val;
+    };
+
+    try {
+      const img1 = await resolveImage(String(args.baseline));
+      const img2 = await resolveImage(String(args.current));
+
+      if (!img1.startsWith('data:image/')) {
+        return { error: 'Baseline image must be a base64 data URL or a valid VFS image path.' };
+      }
+      if (!img2.startsWith('data:image/')) {
+        return { error: 'Current image must be a base64 data URL or a valid VFS image path.' };
+      }
+
+      await ensureOffscreen();
+      const res = await chrome.runtime.sendMessage({
+        type: 'compare_images',
+        img1,
+        img2,
+      });
+
+      if (!res?.ok) return { error: res?.error ?? 'Comparison failed.' };
+      return {
+        diffDataUrl: res.diffDataUrl,
+        mismatchPercent: res.mismatchPercent,
+        diffPixels: res.diffPixels,
+        totalPixels: res.totalPixels,
+        dimensions: res.dimensions,
+      };
+    } catch (e) {
+      return { error: `Screenshot comparison failed: ${e instanceof Error ? e.message : String(e)}` };
+    }
+  },
+};
+
 export const miscTools = [
   screenshotTab,
+  screenshotFullPage,
   analyzeScreenshot,
   writeClipboard,
   readClipboard,
   sendNotification,
+  getElementScreenshot,
+  compareScreenshots,
 ];

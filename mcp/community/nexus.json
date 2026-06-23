@@ -1,0 +1,19 @@
+{
+  "id": "nexus",
+  "name": "Nexus",
+  "icon": "https://cdn.simpleicons.org/nexus",
+  "description": "Zero-setup MCP gateway securely connecting AI to your tools with authentication and workflows",
+  "longDescription": "Zero-setup MCP gateway securely connecting AI to your tools with authentication and workflows",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.100",
+  "author": "com.civic",
+  "submittedBy": "com.civic",
+  "url": "https://nexus.civic.com/hub/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://nexus.civic.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

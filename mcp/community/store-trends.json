@@ -1,0 +1,24 @@
+{
+  "id": "store-trends",
+  "name": "Store Trends",
+  "icon": "https://cdn.simpleicons.org/shoppingcart",
+  "description": "App Store and Play downloads and charts over time, Android uses bundle ID. Free key at trendsmcp.ai",
+  "longDescription": "App Store and Play downloads and charts over time, Android uses bundle ID. Free key at trendsmcp.ai",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.3",
+  "author": "ai.trendsmcp",
+  "submittedBy": "ai.trendsmcp",
+  "url": "https://app-store.api.trendsmcp.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://trendsmcp.ai",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token. Get your free API key at https://trendsmcp.ai"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

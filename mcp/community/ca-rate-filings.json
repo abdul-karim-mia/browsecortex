@@ -1,0 +1,19 @@
+{
+  "id": "ca-rate-filings",
+  "name": "CA Rate Filings",
+  "icon": "https://cdn.simpleicons.org/finance",
+  "description": "Natural-language search over California's public insurance rate, rule & form filings.",
+  "longDescription": "Natural-language search over California's public insurance rate, rule & form filings.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.serff",
+  "submittedBy": "ai.serff",
+  "url": "https://api.serff.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://serff.ai",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

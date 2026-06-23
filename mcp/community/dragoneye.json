@@ -1,0 +1,19 @@
+{
+  "id": "dragoneye",
+  "name": "Dragoneye",
+  "icon": "https://cdn.simpleicons.org/eye",
+  "description": "Build zero-shot video models for object detection, and category and attribute classification.",
+  "longDescription": "Build zero-shot video models for object detection, and category and attribute classification.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.dragoneye",
+  "submittedBy": "ai.dragoneye",
+  "url": "https://nexus.api.dragoneye.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

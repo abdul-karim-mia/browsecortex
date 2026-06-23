@@ -1,0 +1,19 @@
+{
+  "id": "waystation-slack",
+  "name": "Waystation \u2014 Slack",
+  "icon": "https://cdn.simpleicons.org/slack",
+  "description": "Send messages, access channels, and manage files in your Slack workspace.",
+  "longDescription": "Send messages, access channels, and manage files in your Slack workspace.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.3.1",
+  "author": "ai.waystation",
+  "submittedBy": "ai.waystation",
+  "url": "https://waystation.ai/slack/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/waystation-ai/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "arcjet",
+  "name": "Arcjet",
+  "icon": "https://cdn.simpleicons.org/arcjet",
+  "description": "An MCP server for Arcjet - the runtime security platform that ships with your AI code.",
+  "longDescription": "An MCP server for Arcjet - the runtime security platform that ships with your AI code.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.arcjet",
+  "submittedBy": "com.arcjet",
+  "url": "https://api.arcjet.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/arcjet/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

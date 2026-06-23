@@ -1,0 +1,19 @@
+{
+  "id": "matchbox",
+  "name": "Matchbox",
+  "icon": "https://cdn.simpleicons.org/matchbox",
+  "description": "Describe a problem in plain language; get matching products with honest caveats. Never sponsored.",
+  "longDescription": "Describe a problem in plain language; get matching products with honest caveats. Never sponsored.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.askmatchbox",
+  "submittedBy": "com.askmatchbox",
+  "url": "https://askmatchbox.com/api/mcp/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://askmatchbox.com/connect",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

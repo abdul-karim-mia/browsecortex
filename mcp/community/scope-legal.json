@@ -1,0 +1,19 @@
+{
+  "id": "scope-legal",
+  "name": "Scope (Legal)",
+  "icon": "https://cdn.simpleicons.org/scope",
+  "description": "Dispatch litigation work to legal-services vendors from any MCP-compatible AI workflow.",
+  "longDescription": "Dispatch litigation work to legal-services vendors from any MCP-compatible AI workflow.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.1",
+  "author": "bid.scope",
+  "submittedBy": "bid.scope",
+  "url": "https://scope.bid/api/mcp/legal",
+  "transport": "streamable_http",
+  "docsUrl": "https://scope.bid/mcp/legal",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

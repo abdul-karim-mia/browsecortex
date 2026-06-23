@@ -1,0 +1,19 @@
+{
+  "id": "agentic-news",
+  "name": "Agentic News",
+  "icon": "https://cdn.simpleicons.org/news",
+  "description": "AI-powered news intelligence \u2014 21 tools for personalized monitoring, briefings, and semantic search",
+  "longDescription": "AI-powered news intelligence \u2014 21 tools for personalized monitoring, briefings, and semantic search",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.agentic-news",
+  "submittedBy": "ai.agentic-news",
+  "url": "https://api.agentic-news.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://agentic-news.ai/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

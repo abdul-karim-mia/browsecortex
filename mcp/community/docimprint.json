@@ -1,0 +1,19 @@
+{
+  "id": "docimprint",
+  "name": "Docimprint",
+  "icon": "https://cdn.simpleicons.org/document",
+  "description": "AI document intelligence: extract, summarize, claim-check, and notarize with on-chain proofs.",
+  "longDescription": "AI document intelligence: extract, summarize, claim-check, and notarize with on-chain proofs.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.docimprint",
+  "submittedBy": "com.docimprint",
+  "url": "https://api.docimprint.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/sawftware-labs/docimprint",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

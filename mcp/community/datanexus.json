@@ -1,0 +1,19 @@
+{
+  "id": "datanexus",
+  "name": "DataNexus",
+  "icon": "https://cdn.simpleicons.org/database",
+  "description": "Public data intelligence for AI agents \u2014 CVE, compliance, patents, contracts, domains.",
+  "longDescription": "Public data intelligence for AI agents \u2014 CVE, compliance, patents, contracts, domains.",
+  "category": "community",
+  "tier": "community",
+  "version": "2.4.10",
+  "author": "com.datanexusmcp",
+  "submittedBy": "com.datanexusmcp",
+  "url": "https://datanexusmcp.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,24 @@
+{
+  "id": "ecommerce-trends",
+  "name": "Ecommerce Trends",
+  "icon": "https://cdn.simpleicons.org/shoppingcart",
+  "description": "Product and category demand trend volume over time, with growth signals. Free key at trendsmcp.ai",
+  "longDescription": "Product and category demand trend volume over time, with growth signals. Free key at trendsmcp.ai",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.trendsmcp",
+  "submittedBy": "ai.trendsmcp",
+  "url": "https://ecommerce.api.trendsmcp.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://trendsmcp.ai",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token. Get your free API key at https://trendsmcp.ai"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

@@ -3,6 +3,7 @@
  * in-page polling/observers, so they work where tab load events don't fire.
  */
 import type { ToolDefinition, ToolResult } from '../types';
+import { findFrameId } from './interaction';
 
 async function tabId(args: Record<string, unknown>, getActive: () => Promise<number>) {
   return typeof args.tab_id === 'number' ? args.tab_id : getActive();
@@ -10,11 +11,12 @@ async function tabId(args: Record<string, unknown>, getActive: () => Promise<num
 
 async function runInPage<A extends unknown[]>(
   id: number,
+  frameId: number,
   func: (...a: A) => unknown,
   args: A,
 ): Promise<ToolResult> {
   try {
-    const [res] = await chrome.scripting.executeScript({ target: { tabId: id }, func, args });
+    const [res] = await chrome.scripting.executeScript({ target: { tabId: id, frameIds: [frameId] }, func, args });
     return (res?.result as ToolResult) ?? { error: 'No result.' };
   } catch (e) {
     return { error: e instanceof Error ? e.message : String(e) };
@@ -53,13 +55,25 @@ export const waitForNetworkIdle: ToolDefinition = {
     'Wait until network activity goes quiet (no new resource requests for ~1s). Use for SPAs.',
   parameters: {
     type: 'object',
-    properties: { tab_id: { type: 'number' }, timeout_ms: { type: 'number' } },
+    properties: {
+      tab_id: { type: 'number' },
+      timeout_ms: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe.' },
+    },
   },
   destructive: false,
   timeout: 'network_idle',
   async execute(args, ctx) {
+    const id = await tabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(id, String(args.frame_selector));
+      if (resolved === undefined) return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      targetFrameId = resolved;
+    }
     return runInPage(
-      await tabId(args, ctx.getActiveTabId),
+      id,
+      targetFrameId,
       async (timeoutMs: number) => {
         const start = Date.now();
         let lastCount = performance.getEntriesByType('resource').length;
@@ -94,14 +108,23 @@ function waitElement(name: string, mode: 'appear' | 'disappear'): ToolDefinition
         selector: { type: 'string' },
         timeout_ms: { type: 'number' },
         tab_id: { type: 'number' },
+        frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe.' },
       },
       required: ['selector'],
     },
     destructive: false,
     timeout: 'navigation',
     async execute(args, ctx) {
+      const id = await tabId(args, ctx.getActiveTabId);
+      let targetFrameId = 0;
+      if (args.frame_selector) {
+        const resolved = await findFrameId(id, String(args.frame_selector));
+        if (resolved === undefined) return { error: `Iframe not found for selector: ${args.frame_selector}` };
+        targetFrameId = resolved;
+      }
       return runInPage(
-        await tabId(args, ctx.getActiveTabId),
+        id,
+        targetFrameId,
         async (selector: string, timeoutMs: number, wantPresent: boolean) => {
           const start = Date.now();
           while (Date.now() - start < timeoutMs) {
@@ -129,14 +152,23 @@ export const waitForText: ToolDefinition = {
       text: { type: 'string' },
       timeout_ms: { type: 'number' },
       tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe.' },
     },
     required: ['text'],
   },
   destructive: false,
   timeout: 'navigation',
   async execute(args, ctx) {
+    const id = await tabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(id, String(args.frame_selector));
+      if (resolved === undefined) return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      targetFrameId = resolved;
+    }
     return runInPage(
-      await tabId(args, ctx.getActiveTabId),
+      id,
+      targetFrameId,
       async (text: string, timeoutMs: number) => {
         const start = Date.now();
         const needle = text.toLowerCase();
@@ -155,12 +187,26 @@ export const waitForText: ToolDefinition = {
 export const getScrollPosition: ToolDefinition = {
   name: 'get_scroll_position',
   description: 'Get the current scroll position and page dimensions.',
-  parameters: { type: 'object', properties: { tab_id: { type: 'number' } } },
+  parameters: {
+    type: 'object',
+    properties: {
+      tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe.' },
+    }
+  },
   destructive: false,
   timeout: 'page_read',
   async execute(args, ctx) {
+    const id = await tabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(id, String(args.frame_selector));
+      if (resolved === undefined) return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      targetFrameId = resolved;
+    }
     return runInPage(
-      await tabId(args, ctx.getActiveTabId),
+      id,
+      targetFrameId,
       () => ({
         x: window.scrollX,
         y: window.scrollY,
@@ -176,14 +222,27 @@ export const setScrollPosition: ToolDefinition = {
   description: 'Scroll the page to exact x/y coordinates.',
   parameters: {
     type: 'object',
-    properties: { x: { type: 'number' }, y: { type: 'number' }, tab_id: { type: 'number' } },
+    properties: {
+      x: { type: 'number' },
+      y: { type: 'number' },
+      tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe.' },
+    },
     required: ['y'],
   },
   destructive: false,
   timeout: 'page_interact',
   async execute(args, ctx) {
+    const id = await tabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(id, String(args.frame_selector));
+      if (resolved === undefined) return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      targetFrameId = resolved;
+    }
     return runInPage(
-      await tabId(args, ctx.getActiveTabId),
+      id,
+      targetFrameId,
       (x: number, y: number) => {
         window.scrollTo(x, y);
         return { x: window.scrollX, y: window.scrollY };
@@ -199,13 +258,25 @@ export const infiniteScrollLoad: ToolDefinition = {
     'Repeatedly scroll to the bottom to trigger lazy loading until no more content loads or a cap is reached.',
   parameters: {
     type: 'object',
-    properties: { max_scrolls: { type: 'number' }, tab_id: { type: 'number' } },
+    properties: {
+      max_scrolls: { type: 'number' },
+      tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe.' },
+    },
   },
   destructive: false,
   timeout: 'navigation',
   async execute(args, ctx) {
+    const id = await tabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(id, String(args.frame_selector));
+      if (resolved === undefined) return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      targetFrameId = resolved;
+    }
     return runInPage(
-      await tabId(args, ctx.getActiveTabId),
+      id,
+      targetFrameId,
       async (maxScrolls: number) => {
         let last = 0;
         let scrolls = 0;
@@ -223,6 +294,114 @@ export const infiniteScrollLoad: ToolDefinition = {
   },
 };
 
+export const waitForCondition: ToolDefinition = {
+  name: 'wait_for_condition',
+  description: 'Wait until a custom JavaScript expression evaluates to truthy.',
+  parameters: {
+    type: 'object',
+    properties: {
+      script: { type: 'string', description: 'JavaScript expression to evaluate (e.g. "window.loaded === true").' },
+      timeout_ms: { type: 'number', description: 'Timeout in milliseconds (default 10,000).' },
+      tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe.' },
+    },
+    required: ['script'],
+  },
+  destructive: false,
+  timeout: 'navigation',
+  async execute(args, ctx) {
+    const id = await tabId(args, ctx.getActiveTabId);
+    let targetFrameId = 0;
+    if (args.frame_selector) {
+      const resolved = await findFrameId(id, String(args.frame_selector));
+      if (resolved === undefined) return { error: `Iframe not found for selector: ${args.frame_selector}` };
+      targetFrameId = resolved;
+    }
+    return runInPage(
+      id,
+      targetFrameId,
+      async (script: string, timeoutMs: number) => {
+        const start = Date.now();
+        while (Date.now() - start < timeoutMs) {
+          try {
+            const res = eval(script);
+            if (res) return { ok: true };
+          } catch (e) {
+            // Ignore syntax/runtime errors during polling
+          }
+          await new Promise((r) => setTimeout(r, 250));
+        }
+        return { ok: false, note: 'Timed out waiting for condition.' };
+      },
+      [String(args.script), Number(args.timeout_ms) || 10_000],
+    );
+  },
+};
+
+export const waitForUrl: ToolDefinition = {
+  name: 'wait_for_url',
+  description: "Wait until the tab's URL matches a pattern (substring, exact, glob, or regex).",
+  parameters: {
+    type: 'object',
+    properties: {
+      url: { type: 'string', description: 'The URL pattern to match.' },
+      match: {
+        type: 'string',
+        enum: ['substring', 'exact', 'glob', 'regex'],
+        description: 'The matching method to use (default "substring").',
+      },
+      timeout_ms: { type: 'number', description: 'Timeout in milliseconds (default 10,000).' },
+      tab_id: { type: 'number', description: 'The tab ID to check.' },
+    },
+    required: ['url'],
+  },
+  destructive: false,
+  timeout: 'navigation',
+  async execute(args, ctx) {
+    const id = await tabId(args, ctx.getActiveTabId);
+    const targetUrl = String(args.url);
+    const mode = args.match || 'substring';
+    const timeoutMs = Number(args.timeout_ms) || 10_000;
+    const start = Date.now();
+
+    let matches: (url: string) => boolean;
+    if (mode === 'exact') {
+      matches = (u) => u === targetUrl;
+    } else if (mode === 'regex') {
+      try {
+        const re = new RegExp(targetUrl);
+        matches = (u) => re.test(u);
+      } catch (e) {
+        return { error: `Invalid regex pattern: ${e instanceof Error ? e.message : String(e)}` };
+      }
+    } else if (mode === 'glob') {
+      try {
+        const escaped = targetUrl.replace(/[.+^${}()|[\]\\]/g, '\\$&');
+        const re = new RegExp('^' + escaped.replace(/\*/g, '.*').replace(/\?/g, '.') + '$');
+        matches = (u) => re.test(u);
+      } catch (e) {
+        return { error: `Invalid glob pattern: ${e instanceof Error ? e.message : String(e)}` };
+      }
+    } else {
+      matches = (u) => u.includes(targetUrl);
+    }
+
+    while (Date.now() - start < timeoutMs) {
+      try {
+        const tab = await chrome.tabs.get(id);
+        if (tab.url && matches(tab.url)) {
+          return { ok: true, url: tab.url };
+        }
+      } catch (e) {
+        // Tab might be loading or closed
+      }
+      await new Promise((r) => setTimeout(r, 250));
+    }
+    const finalTab = await chrome.tabs.get(id).catch(() => null);
+    return { ok: false, url: finalTab?.url, note: 'Timed out waiting for URL.' };
+  },
+};
+
 export const waitTools = [
   waitForPageLoad,
   waitForNetworkIdle,
@@ -232,4 +411,6 @@ export const waitTools = [
   getScrollPosition,
   setScrollPosition,
   infiniteScrollLoad,
+  waitForCondition,
+  waitForUrl,
 ];

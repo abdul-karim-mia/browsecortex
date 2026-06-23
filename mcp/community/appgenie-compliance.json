@@ -1,0 +1,19 @@
+{
+  "id": "appgenie-compliance",
+  "name": "AppGenie Compliance",
+  "icon": "https://cdn.simpleicons.org/appgenie",
+  "description": "Cited, standards-aware compliance overlay for AI assistants (ISO, NIST, FedRAMP, IRAP), over MCP.",
+  "longDescription": "Cited, standards-aware compliance overlay for AI assistants (ISO, NIST, FedRAMP, IRAP), over MCP.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "au.com.appgenie",
+  "submittedBy": "au.com.appgenie",
+  "url": "https://compliance.appgenie.com.au/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://appgenie.com.au/compliance-mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,53 @@
+{
+  "id": "shopify",
+  "name": "Shopify",
+  "icon": "https://cdn.simpleicons.org/shopify",
+  "description": "Full Admin API access: products, orders, customers, inventory, analytics (75 tools)",
+  "longDescription": "Community Shopify MCP server (aserper/shopify-mcp) providing complete Admin GraphQL API coverage with 75 tools for products, orders, customers, inventory, collections, discounts, analytics, fulfillment, and more. Supports both static access tokens and OAuth client credentials. Built-in cost-aware rate limiting.",
+  "category": "commerce",
+  "tier": "featured",
+  "version": "1.0",
+  "author": "aserper",
+  "submittedBy": "admin",
+  "url": "https://github.com/aserper/shopify-mcp",
+  "transport": "stdio",
+  "docsUrl": "https://github.com/aserper/shopify-mcp",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "Shopify Admin API Access Token",
+    "placeholder": "shpat_...",
+    "helperUrl": "https://shopify.dev/docs/apps/build/authentication/access-tokens",
+    "helperText": "Create a Custom App in Shopify Admin > Settings > Apps > Develop apps, enable Admin API scopes"
+  },
+  "tools": [
+    "list_products",
+    "get_product",
+    "create_product",
+    "update_product",
+    "delete_product",
+    "list_orders",
+    "get_order",
+    "create_order",
+    "update_order",
+    "list_customers",
+    "get_customer",
+    "create_customer",
+    "update_customer",
+    "list_inventory",
+    "adjust_inventory",
+    "list_collections",
+    "get_collection",
+    "create_collection",
+    "run_shopifyql",
+    "get_analytics"
+  ],
+  "examplePrompts": [
+    "List all products with low inventory",
+    "Create a new product with variants",
+    "Show me orders from the last 7 days",
+    "Get customer lifetime value for customer 123",
+    "Run a ShopifyQL query for sales by month",
+    "Update inventory for product variant"
+  ]
+}

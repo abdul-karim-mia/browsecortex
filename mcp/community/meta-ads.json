@@ -1,0 +1,19 @@
+{
+  "id": "meta-ads",
+  "name": "Meta Ads",
+  "icon": "https://cdn.simpleicons.org/meta",
+  "description": "Facebook / Meta Ads automation with AI: analyze performance, test creatives, optimize spend.",
+  "longDescription": "Facebook / Meta Ads automation with AI: analyze performance, test creatives, optimize spend.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.102",
+  "author": "co.pipeboard",
+  "submittedBy": "co.pipeboard",
+  "url": "https://mcp.pipeboard.co/meta-ads-mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

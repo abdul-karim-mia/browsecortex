@@ -1,0 +1,19 @@
+{
+  "id": "agent-skills-search",
+  "name": "Agent Skills Search",
+  "icon": "https://cdn.simpleicons.org/robotframework",
+  "description": "Search and discover Agent Skills from the skills.sh registry. Powered by HAPI MCP server.",
+  "longDescription": "Search and discover Agent Skills from the skills.sh registry. Powered by HAPI MCP server.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.com.mcp",
+  "submittedBy": "ai.com.mcp",
+  "url": "https://skills-sh.run.mcp.com.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://run.mcp.com.ai",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

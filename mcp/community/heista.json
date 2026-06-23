@@ -1,0 +1,19 @@
+{
+  "id": "heista",
+  "name": "Heista",
+  "icon": "https://cdn.simpleicons.org/heista",
+  "description": "Decode video ads, load brand intelligence, generate ad scripts.",
+  "longDescription": "Decode video ads, load brand intelligence, generate ad scripts.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "co.heista",
+  "submittedBy": "co.heista",
+  "url": "https://www.heista.co/api/mcp/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://www.heista.co",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

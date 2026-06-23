@@ -1,0 +1,19 @@
+{
+  "id": "adcritter-for-developers",
+  "name": "AdCritter for Developers",
+  "icon": "https://cdn.simpleicons.org/adcritter",
+  "description": "AdCritter ads platform: docs, API reference, app scaffolding, and white-label integration.",
+  "longDescription": "AdCritter ads platform: docs, API reference, app scaffolding, and white-label integration.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "com.adcritter",
+  "submittedBy": "com.adcritter",
+  "url": "https://mcp.adcritter.com/mcp/dev",
+  "transport": "streamable_http",
+  "docsUrl": "https://adcritter.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

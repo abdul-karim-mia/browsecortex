@@ -1,0 +1,24 @@
+{
+  "id": "egnyte-remote",
+  "name": "Egnyte Remote",
+  "icon": "https://cdn.simpleicons.org/egnyte",
+  "description": "Egnyte's remote MCP server for secure AI access, search, upload and file management in your account.",
+  "longDescription": "Egnyte's remote MCP server for secure AI access, search, upload and file management in your account.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.egnyte",
+  "submittedBy": "com.egnyte",
+  "url": "https://mcp-server.egnyte.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "OAuth 2.0 Bearer token for Egnyte authentication. Obtain via OAuth flow at https://mcp-oauth.egnyte.com/domain_picker.html"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

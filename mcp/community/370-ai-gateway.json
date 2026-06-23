@@ -1,0 +1,24 @@
+{
+  "id": "370-ai-gateway",
+  "name": "370.AI Gateway",
+  "icon": "https://cdn.simpleicons.org/openai",
+  "description": "One key, 100+ models \u2014 chat with any LLM and generate video, images, speech. Free trial at 370.ai.",
+  "longDescription": "One key, 100+ models \u2014 chat with any LLM and generate video, images, speech. Free trial at 370.ai.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.router",
+  "submittedBy": "ai.router",
+  "url": "https://mcp.router.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://370.ai",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Your 370.ai API key as a bearer token, e.g. 'Bearer sk-...'. Get a free key with trial credits at https://370.ai."
+  },
+  "tools": [],
+  "examplePrompts": []
+}

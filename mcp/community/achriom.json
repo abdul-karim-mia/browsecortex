@@ -1,0 +1,19 @@
+{
+  "id": "achriom",
+  "name": "Achriom",
+  "icon": "https://cdn.simpleicons.org/achriom",
+  "description": "The media memory layer for AI agents and their humans. Books, movies, music, shows, and anime.",
+  "longDescription": "The media memory layer for AI agents and their humans. Books, movies, music, shows, and anime.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.achriom",
+  "submittedBy": "com.achriom",
+  "url": "https://mcp.achriom.com/mcp?api_key={api_key}",
+  "transport": "streamable_http",
+  "docsUrl": "https://www.achriom.com/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "dock-ai",
+  "name": "Dock AI",
+  "icon": "https://cdn.simpleicons.org/docker",
+  "description": "Discover MCP endpoints for real-world entities by resolving business domains.",
+  "longDescription": "Discover MCP endpoints for real-world entities by resolving business domains.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "co.dockai",
+  "submittedBy": "co.dockai",
+  "url": "https://mcp.dockai.co/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://dockai.co",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

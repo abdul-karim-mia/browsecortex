@@ -1,0 +1,24 @@
+{
+  "id": "bright-security",
+  "name": "Bright Security",
+  "icon": "https://cdn.simpleicons.org/security",
+  "description": "Enables AI agents to access Bright Security tools for app discovery and security testing.",
+  "longDescription": "Enables AI agents to access Bright Security tools for app discovery and security testing.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.brightsec",
+  "submittedBy": "com.brightsec",
+  "url": "https://{instance}.brightsec.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://brightsec.com",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bright Security API key for authentication."
+  },
+  "tools": [],
+  "examplePrompts": []
+}

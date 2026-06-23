@@ -1,0 +1,19 @@
+{
+  "id": "llm-attack-info",
+  "name": "LLM Attack Info",
+  "icon": "https://cdn.simpleicons.org/security",
+  "description": "Query and retrieve information about various adversarial tactics and techniques used in cyber atta\u2026",
+  "longDescription": "Query and retrieve information about various adversarial tactics and techniques used in cyber atta\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "2.1",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@alex-llm/attack-mcp-server/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/alex-llm/attAck-mcp-server",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "feedsquad",
+  "name": "Feedsquad",
+  "icon": "https://cdn.simpleicons.org/rss",
+  "description": "Schedule and publish to LinkedIn, X, and Threads from your AI. Content calendar, approval-first.",
+  "longDescription": "Schedule and publish to LinkedIn, X, and Threads from your AI. Content calendar, approval-first.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.1.0",
+  "author": "com.feedsquad",
+  "submittedBy": "com.feedsquad",
+  "url": "https://feedsquad.com/api/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://feedsquad.com/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

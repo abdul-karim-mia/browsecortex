@@ -1,0 +1,28 @@
+{
+  "id": "cloudflare",
+  "name": "Cloudflare",
+  "icon": "https://cdn.simpleicons.org/cloudflare",
+  "description": "Cloudflare MCP servers",
+  "longDescription": "Suite of Cloudflare MCP servers providing access to Cloudflare products including Documentation, Workers Bindings, Workers Builds, Observability, Containers, Browser Rendering, Logpush, AI Gateway, Audit Logs, DNS Analytics, and more. Each server provides specialized tools for its product area.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.cloudflare.mcp",
+  "submittedBy": "com.cloudflare.mcp",
+  "url": "https://docs.mcp.cloudflare.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/cloudflare/mcp-server-cloudflare",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [
+    "search",
+    "execute"
+  ],
+  "examplePrompts": [
+    "Search Cloudflare docs for Workers best practices",
+    "Get DNS analytics for my zone",
+    "List my Workers and their deployments",
+    "Check observability logs for errors",
+    "Spin up a sandbox container for testing"
+  ]
+}

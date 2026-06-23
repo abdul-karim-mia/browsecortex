@@ -1,0 +1,51 @@
+{
+  "id": "github",
+  "name": "GitHub",
+  "icon": "https://cdn.simpleicons.org/github",
+  "description": "Search repos, create issues, manage PRs directly from BrowseCortex",
+  "longDescription": "Connect GitHub to BrowseCortex and let the AI manage your entire dev workflow. Search repositories, read files, create issues, open pull requests, review code, and manage workflows—all from the side panel.",
+  "category": "code",
+  "tier": "featured",
+  "version": "1.0",
+  "author": "BrowseCortex",
+  "submittedBy": null,
+  "url": "https://api.githubcopilot.com/mcp/",
+  "transport": "streamable_http",
+  "docsUrl": "https://docs.github.com/en/copilot",
+  "auth": "oauth",
+  "authFallback": "api_key",
+  "oauthConfig": {
+    "authUrl": "https://github.com/login/oauth/authorize",
+    "tokenUrl": "https://github.com/login/oauth/access_token",
+    "revokeUrl": "https://github.com/settings/applications",
+    "scopes": ["repo", "read:user", "user:email"]
+  },
+  "apiKeyConfig": {
+    "label": "GitHub Personal Access Token",
+    "placeholder": "ghp_...",
+    "helperUrl": "https://github.com/settings/tokens",
+    "helperText": "Create a token with 'repo' and 'read:user' scopes"
+  },
+  "tools": [
+    "search_repositories",
+    "get_file_contents",
+    "create_issue",
+    "create_pull_request",
+    "list_commits",
+    "get_issue",
+    "add_comment",
+    "list_pull_requests",
+    "get_pull_request",
+    "update_issue",
+    "create_branch",
+    "get_me"
+  ],
+  "examplePrompts": [
+    "Search for open issues labeled 'bug' in my repos",
+    "Create a pull request for my latest branch with a summary",
+    "Summarize what changed in the last 5 commits on main",
+    "Find all repos I contributed to this month",
+    "Review this pull request and suggest improvements",
+    "Close issue #42 with a summary message"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "noonai-yolo-face-video-anonymization",
+  "name": "NoonAI YOLO Face Only Image/Video Anonymization",
+  "icon": "https://cdn.simpleicons.org/noonai",
+  "description": "YOLO face-only image/video anonymization: face blur, redaction, body and plate masking.",
+  "longDescription": "YOLO face-only image/video anonymization: face blur, redaction, body and plate masking.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.11",
+  "author": "com.dyndns-server.noon-ai",
+  "submittedBy": "com.dyndns-server.noon-ai",
+  "url": "https://noon-ai.dyndns-server.com/face-detection-anonymization-mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://noon-ai.dyndns-server.com/mcp-proof",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

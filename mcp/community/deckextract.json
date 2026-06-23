@@ -1,0 +1,19 @@
+{
+  "id": "deckextract",
+  "name": "DeckExtract",
+  "icon": "https://cdn.simpleicons.org/slides",
+  "description": "Download DocSend and Papermark decks as PDF or PPTX, including email-gated and protected links.",
+  "longDescription": "Download DocSend and Papermark decks as PDF or PPTX, including email-gated and protected links.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.deckextract",
+  "submittedBy": "com.deckextract",
+  "url": "https://deckextract.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://deckextract.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

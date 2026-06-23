@@ -1,0 +1,19 @@
+{
+  "id": "prover",
+  "name": "Prover",
+  "icon": "https://cdn.simpleicons.org/prover",
+  "description": "Lean 4 MCP server: compile, prove theorems, and formalize math with Mathlib.",
+  "longDescription": "Lean 4 MCP server: compile, prove theorems, and formalize math with Mathlib.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "com.axiomatic-ai",
+  "submittedBy": "com.axiomatic-ai",
+  "url": "https://prover.axiomatic-ai.com/mcp/",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/Axiomatic-AI/ax-prover-base-mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

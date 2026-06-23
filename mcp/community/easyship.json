@@ -1,0 +1,19 @@
+{
+  "id": "easyship",
+  "name": "Easyship",
+  "icon": "https://cdn.simpleicons.org/easyship",
+  "description": "Unlock global e-commerce shipping with Easyship's automated tools and worldwide courier network.",
+  "longDescription": "Unlock global e-commerce shipping with Easyship's automated tools and worldwide courier network.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.2.0",
+  "author": "com.easyship",
+  "submittedBy": "com.easyship",
+  "url": "https://mcp.easyship.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/easyship/easyship-mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

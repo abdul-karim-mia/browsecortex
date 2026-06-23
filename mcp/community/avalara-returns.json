@@ -1,0 +1,19 @@
+{
+  "id": "avalara-returns",
+  "name": "Avalara Returns",
+  "icon": "https://cdn.simpleicons.org/avalara",
+  "description": "Avalara Global Returns API for tax returns, filing calendars, and compliance data",
+  "longDescription": "Provides access to Avalara Global Returns API for tax returns, filing calendars, and compliance data",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.avalara",
+  "submittedBy": "com.avalara",
+  "url": "https://mcp.avalara.com/returns",
+  "transport": "streamable_http",
+  "docsUrl": "https://developer.avalara.com/mcp-servers/returns",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

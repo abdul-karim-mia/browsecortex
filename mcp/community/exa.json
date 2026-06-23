@@ -1,0 +1,29 @@
+{
+  "id": "exa",
+  "name": "Exa",
+  "icon": "https://cdn.simpleicons.org/exa",
+  "description": "Fast, intelligent web search and web crawling.\n\nNew mcp tool: Exa-code is a context tool for coding ",
+  "longDescription": "Fast, intelligent web search and web crawling powered by Exa. Provides web search, advanced search with filters, and webpage fetching as clean markdown. Free tier available.",
+  "category": "community",
+  "tier": "community",
+  "version": "3.0.7",
+  "author": "ai.exa",
+  "submittedBy": "ai.exa",
+  "url": "https://mcp.exa.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/exa-labs/exa-mcp-server",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [
+    "web_search_exa",
+    "web_fetch_exa",
+    "web_search_advanced_exa"
+  ],
+  "examplePrompts": [
+    "Search the web for the latest developments in quantum computing",
+    "Fetch and summarize this blog post",
+    "Find research papers about RAG architectures",
+    "Search for TypeScript tutorials from the last month",
+    "Compare funding data for AI startups"
+  ]
+}

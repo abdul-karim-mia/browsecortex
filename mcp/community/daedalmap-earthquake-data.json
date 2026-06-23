@@ -1,0 +1,19 @@
+{
+  "id": "daedalmap-earthquake-data",
+  "name": "DaedalMap Earthquake Data",
+  "icon": "https://cdn.simpleicons.org/map",
+  "description": "Historical earthquake event data and structured earthquake queries from the DaedalMap MCP lane.",
+  "longDescription": "Historical earthquake event data and structured earthquake queries from the DaedalMap MCP lane.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.1",
+  "author": "com.daedalmap",
+  "submittedBy": "com.daedalmap",
+  "url": "https://app.daedalmap.com/mcp/earthquakes",
+  "transport": "streamable_http",
+  "docsUrl": "https://www.daedalmap.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

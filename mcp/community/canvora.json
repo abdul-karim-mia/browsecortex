@@ -1,0 +1,19 @@
+{
+  "id": "canvora",
+  "name": "Canvora",
+  "icon": "https://cdn.simpleicons.org/canvas",
+  "description": "Create professional visuals from text, URLs, or PDFs. Carousels, presentations, posts. 100+ formats",
+  "longDescription": "Create professional visuals from text, URLs, or PDFs. Carousels, presentations, posts. 100+ formats",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.canvora",
+  "submittedBy": "ai.canvora",
+  "url": "https://api.canvora.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

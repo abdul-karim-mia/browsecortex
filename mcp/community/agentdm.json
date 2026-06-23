@@ -1,0 +1,24 @@
+{
+  "id": "agentdm",
+  "name": "AgentDM",
+  "icon": "https://cdn.simpleicons.org/robotframework",
+  "description": "Agent-to-agent messaging platform using MCP for cross-model communication.",
+  "longDescription": "Agent-to-agent messaging platform using MCP for cross-model communication.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "ai.agentdm",
+  "submittedBy": "ai.agentdm",
+  "url": "https://api.agentdm.ai/api/v1/grid",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for authentication (e.g., 'Bearer agentdm_...'). Get your token at https://app.agentdm.ai"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

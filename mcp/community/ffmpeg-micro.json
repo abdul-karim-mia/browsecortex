@@ -1,0 +1,19 @@
+{
+  "id": "ffmpeg-micro",
+  "name": "Ffmpeg Micro",
+  "icon": "https://cdn.simpleicons.org/ffmpeg",
+  "description": "MCP server for the FFmpeg Micro video transcoding API \u2014 create, monitor, download transcodes.",
+  "longDescription": "MCP server for the FFmpeg Micro video transcoding API \u2014 create, monitor, download transcodes.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.3",
+  "author": "com.ffmpeg-micro",
+  "submittedBy": "com.ffmpeg-micro",
+  "url": "https://mcp.ffmpeg-micro.com",
+  "transport": "streamable_http",
+  "docsUrl": "https://ffmpeg-micro.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "cognethics",
+  "name": "Cognethics",
+  "icon": "https://cdn.simpleicons.org/ethics",
+  "description": "Multi-tenant business platform \u2014 6,000+ RBAC-gated MCP tools across finance, ops, docs, agents.",
+  "longDescription": "Multi-tenant business platform \u2014 6,000+ RBAC-gated MCP tools across finance, ops, docs, agents.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "com.cognethics",
+  "submittedBy": "com.cognethics",
+  "url": "https://{tenant}.cognethics.com/api/mcp/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://developers.cognethics.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

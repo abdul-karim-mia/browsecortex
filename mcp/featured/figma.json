@@ -1,0 +1,43 @@
+{
+  "id": "figma",
+  "name": "Figma",
+  "icon": "https://cdn.simpleicons.org/figma",
+  "description": "Read designs, inspect components, generate specs",
+  "longDescription": "Connect Figma so the AI can read your design files, inspect frames and components, pull design tokens, and turn a mockup into implementation notes or a spec without leaving the browser.",
+  "category": "design",
+  "tier": "featured",
+  "version": "1.0",
+  "author": "BrowseCortex",
+  "submittedBy": null,
+  "url": "https://mcp.figma.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://www.figma.com/developers/api",
+  "auth": "oauth",
+  "authFallback": "api_key",
+  "oauthConfig": {
+    "authUrl": "https://www.figma.com/oauth",
+    "tokenUrl": "https://api.figma.com/v1/oauth/token",
+    "revokeUrl": "https://www.figma.com/developers/apps",
+    "scopes": ["file_read"]
+  },
+  "apiKeyConfig": {
+    "label": "Figma Personal Access Token",
+    "placeholder": "figd_...",
+    "helperUrl": "https://www.figma.com/developers/api#access-tokens",
+    "helperText": "Generate a personal access token in Figma account settings"
+  },
+  "tools": [
+    "get_file",
+    "get_node",
+    "get_components",
+    "get_styles",
+    "get_comments"
+  ],
+  "examplePrompts": [
+    "Turn this Figma frame into a component spec",
+    "List the colors and type styles used in this file",
+    "What components are on the homepage frame?",
+    "Generate CSS from this design's tokens",
+    "Summarize the unresolved comments on this file"
+  ]
+}

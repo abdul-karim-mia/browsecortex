@@ -1,0 +1,19 @@
+{
+  "id": "nordic-data",
+  "name": "Nordic Data",
+  "icon": "https://cdn.simpleicons.org/nordic",
+  "description": "Global B2B intelligence for AI agents: 35M+ companies, 1.6M sanctions, KYB pack. 78 tools.",
+  "longDescription": "Global B2B intelligence for AI agents: 35M+ companies, 1.6M sanctions, KYB pack. 78 tools.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.5.0",
+  "author": "cloud.nordicdata",
+  "submittedBy": "cloud.nordicdata",
+  "url": "https://api.nordicdata.cloud/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://nordicdata.cloud",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

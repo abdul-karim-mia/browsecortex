@@ -1,0 +1,19 @@
+{
+  "id": "100hires",
+  "name": "100Hires",
+  "icon": "https://cdn.simpleicons.org/100hires",
+  "description": "Official MCP server for 100Hires ATS: candidates, jobs, applications, interviews, messages.",
+  "longDescription": "Official MCP server for 100Hires ATS: candidates, jobs, applications, interviews, messages.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.100hires",
+  "submittedBy": "com.100hires",
+  "url": "https://mcp.100hires.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://100hires.com/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

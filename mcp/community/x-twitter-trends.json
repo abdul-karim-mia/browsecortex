@@ -1,0 +1,24 @@
+{
+  "id": "x-twitter-trends",
+  "name": "X (Twitter) Trends",
+  "icon": "https://cdn.simpleicons.org/x",
+  "description": "Twitter (X) trends over time, with growth for any keyword. Free key at trendsmcp.ai",
+  "longDescription": "Twitter (X) trends over time, with growth for any keyword. Free key at trendsmcp.ai",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.3",
+  "author": "ai.trendsmcp",
+  "submittedBy": "ai.trendsmcp",
+  "url": "https://x-twitter.api.trendsmcp.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://trendsmcp.ai",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token. Get your free API key at https://trendsmcp.ai"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

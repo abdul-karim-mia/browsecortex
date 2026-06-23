@@ -1,0 +1,19 @@
+{
+  "id": "bidda-compliance",
+  "name": "Bidda Compliance",
+  "icon": "https://cdn.simpleicons.org/bidda",
+  "description": "9,500 verified compliance nodes (EU AI Act, GDPR, HIPAA, DORA, NIST, MITRE). Zero hallucination.",
+  "longDescription": "9,500 verified compliance nodes (EU AI Act, GDPR, HIPAA, DORA, NIST, MITRE). Zero hallucination.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.bidda",
+  "submittedBy": "com.bidda",
+  "url": "https://bidda.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/Bidda-Ai/bidda-mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "servicepal",
+  "name": "ServicePal",
+  "icon": "https://cdn.simpleicons.org/service",
+  "description": "AI phone answering tools for service businesses \u2014 ROI, missed calls, demos across 18 industries",
+  "longDescription": "AI phone answering tools for service businesses \u2014 ROI, missed calls, demos across 18 industries",
+  "category": "community",
+  "tier": "community",
+  "version": "2.0.0",
+  "author": "cloud.servicepal",
+  "submittedBy": "cloud.servicepal",
+  "url": "https://servicepal.cloud/mcp/",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

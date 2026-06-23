@@ -1,0 +1,51 @@
+{
+  "id": "semrush",
+  "name": "Semrush",
+  "icon": "https://cdn.simpleicons.org/semrush",
+  "description": "Access SEO, Trends, and Projects APIs for keyword research, domain analysis, and rank tracking",
+  "longDescription": "Official Semrush MCP server providing access to all Trends API, all SEO API, and read-only Projects API. Supports both OAuth and API key authentication. API key must be passed as 'Authorization: Apikey YOUR_API_KEY' header. Get your API key from Subscription Info > API Units in Semrush.",
+  "category": "marketing",
+  "tier": "featured",
+  "version": "1.0",
+  "author": "Semrush",
+  "submittedBy": "admin",
+  "url": "https://mcp.semrush.com/v1/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://developer.semrush.com/api/introduction/semrush-mcp/",
+  "auth": "oauth",
+  "authFallback": "api_key",
+  "oauthConfig": {
+    "authUrl": "https://api.semrush.com/oauth/authorize",
+    "tokenUrl": "https://api.semrush.com/oauth/token",
+    "revokeUrl": "https://app.semrush.com/account/api-keys",
+    "scopes": ["read"]
+  },
+  "apiKeyConfig": {
+    "label": "Semrush API Key",
+    "placeholder": "YOUR_API_KEY",
+    "helperUrl": "https://app.semrush.com/account/api-units",
+    "helperText": "Copy your API key from Subscription Info > API Units (format: plain key, not Bearer)"
+  },
+  "tools": [
+    "domain_overview",
+    "keyword_overview",
+    "keyword_magic",
+    "position_tracking",
+    "site_audit",
+    "backlink_analytics",
+    "traffic_analytics",
+    "market_explorer",
+    "organic_research",
+    "advertising_research",
+    "keyword_gap",
+    "backlink_gap"
+  ],
+  "examplePrompts": [
+    "Get domain overview for example.com",
+    "Find keyword volume for 'best running shoes'",
+    "Track rankings for my target keywords",
+    "Run a site audit for technical SEO issues",
+    "Analyze backlink profile of a competitor",
+    "Get traffic estimates for a domain"
+  ]
+}

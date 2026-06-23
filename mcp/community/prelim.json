@@ -1,0 +1,19 @@
+{
+  "id": "prelim",
+  "name": "Prelim",
+  "icon": "https://cdn.simpleicons.org/prelim",
+  "description": "Read AI preliminary phone screens \u2014 your roles, candidate scores, transcripts, and analytics.",
+  "longDescription": "Read AI preliminary phone screens \u2014 your roles, candidate scores, transcripts, and analytics.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.0",
+  "author": "chat.prelim",
+  "submittedBy": "chat.prelim",
+  "url": "https://mcp.prelim.chat/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://prelim.chat",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

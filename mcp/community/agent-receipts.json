@@ -1,0 +1,19 @@
+{
+  "id": "agent-receipts",
+  "name": "Agent Receipts",
+  "icon": "https://cdn.simpleicons.org/receipt",
+  "description": "Issue & verify signed (ed25519), hash-chained, timestamped provenance receipts for agent actions.",
+  "longDescription": "Issue & verify signed (ed25519), hash-chained, timestamped provenance receipts for agent actions.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.1",
+  "author": "com.dropwatchhq",
+  "submittedBy": "com.dropwatchhq",
+  "url": "https://agent-receipts.dropwatchhq.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://agent-receipts.dropwatchhq.com",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

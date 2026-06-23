@@ -1,0 +1,50 @@
+{
+  "id": "supabase",
+  "name": "Supabase",
+  "icon": "https://cdn.simpleicons.org/supabase",
+  "description": "Manage Supabase projects, query data, generate types, and run migrations",
+  "longDescription": "Official Supabase MCP server for managing your projects, querying databases with SQL, generating TypeScript types from schema, running migrations, and accessing realtime subscriptions. Supports both OAuth and Personal Access Token authentication.",
+  "category": "data",
+  "tier": "featured",
+  "version": "1.0",
+  "author": "Supabase",
+  "submittedBy": "admin",
+  "url": "https://mcp.supabase.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://supabase.com/docs/guides/ai-tools/mcp",
+  "auth": "oauth",
+  "authFallback": "api_key",
+  "oauthConfig": {
+    "authUrl": "https://supabase.com/dashboard/oauth/authorize",
+    "tokenUrl": "https://api.supabase.com/v1/oauth/token",
+    "revokeUrl": "https://supabase.com/dashboard/account/tokens",
+    "scopes": ["read", "write"]
+  },
+  "apiKeyConfig": {
+    "label": "Supabase Personal Access Token",
+    "placeholder": "sbp_...",
+    "helperUrl": "https://supabase.com/dashboard/account/tokens",
+    "helperText": "Create a PAT at supabase.com/dashboard/account/tokens with required scopes"
+  },
+  "tools": [
+    "list_projects",
+    "get_project",
+    "execute_sql",
+    "list_tables",
+    "get_table_schema",
+    "generate_typescript_types",
+    "get_publishable_keys",
+    "get_project_url",
+    "create_migration",
+    "list_migrations",
+    "apply_migration"
+  ],
+  "examplePrompts": [
+    "List all my Supabase projects",
+    "Run a SQL query on my production database",
+    "Generate TypeScript types for the users table",
+    "Show me the schema for the orders table",
+    "Create a migration to add a new column",
+    "Get the anon key for my project"
+  ]
+}

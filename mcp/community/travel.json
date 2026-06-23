@@ -1,0 +1,19 @@
+{
+  "id": "travel",
+  "name": "Travel",
+  "icon": "https://cdn.simpleicons.org/travel",
+  "description": "AI travel agent \u2014 book flights, hotels, activities, and events worldwide via autonomad.ai.",
+  "longDescription": "AI travel agent \u2014 book flights, hotels, activities, and events worldwide via autonomad.ai.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.4.0",
+  "author": "ai.autonomad",
+  "submittedBy": "ai.autonomad",
+  "url": "https://mcp.autonomad.ai/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://autonomad.ai",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

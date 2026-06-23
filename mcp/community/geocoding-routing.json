@@ -1,0 +1,19 @@
+{
+  "id": "geocoding-routing",
+  "name": "Geocoding & Routing",
+  "icon": "https://cdn.simpleicons.org/map",
+  "description": "Geocoding, truck routing, traffic, weather, and place search via MCP \u2014 11 hosted tools.",
+  "longDescription": "Geocoding, truck routing, traffic, weather, and place search via MCP \u2014 11 hosted tools.",
+  "category": "community",
+  "tier": "community",
+  "version": "2.0.2",
+  "author": "co.thinair",
+  "submittedBy": "co.thinair",
+  "url": "https://geo.thinair.co/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://geo.thinair.co",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

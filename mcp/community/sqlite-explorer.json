@@ -1,0 +1,19 @@
+{
+  "id": "sqlite-explorer",
+  "name": "SQLite Explorer",
+  "icon": "https://cdn.simpleicons.org/database",
+  "description": "Explore your Messages SQLite database to browse tables and inspect schemas with ease. Run flexible\u2026",
+  "longDescription": "Explore your Messages SQLite database to browse tables and inspect schemas with ease. Run flexible\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "1.16.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@afgong/sqlite-mcp-server/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/afgong/sqlite-mcp-server",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

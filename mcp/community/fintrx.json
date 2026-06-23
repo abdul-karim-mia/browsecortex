@@ -1,0 +1,19 @@
+{
+  "id": "fintrx",
+  "name": "Fintrx",
+  "icon": "https://cdn.simpleicons.org/finance",
+  "description": "Bring FINTRX's family office and RIA intelligence into Claude.",
+  "longDescription": "Bring FINTRX's family office and RIA intelligence into Claude.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "com.fintrx",
+  "submittedBy": "com.fintrx",
+  "url": "https://mcp.fintrx.net/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/FINTRX-Inc/fintrx-mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

@@ -1,0 +1,19 @@
+{
+  "id": "contexta",
+  "name": "Contexta",
+  "icon": "https://cdn.simpleicons.org/context",
+  "description": "Persistent memory and knowledge graph for AI assistants \u2014 keyword + vector + graph search.",
+  "longDescription": "Persistent memory and knowledge graph for AI assistants \u2014 keyword + vector + graph search.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.0",
+  "author": "cc.contexta",
+  "submittedBy": "cc.contexta",
+  "url": "https://mcp.contexta.cc/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://contexta.cc",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

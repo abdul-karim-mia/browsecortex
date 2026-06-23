@@ -1,0 +1,24 @@
+{
+  "id": "autogen-agents",
+  "name": "AutoGen Agents",
+  "icon": "https://cdn.simpleicons.org/microsoft",
+  "description": "Create and manage AI agents that collaborate and solve problems through natural language interacti\u2026",
+  "longDescription": "Create and manage AI agents that collaborate and solve problems through natural language interacti\u2026",
+  "category": "community",
+  "tier": "community",
+  "version": "0.3.0",
+  "author": "ai.smithery",
+  "submittedBy": "ai.smithery",
+  "url": "https://server.smithery.ai/@DynamicEndpoints/autogen_mcp/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://github.com/DynamicEndpoints/Autogen_MCP",
+  "auth": "api_key",
+  "authFallback": null,
+  "apiKeyConfig": {
+    "label": "API Key / Bearer Token",
+    "placeholder": "token...",
+    "helperText": "Bearer token for Smithery authentication"
+  },
+  "tools": [],
+  "examplePrompts": []
+}

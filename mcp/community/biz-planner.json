@@ -1,0 +1,19 @@
+{
+  "id": "biz-planner",
+  "name": "Biz Planner",
+  "icon": "https://cdn.simpleicons.org/business",
+  "description": "AI-powered financial simulator for entrepreneurs \u2014 simulate, analyze, and plan any business",
+  "longDescription": "AI-powered financial simulator for entrepreneurs \u2014 simulate, analyze, and plan any business",
+  "category": "community",
+  "tier": "community",
+  "version": "0.6.0",
+  "author": "com.biz-planner",
+  "submittedBy": "com.biz-planner",
+  "url": "https://biz-planner.com/api/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://biz-planner.com/en/mcp",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

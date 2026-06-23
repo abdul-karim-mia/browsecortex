@@ -1,0 +1,19 @@
+{
+  "id": "knox-anchor",
+  "name": "Knox Anchor",
+  "icon": "https://cdn.simpleicons.org/anchor",
+  "description": "Bitcoin-anchored, tamper-evident audit-permanence layer for AI agents, FRE 902(13)/(14)-shaped.",
+  "longDescription": "Bitcoin-anchored, tamper-evident audit-permanence layer for AI agents, FRE 902(13)/(14)-shaped.",
+  "category": "community",
+  "tier": "community",
+  "version": "1.0.1",
+  "author": "com.bonissystems",
+  "submittedBy": "com.bonissystems",
+  "url": "https://bonissystems.com/api/knox/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://bonissystems.com/aam/mcp-server",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}

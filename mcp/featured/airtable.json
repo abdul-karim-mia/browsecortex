@@ -1,0 +1,50 @@
+{
+  "id": "airtable",
+  "name": "Airtable",
+  "icon": "https://cdn.simpleicons.org/airtable",
+  "description": "Search, create, update records and manage bases in Airtable",
+  "longDescription": "Official Airtable MCP server for interacting with your Airtable bases. Search, create, update, and delete records. Manage schemas, views, and fields. Supports both OAuth and Personal Access Token authentication. Requires data.records:read, data.records:write, and schema.bases:read scopes.",
+  "category": "productivity",
+  "tier": "featured",
+  "version": "1.0",
+  "author": "Airtable",
+  "submittedBy": "admin",
+  "url": "https://mcp.airtable.com/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "https://support.airtable.com/docs/using-the-airtable-mcp-server",
+  "auth": "oauth",
+  "authFallback": "api_key",
+  "oauthConfig": {
+    "authUrl": "https://airtable.com/oauth2/v1/authorize",
+    "tokenUrl": "https://airtable.com/oauth2/v1/token",
+    "revokeUrl": "https://airtable.com/account",
+    "scopes": ["data.records:read", "data.records:write", "schema.bases:read", "schema.bases:write"]
+  },
+  "apiKeyConfig": {
+    "label": "Airtable Personal Access Token",
+    "placeholder": "pat...",
+    "helperUrl": "https://airtable.com/create/tokens",
+    "helperText": "Create a PAT at airtable.com/create/tokens with required scopes and base access"
+  },
+  "tools": [
+    "list_bases",
+    "get_base_schema",
+    "list_tables",
+    "get_table",
+    "list_records",
+    "get_record",
+    "create_record",
+    "update_record",
+    "delete_record",
+    "list_views",
+    "get_view"
+  ],
+  "examplePrompts": [
+    "List all my Airtable bases",
+    "Show me the schema for the Projects base",
+    "Create a new record in the Tasks table",
+    "Find all records where Status is 'In Progress'",
+    "Update record rec123 to mark as complete",
+    "Get all views for the Contacts table"
+  ]
+}

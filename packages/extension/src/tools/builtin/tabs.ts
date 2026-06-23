@@ -106,4 +106,31 @@ export const switchToTab: ToolDefinition = {
   },
 };
 
-export const tabTools = [getActiveTab, getAllTabs, openTab, closeTab, switchToTab];
+export const moveTab: ToolDefinition = {
+  name: 'move_tab',
+  description: 'Move a tab to a different index position or to another window.',
+  parameters: {
+    type: 'object',
+    properties: {
+      tab_id: { type: 'number', description: 'The ID of the tab to move.' },
+      index: { type: 'number', description: 'The 0-based position to move the tab to. Use -1 to place at the end.' },
+      window_id: { type: 'number', description: 'Optional window ID to move the tab to.' },
+    },
+    required: ['tab_id'],
+  },
+  destructive: false,
+  timeout: 'tab',
+  async execute(args) {
+    const tabIdVal = Number(args.tab_id);
+    const index = args.index !== undefined ? Number(args.index) : -1;
+    const windowId = args.window_id !== undefined ? Number(args.window_id) : undefined;
+    try {
+      await chrome.tabs.move(tabIdVal, { index, windowId });
+      return { moved: tabIdVal, index, window_id: windowId };
+    } catch (e) {
+      return { error: `Failed to move tab: ${e instanceof Error ? e.message : String(e)}` };
+    }
+  },
+};
+
+export const tabTools = [getActiveTab, getAllTabs, openTab, closeTab, switchToTab, moveTab];

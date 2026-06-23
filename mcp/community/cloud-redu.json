@@ -1,0 +1,19 @@
+{
+  "id": "cloud-redu",
+  "name": "Redu Cloud",
+  "icon": "https://cdn.simpleicons.org/cloud",
+  "description": "Agent-native cloud, EU-hosted. Provision VMs, networks & databases on redu.cloud via MCP.",
+  "longDescription": "Agent-native cloud, EU-hosted. Provision VMs, networks & databases on redu.cloud via MCP.",
+  "category": "community",
+  "tier": "community",
+  "version": "0.1.1",
+  "author": "cloud.redu",
+  "submittedBy": "cloud.redu",
+  "url": "https://mcp.redu.cloud/mcp",
+  "transport": "streamable_http",
+  "docsUrl": "",
+  "auth": "none",
+  "authFallback": null,
+  "tools": [],
+  "examplePrompts": []
+}
