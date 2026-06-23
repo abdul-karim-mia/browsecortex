@@ -1,9 +1,9 @@
 {
   "id": "attio-crm",
   "name": "Attio CRM",
-  "icon": "https://cdn.simpleicons.org/attio",
-  "description": "your Attio CRM data through natural language querie\u2026",
-  "longDescription": "Enable AI assistants to interact directly with your Attio CRM data through natural language querie\u2026",
+  "icon": "https://attio.com/favicon.ico",
+  "description": "your Attio CRM data through natural language querie",
+  "longDescription": "Comprehensive Attio CRM MCP server providing complete CRM surface coverage. Manage Companies, People, Deals, Tasks, Lists, Records, and Notes. Supports advanced filtering, relationship search, batch operations, and workspace member management.",
   "category": "community",
   "tier": "community",
   "version": "0.2.0",
@@ -19,6 +19,25 @@
     "placeholder": "token...",
     "helperText": "Bearer token for Smithery authentication"
   },
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "search_records",
+    "get_record_details",
+    "create_record",
+    "update_record",
+    "delete_record",
+    "search_records_advanced",
+    "search_records_by_relationship",
+    "batch_records",
+    "create_note",
+    "list_notes",
+    "get-lists",
+    "list-workspace-members"
+  ],
+  "examplePrompts": [
+    "Search for all companies in my Attio workspace",
+    "Create a new deal worth $50,000",
+    "Find all people who work at Tech Corp",
+    "Show me recent activity on the enterprise pipeline",
+    "Add a note to this contact about today's meeting"
+  ]
 }

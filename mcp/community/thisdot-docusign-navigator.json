@@ -1,7 +1,7 @@
 {
   "id": "thisdot-docusign-navigator",
   "name": "Thisdot Docusign Navigator",
-  "icon": "https://cdn.simpleicons.org/docusign",
+  "icon": "https://docusign.com/favicon.ico",
   "description": "Secure Docusign Navigator integration for AI assistants to access and analyze agreement data.",
   "longDescription": "Secure Docusign Navigator integration for AI assistants to access and analyze agreement data.",
   "category": "community",

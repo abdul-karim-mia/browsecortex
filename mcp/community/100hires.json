@@ -1,9 +1,9 @@
 {
   "id": "100hires",
   "name": "100Hires",
-  "icon": "https://cdn.simpleicons.org/100hires",
+  "icon": "https://100hires.com/favicon.ico",
   "description": "Official MCP server for 100Hires ATS: candidates, jobs, applications, interviews, messages.",
-  "longDescription": "Official MCP server for 100Hires ATS: candidates, jobs, applications, interviews, messages.",
+  "longDescription": "100Hires AI ATS MCP server with 130 tools for candidate management, job posting, application tracking, interviews, messages, and recruitment automation. Managed via natural language prompts.",
   "category": "community",
   "tier": "community",
   "version": "1.0.0",
@@ -11,9 +11,27 @@
   "submittedBy": "com.100hires",
   "url": "https://mcp.100hires.com/mcp",
   "transport": "streamable_http",
-  "docsUrl": "https://100hires.com/mcp",
+  "docsUrl": "https://github.com/100Hires/mcp-server",
   "auth": "none",
   "authFallback": null,
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "hires_list_candidates",
+    "hires_create_candidate",
+    "hires_update_candidate",
+    "hires_list_applications",
+    "hires_create_application",
+    "hires_advance_application",
+    "hires_list_jobs",
+    "hires_create_job",
+    "hires_create_interview",
+    "hires_list_messages",
+    "hires_send_candidate_message"
+  ],
+  "examplePrompts": [
+    "List all candidates in the pipeline",
+    "Create a new candidate for John Doe",
+    "Show me applications for the Senior Developer role",
+    "Advance this application to the interview stage",
+    "Schedule an interview for this candidate"
+  ]
 }

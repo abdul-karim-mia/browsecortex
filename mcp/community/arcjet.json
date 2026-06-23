@@ -3,7 +3,7 @@
   "name": "Arcjet",
   "icon": "https://cdn.simpleicons.org/arcjet",
   "description": "An MCP server for Arcjet - the runtime security platform that ships with your AI code.",
-  "longDescription": "An MCP server for Arcjet - the runtime security platform that ships with your AI code.",
+  "longDescription": "Arcjet security MCP server for application protection. Manage teams, sites, security rules, analyze traffic, detect anomalies, investigate IPs, and get security briefings. Includes rate limiting, bot protection, and threat detection.",
   "category": "community",
   "tier": "community",
   "version": "1.0.0",
@@ -14,6 +14,27 @@
   "docsUrl": "https://github.com/arcjet/mcp",
   "auth": "none",
   "authFallback": null,
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "list-teams",
+    "list-sites",
+    "create-site",
+    "get-site-key",
+    "list-requests",
+    "get-request-details",
+    "explain-decision",
+    "get-site-quota",
+    "analyze-traffic",
+    "get-anomalies",
+    "investigate-ip",
+    "get-security-briefing",
+    "list-rules",
+    "create-rule"
+  ],
+  "examplePrompts": [
+    "Show me my Arcjet teams and sites",
+    "Analyze traffic patterns for the last 24 hours",
+    "Investigate this suspicious IP address",
+    "Explain why this request was denied",
+    "Get a security briefing for my application"
+  ]
 }

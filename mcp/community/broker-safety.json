@@ -1,7 +1,7 @@
 {
   "id": "broker-safety",
   "name": "Broker Safety",
-  "icon": "https://cdn.simpleicons.org/security",
+  "icon": "https://app.axiorank.com/favicon.ico",
   "description": "MCP server offering regulator-sourced legitimacy checks on investment entities by name or URL.",
   "longDescription": "MCP server offering regulator-sourced legitimacy checks on investment entities by name or URL.",
   "category": "community",

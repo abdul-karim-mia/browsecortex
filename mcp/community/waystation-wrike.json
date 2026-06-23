@@ -1,7 +1,7 @@
 {
   "id": "waystation-wrike",
   "name": "Waystation \u2014 Wrike",
-  "icon": "https://cdn.simpleicons.org/wrike",
+  "icon": "https://wrike.com/favicon.ico",
   "description": "Manage projects, tasks, and workflows with Wrike project management.",
   "longDescription": "Manage projects, tasks, and workflows with Wrike project management.",
   "category": "community",

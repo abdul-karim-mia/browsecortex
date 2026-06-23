@@ -1,7 +1,7 @@
 {
   "id": "callingly",
   "name": "Callingly",
-  "icon": "https://cdn.simpleicons.org/phone",
+  "icon": "https://api.callingly.com/favicon.ico",
   "description": "Lets AI agents get leads on the phone: call, send SMS, and schedule callbacks for sales teams.",
   "longDescription": "Lets AI agents get leads on the phone: call, send SMS, and schedule callbacks for sales teams.",
   "category": "community",

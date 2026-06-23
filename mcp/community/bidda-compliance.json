@@ -1,7 +1,7 @@
 {
   "id": "bidda-compliance",
   "name": "Bidda Compliance",
-  "icon": "https://cdn.simpleicons.org/bidda",
+  "icon": "https://bidda.com/favicon.ico",
   "description": "9,500 verified compliance nodes (EU AI Act, GDPR, HIPAA, DORA, NIST, MITRE). Zero hallucination.",
   "longDescription": "9,500 verified compliance nodes (EU AI Act, GDPR, HIPAA, DORA, NIST, MITRE). Zero hallucination.",
   "category": "community",

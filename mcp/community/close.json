@@ -3,7 +3,7 @@
   "name": "Close",
   "icon": "https://cdn.simpleicons.org/close",
   "description": "Close CRM to manage your sales pipeline. Learn more at https://close.com or https://mcp.close.com",
-  "longDescription": "Close CRM to manage your sales pipeline. Learn more at https://close.com or https://mcp.close.com",
+  "longDescription": "Close CRM MCP server for managing sales pipeline. Manage leads, contacts, activities, tasks, opportunities, email sequences, SMS, and reporting. Full CRUD operations across all CRM resources.",
   "category": "community",
   "tier": "community",
   "version": "1.0.0",
@@ -11,9 +11,28 @@
   "submittedBy": "com.close",
   "url": "https://mcp.close.com/mcp",
   "transport": "streamable_http",
-  "docsUrl": "",
+  "docsUrl": "https://github.com/pipeworx-io/mcp-close-crm",
   "auth": "none",
   "authFallback": null,
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "list_leads",
+    "get_lead",
+    "create_lead",
+    "update_lead",
+    "list_contacts",
+    "create_contact",
+    "list_tasks",
+    "create_task",
+    "list_opportunities",
+    "create_opportunity",
+    "list_activities",
+    "search_leads"
+  ],
+  "examplePrompts": [
+    "Show me all leads in the pipeline",
+    "Create a new lead for Acme Corp",
+    "List contacts at this company",
+    "What tasks are due this week?",
+    "Search for leads with status 'New'"
+  ]
 }

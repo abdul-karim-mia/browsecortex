@@ -3,7 +3,7 @@
   "name": "Reddit Trends",
   "icon": "https://cdn.simpleicons.org/reddit",
   "description": "Reddit trend data over time, with growth for any topic or brand. Free key at trendsmcp.ai",
-  "longDescription": "Reddit trend data over time, with growth for any topic or brand. Free key at trendsmcp.ai",
+  "longDescription": "Reddit trend data over time with growth metrics for any topic or brand. Query historical trend data, measure cross-source growth, and discover what's trending. Free API key at trendsmcp.ai.",
   "category": "community",
   "tier": "community",
   "version": "1.0.3",
@@ -19,6 +19,16 @@
     "placeholder": "token...",
     "helperText": "Bearer token. Get your free API key at https://trendsmcp.ai"
   },
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "get_trends",
+    "get_growth",
+    "get_top_trends",
+    "get_ranked_trends"
+  ],
+  "examplePrompts": [
+    "What are the trending topics on Reddit right now?",
+    "How is interest in AI agents growing on Reddit?",
+    "Show me Reddit trend data for 'machine learning' over the last year",
+    "Find the fastest growing subreddits this week"
+  ]
 }

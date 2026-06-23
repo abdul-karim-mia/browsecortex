@@ -1,7 +1,7 @@
 {
   "id": "amazon-trends",
   "name": "Amazon Trends",
-  "icon": "https://cdn.simpleicons.org/amazon",
+  "icon": "https://amazon.com/favicon.ico",
   "description": "Amazon product search demand over time, with growth for any keyword. Free key at trendsmcp.ai",
   "longDescription": "Amazon product search demand over time, with growth for any keyword. Free key at trendsmcp.ai",
   "category": "community",

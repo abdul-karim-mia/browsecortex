@@ -3,7 +3,7 @@
   "name": "Alchemy",
   "icon": "https://cdn.simpleicons.org/alchemy",
   "description": "Alchemy's hosted MCP server for blockchain APIs and onchain data.",
-  "longDescription": "Alchemy's hosted MCP server for blockchain APIs and onchain data.",
+  "longDescription": "Alchemy blockchain MCP server with 168 tools across 100+ blockchains. Query token prices, NFT metadata, transaction history, smart contract simulation, ENS resolution, account abstraction, and Solana DAS.",
   "category": "community",
   "tier": "community",
   "version": "0.2.2",
@@ -11,9 +11,25 @@
   "submittedBy": "com.alchemy",
   "url": "https://mcp.alchemy.com/mcp",
   "transport": "streamable_http",
-  "docsUrl": "",
+  "docsUrl": "https://github.com/alchemyplatform/alchemy-mcp-server",
   "auth": "none",
   "authFallback": null,
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "fetchTokenPriceBySymbol",
+    "fetchTokenPriceByAddress",
+    "fetchTokensOwnedByMultichainAddresses",
+    "fetchAddressTransactionHistory",
+    "fetchNftsOwnedByMultichainAddresses",
+    "sendTransaction",
+    "swap",
+    "list_apps",
+    "list_chains"
+  ],
+  "examplePrompts": [
+    "What's the current price of ETH?",
+    "Show me NFTs owned by this address",
+    "Get transaction history for this wallet on Ethereum",
+    "List all supported blockchain networks",
+    "Swap 100 USDC for ETH"
+  ]
 }

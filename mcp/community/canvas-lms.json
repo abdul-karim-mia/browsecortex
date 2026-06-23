@@ -2,8 +2,8 @@
   "id": "canvas-lms",
   "name": "Canvas LMS",
   "icon": "https://cdn.simpleicons.org/canvas",
-  "description": "Manage your Canvas coursework with quick access to courses, assignments, and grades. Track upcomin\u2026",
-  "longDescription": "Manage your Canvas coursework with quick access to courses, assignments, and grades. Track upcomin\u2026",
+  "description": "Manage your Canvas coursework with quick access to courses, assignments, and grades. Track upcomin",
+  "longDescription": "Comprehensive Canvas LMS MCP server with 90+ tools for students and educators. Manage courses, assignments, submissions, grading, discussions, announcements, analytics, and more. Includes agent skills for common workflows.",
   "category": "community",
   "tier": "community",
   "version": "2.0.0",
@@ -11,9 +11,26 @@
   "submittedBy": "ai.smithery",
   "url": "https://server.smithery.ai/@a-ariff/canvas-instant-mcp/mcp",
   "transport": "streamable_http",
-  "docsUrl": "https://github.com/a-ariff/canvas-instant-mcp",
+  "docsUrl": "https://github.com/vishalsachdev/canvas-mcp",
   "auth": "none",
   "authFallback": null,
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "list_courses",
+    "get_course_details",
+    "list_assignments",
+    "list_submissions",
+    "create_assignment",
+    "grade_submission_with_rubric",
+    "get_student_analytics",
+    "send_message",
+    "list_modules",
+    "execute_typescript"
+  ],
+  "examplePrompts": [
+    "List all my enrolled courses",
+    "Show me upcoming assignment due dates",
+    "Grade this submission with the rubric",
+    "Send a message to all students in my course",
+    "Create a new discussion topic"
+  ]
 }

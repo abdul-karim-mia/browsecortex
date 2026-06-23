@@ -1,9 +1,9 @@
 {
   "id": "clinicaltrials-gov",
   "name": "ClinicalTrials.gov",
-  "icon": "https://cdn.simpleicons.org/clinicaltrials",
-  "description": "Provide structured access to ClinicalTrials.gov data for searching, retrieving, and analyzing clin\u2026",
-  "longDescription": "Provide structured access to ClinicalTrials.gov data for searching, retrieving, and analyzing clin\u2026",
+  "icon": "https://clinicaltrials.gov/favicon.ico",
+  "description": "Provide structured access to ClinicalTrials.gov data for searching, retrieving, and analyzing clin",
+  "longDescription": "Provide structured access to ClinicalTrials.gov data for searching, retrieving, and analyzing clin",
   "category": "community",
   "tier": "community",
   "version": "1.16.0",

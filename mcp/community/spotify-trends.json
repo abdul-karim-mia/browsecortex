@@ -3,7 +3,7 @@
   "name": "Spotify Trends",
   "icon": "https://cdn.simpleicons.org/spotify",
   "description": "Spotify podcast and artist trends over time, with growth metrics. Free key at trendsmcp.ai",
-  "longDescription": "Spotify podcast and artist trends over time, with growth metrics. Free key at trendsmcp.ai",
+  "longDescription": "Spotify podcast and artist trends over time with growth metrics. Query historical trend data for any artist or podcast, measure growth, and discover what's trending in audio. Free API key at trendsmcp.ai.",
   "category": "community",
   "tier": "community",
   "version": "1.0.3",
@@ -19,6 +19,16 @@
     "placeholder": "token...",
     "helperText": "Bearer token. Get your free API key at https://trendsmcp.ai"
   },
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "get_trends",
+    "get_growth",
+    "get_top_trends",
+    "get_ranked_trends"
+  ],
+  "examplePrompts": [
+    "What are the top trending podcasts on Spotify?",
+    "How is this artist's popularity growing over time?",
+    "Show me Spotify trends for true crime podcasts",
+    "Find the fastest growing music artists this month"
+  ]
 }

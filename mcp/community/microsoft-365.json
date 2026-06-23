@@ -1,9 +1,9 @@
 {
   "id": "microsoft-365",
   "name": "Microsoft 365",
-  "icon": "https://cdn.simpleicons.org/microsoft",
-  "description": "*Updated September 25th 2025** Manage your Microsoft 365 services effortlessly. Create and manage\u2026",
-  "longDescription": "*Updated September 25th 2025** Manage your Microsoft 365 services effortlessly. Create and manage\u2026",
+  "icon": "https://microsoft.com/favicon.ico",
+  "description": "*Updated September 25th 2025** Manage your Microsoft 365 services effortlessly. Create and manage",
+  "longDescription": "*Updated September 25th 2025** Manage your Microsoft 365 services effortlessly. Create and manage",
   "category": "community",
   "tier": "community",
   "version": "1.0.0",

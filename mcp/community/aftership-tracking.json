@@ -3,7 +3,7 @@
   "name": "AfterShip Tracking",
   "icon": "https://cdn.simpleicons.org/aftership",
   "description": "Track packages across 1,300+ global carriers with real-time status and AI-powered delivery dates.",
-  "longDescription": "Track packages across 1,300+ global carriers with real-time status and AI-powered delivery dates.",
+  "longDescription": "AfterShip Tracking & Returns MCP server. Track any shipment in real-time across 1,200+ carriers worldwide. Auto-detect carrier from tracking number. Also provides AfterShip Returns Center demo generation.",
   "category": "community",
   "tier": "community",
   "version": "1.0.0",
@@ -11,9 +11,17 @@
   "submittedBy": "com.aftership.mcp",
   "url": "https://mcp.aftership.com/tracking/public",
   "transport": "streamable_http",
-  "docsUrl": "",
+  "docsUrl": "https://github.com/AfterShip/tracking-and-returns-mcp",
   "auth": "none",
   "authFallback": null,
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "track_shipment",
+    "get_returns_demo"
+  ],
+  "examplePrompts": [
+    "Track this package: 1Z999AA10123456784",
+    "Where is my order? Tracking number is 9400111899223100009383",
+    "Generate a returns demo for my store",
+    "Track this FedEx shipment"
+  ]
 }

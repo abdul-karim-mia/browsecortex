@@ -2,8 +2,8 @@
   "id": "sec-edgar",
   "name": "SEC EDGAR",
   "icon": "https://cdn.simpleicons.org/secedgar",
-  "description": "Provide AI assistants with real-time access to official SEC EDGAR filings and financial data. Enab\u2026",
-  "longDescription": "Provide AI assistants with real-time access to official SEC EDGAR filings and financial data. Enab\u2026",
+  "description": "Provide AI assistants with real-time access to official SEC EDGAR filings and financial data. Enab",
+  "longDescription": "SEC EDGAR MCP server for accessing US securities filings. Search 10-K, 10-Q, 8-K filings, extract financial statements, get insider trading data, and access structured XBRL financial data with exact numeric precision.",
   "category": "community",
   "tier": "community",
   "version": "1.14.0",
@@ -11,7 +11,7 @@
   "submittedBy": "ai.smithery",
   "url": "https://server.smithery.ai/@plainyogurt21/sec-edgar-mcp/mcp",
   "transport": "streamable_http",
-  "docsUrl": "https://github.com/plainyogurt21/sec-edgar-mcp",
+  "docsUrl": "https://github.com/stefanoamorelli/sec-edgar-mcp",
   "auth": "api_key",
   "authFallback": null,
   "apiKeyConfig": {
@@ -19,6 +19,21 @@
     "placeholder": "token...",
     "helperText": "Bearer token for Smithery authentication"
   },
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "edgar_search",
+    "edgar_company_info",
+    "edgar_get_filing",
+    "edgar_get_section",
+    "edgar_company_facts",
+    "edgar_company_concept",
+    "edgar_insider_transactions",
+    "edgar_full_text_search"
+  ],
+  "examplePrompts": [
+    "Search for Apple's latest 10-K filing",
+    "Get the MD&A section from this 10-Q",
+    "Show me Microsoft's revenue over the last 4 quarters",
+    "What insider transactions occurred at Tesla recently?",
+    "Find filings mentioning 'artificial intelligence'"
+  ]
 }

@@ -3,7 +3,7 @@
   "name": "Steam Trends",
   "icon": "https://cdn.simpleicons.org/steam",
   "description": "Steam concurrent players by game over time, monthly trends and growth. Free key at trendsmcp.ai",
-  "longDescription": "Steam concurrent players by game over time, monthly trends and growth. Free key at trendsmcp.ai",
+  "longDescription": "Steam player trends MCP server for tracking game momentum and player counts. Get time-series data, growth percentages, and trending games from Steam. Part of Trends MCP network.",
   "category": "community",
   "tier": "community",
   "version": "1.0.3",
@@ -11,7 +11,7 @@
   "submittedBy": "ai.trendsmcp",
   "url": "https://steam.api.trendsmcp.ai/mcp",
   "transport": "streamable_http",
-  "docsUrl": "https://trendsmcp.ai",
+  "docsUrl": "https://github.com/trendsmcp/steam-trends-mcp",
   "auth": "api_key",
   "authFallback": null,
   "apiKeyConfig": {
@@ -19,6 +19,16 @@
     "placeholder": "token...",
     "helperText": "Bearer token. Get your free API key at https://trendsmcp.ai"
   },
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "get_trends",
+    "get_growth",
+    "get_top_trends",
+    "get_ranked_trends"
+  ],
+  "examplePrompts": [
+    "What are the top trending games on Steam right now?",
+    "How is the player count for this game growing?",
+    "Show me Steam trends for 'Counter-Strike 2'",
+    "Find the fastest growing games this month"
+  ]
 }

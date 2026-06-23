@@ -1,9 +1,9 @@
 {
   "id": "exa-code",
   "name": "Exa Code",
-  "icon": "https://cdn.simpleicons.org/exa",
-  "description": "Find open-source libraries and fetch contextual code snippets by version to accelerate development\u2026",
-  "longDescription": "Find open-source libraries and fetch contextual code snippets by version to accelerate development\u2026",
+  "icon": "https://exa.ai/favicon.ico",
+  "description": "Find open-source libraries and fetch contextual code snippets by version to accelerate development",
+  "longDescription": "Find open-source libraries and fetch contextual code snippets by version to accelerate development",
   "category": "community",
   "tier": "community",
   "version": "0.0.1",

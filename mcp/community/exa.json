@@ -1,7 +1,7 @@
 {
   "id": "exa",
   "name": "Exa",
-  "icon": "https://cdn.simpleicons.org/exa",
+  "icon": "https://exa.ai/favicon.ico",
   "description": "Fast, intelligent web search and web crawling.\n\nNew mcp tool: Exa-code is a context tool for coding ",
   "longDescription": "Fast, intelligent web search and web crawling powered by Exa. Provides web search, advanced search with filters, and webpage fetching as clean markdown. Free tier available.",
   "category": "community",

@@ -3,7 +3,7 @@
   "name": "Tenderly",
   "icon": "https://cdn.simpleicons.org/tenderly",
   "description": "Tenderly MCP server for blockchain dev \u2014 simulate, debug, and test on 70+ networks.",
-  "longDescription": "Tenderly MCP server for blockchain dev \u2014 simulate, debug, and test on 70+ networks.",
+  "longDescription": "Tenderly MCP server with 59 tools for blockchain development. Simulate transactions, trace execution, inspect contracts, manage Virtual Environments, and access 100+ EVM networks. Full smart contract development workflow.",
   "category": "community",
   "tier": "community",
   "version": "0.1.0",
@@ -11,9 +11,26 @@
   "submittedBy": "co.tenderly",
   "url": "https://mcp.tenderly.co/mcp",
   "transport": "streamable_http",
-  "docsUrl": "",
+  "docsUrl": "https://docs.tenderly.co/mcp-server",
   "auth": "none",
   "authFallback": null,
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "get_user_info",
+    "list_projects",
+    "set_active_project",
+    "get_networks",
+    "get_contract_info",
+    "set_active_vnet",
+    "create_vnet",
+    "list_vnets",
+    "simulate_transaction",
+    "trace_transaction"
+  ],
+  "examplePrompts": [
+    "List my Tenderly projects",
+    "Create a Virtual Environment for testing",
+    "Simulate this transaction on Ethereum",
+    "Trace the execution of this transaction",
+    "Get contract info for this address"
+  ]
 }

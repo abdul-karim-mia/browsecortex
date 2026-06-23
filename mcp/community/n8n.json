@@ -18,7 +18,10 @@
     "authUrl": "https://<your-n8n-domain>/oauth2/authorize",
     "tokenUrl": "https://<your-n8n-domain>/oauth2/token",
     "revokeUrl": "https://<your-n8n-domain>/settings/mcp",
-    "scopes": ["read", "write"]
+    "scopes": [
+      "read",
+      "write"
+    ]
   },
   "apiKeyConfig": {
     "label": "n8n MCP Access Token",

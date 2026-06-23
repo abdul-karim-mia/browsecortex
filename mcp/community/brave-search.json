@@ -2,7 +2,7 @@
   "id": "brave-search",
   "name": "Brave Search",
   "icon": "https://cdn.simpleicons.org/brave",
-  "description": "Visit https://brave.com/search/api/ for a free API key. Search the web, local businesses, images,\u2026",
+  "description": "Visit https://brave.com/search/api/ for a free API key. Search the web, local businesses, images,",
   "longDescription": "Official Brave Search MCP server providing comprehensive search capabilities including web search, local business search, place search, image search, video search, news search, LLM context, and AI-powered summarization. Supports both STDIO and HTTP transports.",
   "category": "community",
   "tier": "community",

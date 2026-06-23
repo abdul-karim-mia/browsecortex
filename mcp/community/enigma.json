@@ -1,7 +1,7 @@
 {
   "id": "enigma",
   "name": "Enigma",
-  "icon": "https://cdn.simpleicons.org/enigma",
+  "icon": "https://enigma.com/favicon.ico",
   "description": "An MCP server that provides access to trusted data about business identity and activity",
   "longDescription": "An MCP server that provides access to trusted data about business identity and activity",
   "category": "community",

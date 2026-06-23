@@ -2,8 +2,8 @@
   "id": "pubmed-search",
   "name": "PubMed Search",
   "icon": "https://cdn.simpleicons.org/pubmed",
-  "description": "Search PubMed with precision using keyword and journal filters and smart sorting. Uncover MeSH ter\u2026",
-  "longDescription": "Search PubMed with precision using keyword and journal filters and smart sorting. Uncover MeSH ter\u2026",
+  "description": "Search PubMed with precision using keyword and journal filters and smart sorting. Uncover MeSH ter",
+  "longDescription": "PubMed MCP server for biomedical literature research. Search PubMed and Europe PMC, fetch articles and full text, format citations, find related articles, explore MeSH terms, and access NCBI databases.",
   "category": "community",
   "tier": "community",
   "version": "1.14.0",
@@ -11,7 +11,7 @@
   "submittedBy": "ai.smithery",
   "url": "https://server.smithery.ai/@lineex/pubmed-mcp-smithery/mcp",
   "transport": "streamable_http",
-  "docsUrl": "https://github.com/lineex/pubmed-mcp-smithery",
+  "docsUrl": "https://github.com/cyanheads/pubmed-mcp-server",
   "auth": "api_key",
   "authFallback": null,
   "apiKeyConfig": {
@@ -19,6 +19,23 @@
     "placeholder": "token...",
     "helperText": "Bearer token for Smithery authentication"
   },
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "pubmed_search_articles",
+    "pubmed_fetch_articles",
+    "pubmed_fetch_fulltext",
+    "pubmed_format_citations",
+    "pubmed_find_related",
+    "pubmed_spell_check",
+    "pubmed_lookup_mesh",
+    "pubmed_lookup_citation",
+    "pubmed_convert_ids",
+    "pubmed_europepmc_search"
+  ],
+  "examplePrompts": [
+    "Search PubMed for recent papers on CRISPR gene editing",
+    "Fetch the full text of this article",
+    "Format this citation in APA style",
+    "Find articles related to this paper",
+    "Look up the MeSH term for 'machine learning'"
+  ]
 }

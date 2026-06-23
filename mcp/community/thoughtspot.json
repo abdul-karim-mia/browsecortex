@@ -1,9 +1,9 @@
 {
   "id": "thoughtspot",
   "name": "Thoughtspot",
-  "icon": "https://cdn.simpleicons.org/thoughtspot",
+  "icon": "https://thoughtspot.com/favicon.ico",
   "description": "MCP Server for ThoughtSpot - provides OAuth authentication and tools for querying data",
-  "longDescription": "MCP Server for ThoughtSpot - provides OAuth authentication and tools for querying data",
+  "longDescription": "ThoughtSpot Spotter MCP Server for AI-powered analytics. Query data with natural language, get answers to business questions, create liveboards, and access ThoughtSpot analytics from any MCP-compatible client.",
   "category": "community",
   "tier": "community",
   "version": "0.5.0",
@@ -14,6 +14,21 @@
   "docsUrl": "https://github.com/thoughtspot/mcp-server",
   "auth": "none",
   "authFallback": null,
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "ping",
+    "getRelevantQuestions",
+    "getAnswer",
+    "createLiveboard",
+    "getDataSourceSuggestions",
+    "create_analysis_session",
+    "send_session_message",
+    "get_session_updates"
+  ],
+  "examplePrompts": [
+    "What were our top revenue sources last quarter?",
+    "Show me sales by region for this year",
+    "Create a liveboard with marketing metrics",
+    "Compare customer acquisition costs across channels",
+    "What's the trend for monthly active users?"
+  ]
 }

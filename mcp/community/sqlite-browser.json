@@ -2,8 +2,8 @@
   "id": "sqlite-browser",
   "name": "SQLite Browser",
   "icon": "https://cdn.simpleicons.org/database",
-  "description": "Explore, query, and inspect SQLite databases with ease. List tables, preview results, and view det\u2026",
-  "longDescription": "Explore, query, and inspect SQLite databases with ease. List tables, preview results, and view det\u2026",
+  "description": "Explore, query, and inspect SQLite databases with ease. List tables, preview results, and view det",
+  "longDescription": "SQLite database MCP server providing comprehensive database interaction. Execute SQL queries, list tables, describe schemas, and perform CRUD operations. Supports read-only and read-write modes.",
   "category": "community",
   "tier": "community",
   "version": "1.16.0",
@@ -11,9 +11,21 @@
   "submittedBy": "ai.smithery",
   "url": "https://server.smithery.ai/@wgong/sqlite-mcp-server/mcp",
   "transport": "streamable_http",
-  "docsUrl": "https://github.com/wgong/sqlite-mcp-server",
+  "docsUrl": "https://github.com/mgcrea/mcp-sqlite",
   "auth": "none",
   "authFallback": null,
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "sqlite_query",
+    "sqlite_list_tables",
+    "sqlite_describe_table",
+    "read_query",
+    "write_query",
+    "create_table"
+  ],
+  "examplePrompts": [
+    "List all tables in the database",
+    "Show me the schema of the users table",
+    "Run a query to find all active users",
+    "Create a new table for products"
+  ]
 }

@@ -1,9 +1,9 @@
 {
   "id": "llm-attack-info",
   "name": "LLM Attack Info",
-  "icon": "https://cdn.simpleicons.org/security",
-  "description": "Query and retrieve information about various adversarial tactics and techniques used in cyber atta\u2026",
-  "longDescription": "Query and retrieve information about various adversarial tactics and techniques used in cyber atta\u2026",
+  "icon": "https://app.axiorank.com/favicon.ico",
+  "description": "Query and retrieve information about various adversarial tactics and techniques used in cyber atta",
+  "longDescription": "Query and retrieve information about various adversarial tactics and techniques used in cyber atta",
   "category": "community",
   "tier": "community",
   "version": "2.1",

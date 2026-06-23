@@ -2,8 +2,8 @@
   "id": "mermaid-diagram",
   "name": "Mermaid Diagram",
   "icon": "https://cdn.simpleicons.org/mermaid",
-  "description": "Generate dynamic Mermaid diagrams and charts with AI assistance. Customize styles and export diagr\u2026",
-  "longDescription": "Generate dynamic Mermaid diagrams and charts with AI assistance. Customize styles and export diagr\u2026",
+  "description": "Generate dynamic Mermaid diagrams and charts with AI assistance. Customize styles and export diagr",
+  "longDescription": "AI-powered Mermaid diagram generation using MCP. Create flowcharts, sequence diagrams, class diagrams, ERDs, Gantt charts, mindmaps, and 22+ other diagram types from natural language. Includes 50+ pre-built templates.",
   "category": "community",
   "tier": "community",
   "version": "0.1.3",
@@ -11,7 +11,7 @@
   "submittedBy": "ai.smithery",
   "url": "https://server.smithery.ai/@hustcc/mcp-mermaid/mcp",
   "transport": "streamable_http",
-  "docsUrl": "https://github.com/hustcc/mcp-mermaid",
+  "docsUrl": "https://github.com/Narasimhaponnada/mermaid-mcp",
   "auth": "api_key",
   "authFallback": null,
   "apiKeyConfig": {
@@ -19,6 +19,22 @@
     "placeholder": "token...",
     "helperText": "Bearer token for Smithery authentication"
   },
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "generateDiagram",
+    "validateDiagram",
+    "getDiagramInfo",
+    "listSupportedTypes",
+    "convertDiagram",
+    "listTemplates",
+    "getTemplate",
+    "searchTemplates",
+    "createCustomTemplate"
+  ],
+  "examplePrompts": [
+    "Create a flowchart for user authentication",
+    "Generate a sequence diagram for a REST API call",
+    "Show me all supported diagram types",
+    "Find templates for database ER diagrams",
+    "Validate this Mermaid syntax"
+  ]
 }

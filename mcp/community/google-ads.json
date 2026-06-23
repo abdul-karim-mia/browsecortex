@@ -3,7 +3,7 @@
   "name": "Google Ads",
   "icon": "https://cdn.simpleicons.org/googleads",
   "description": "Google Ads automation with AI: analyze performance, manage campaigns, optimize bids.",
-  "longDescription": "Google Ads automation with AI: analyze performance, manage campaigns, optimize bids.",
+  "longDescription": "Google Ads MCP server by Pipeboard. 35+ tools for managing campaigns, optimizing keywords, analyzing performance, managing ad extensions, and running GAQL queries. Works with Claude, ChatGPT, and any MCP client.",
   "category": "community",
   "tier": "community",
   "version": "1.0.0",
@@ -11,9 +11,26 @@
   "submittedBy": "co.pipeboard",
   "url": "https://google-ads.mcp.pipeboard.co/",
   "transport": "streamable_http",
-  "docsUrl": "",
+  "docsUrl": "https://pipeboard.co/guides/google-ads-mcp",
   "auth": "none",
   "authFallback": null,
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "list_google_ads_customers",
+    "get_google_ads_account_info",
+    "get_google_ads_campaigns",
+    "create_google_ads_campaign",
+    "update_google_ads_campaign",
+    "get_google_ads_ad_groups",
+    "get_google_ads_keywords",
+    "get_google_ads_campaign_metrics",
+    "get_google_ads_search_terms_report",
+    "execute_google_ads_gaql_query"
+  ],
+  "examplePrompts": [
+    "Show me all my Google Ads campaigns",
+    "Create a new search campaign for summer sale",
+    "What are my top performing keywords?",
+    "Pause the campaign with lowest ROI",
+    "Run a GAQL query for campaign performance"
+  ]
 }

@@ -2,7 +2,7 @@
   "id": "youtube",
   "name": "YouTube",
   "icon": "https://cdn.simpleicons.org/youtube",
-  "description": "Provide token-optimized, structured YouTube data to enhance your LLM applications. Access efficien\u2026",
+  "description": "Provide token-optimized, structured YouTube data to enhance your LLM applications. Access efficien",
   "longDescription": "Token-optimized YouTube data MCP server. Access video details, search videos, get transcripts, channel statistics, trending videos, and comments. Designed for efficient LLM consumption with minimal token usage.",
   "category": "community",
   "tier": "community",

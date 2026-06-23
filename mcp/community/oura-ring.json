@@ -2,8 +2,8 @@
   "id": "oura-ring",
   "name": "Oura Ring",
   "icon": "https://cdn.simpleicons.org/oura",
-  "description": "Connect your Oura Ring account and enable access to your wellness data in apps and automations. In\u2026",
-  "longDescription": "Connect your Oura Ring account and enable access to your wellness data in apps and automations. In\u2026",
+  "description": "Connect your Oura Ring account and enable access to your wellness data in apps and automations. In",
+  "longDescription": "Oura Ring MCP server for health and wellness data. Access sleep scores, activity data, readiness, heart rate, workouts, SpO2, VO2 max, stress, resilience, and tags from your Oura Ring via the Oura API v2.",
   "category": "community",
   "tier": "community",
   "version": "1.16.0",
@@ -11,9 +11,27 @@
   "submittedBy": "ai.smithery",
   "url": "https://server.smithery.ai/@eliu243/oura-mcp-server/mcp",
   "transport": "streamable_http",
-  "docsUrl": "https://github.com/eliu243/oura-mcp-server",
+  "docsUrl": "https://github.com/gjlumsden/oura-mcp",
   "auth": "none",
   "authFallback": null,
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "get_personal_info",
+    "get_ring_configuration",
+    "get_daily_sleep",
+    "get_sleep_periods",
+    "get_daily_activity",
+    "get_workouts",
+    "get_daily_readiness",
+    "get_daily_stress",
+    "get_heart_rate",
+    "get_daily_spo2",
+    "get_vo2_max"
+  ],
+  "examplePrompts": [
+    "How did I sleep last night?",
+    "Show my activity summary for this week",
+    "What's my readiness score today?",
+    "Get my heart rate data for the last 7 days",
+    "Show my workout history"
+  ]
 }

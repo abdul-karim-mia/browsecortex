@@ -2,8 +2,8 @@
   "id": "sqlite-explorer",
   "name": "SQLite Explorer",
   "icon": "https://cdn.simpleicons.org/database",
-  "description": "Explore your Messages SQLite database to browse tables and inspect schemas with ease. Run flexible\u2026",
-  "longDescription": "Explore your Messages SQLite database to browse tables and inspect schemas with ease. Run flexible\u2026",
+  "description": "Explore your Messages SQLite database to browse tables and inspect schemas with ease. Run flexible",
+  "longDescription": "SQLite database explorer MCP server with full CRUD operations, custom SQL queries, database exploration and introspection. Provides comprehensive SQLite interaction capabilities.",
   "category": "community",
   "tier": "community",
   "version": "1.16.0",
@@ -11,9 +11,23 @@
   "submittedBy": "ai.smithery",
   "url": "https://server.smithery.ai/@afgong/sqlite-mcp-server/mcp",
   "transport": "streamable_http",
-  "docsUrl": "https://github.com/afgong/sqlite-mcp-server",
+  "docsUrl": "https://github.com/jparkerweb/mcp-sqlite",
   "auth": "none",
   "authFallback": null,
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "db_info",
+    "list_tables",
+    "get_table_schema",
+    "create_record",
+    "read_records",
+    "update_records",
+    "delete_records",
+    "execute_query"
+  ],
+  "examplePrompts": [
+    "Get database information",
+    "Show me all tables and their schemas",
+    "Query the orders table for this month",
+    "Insert a new record into the users table"
+  ]
 }

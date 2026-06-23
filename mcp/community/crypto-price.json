@@ -3,7 +3,7 @@
   "name": "Crypto Price",
   "icon": "https://cdn.simpleicons.org/bitcoin",
   "description": "Provide real-time cryptocurrency price data and market analysis.",
-  "longDescription": "Provide real-time cryptocurrency price data and market analysis.",
+  "longDescription": "Real-time cryptocurrency analysis via CoinCap API. Get current prices, market analysis, historical trends, technical indicators, and exchange data. Supports both STDIO and Streamable HTTP transports.",
   "category": "community",
   "tier": "community",
   "version": "2.1.0",
@@ -14,6 +14,20 @@
   "docsUrl": "https://github.com/truss44/mcp-crypto-price",
   "auth": "none",
   "authFallback": null,
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "get-crypto-price",
+    "get-market-analysis",
+    "get-historical-analysis",
+    "get-top-assets",
+    "get-technical-analysis",
+    "get-rates",
+    "get-exchanges"
+  ],
+  "examplePrompts": [
+    "What is the current price of Bitcoin?",
+    "Show me the top 10 cryptocurrencies by market cap",
+    "Analyze Ethereum's price trends over the last week",
+    "Get technical indicators for Solana",
+    "Compare prices across different exchanges"
+  ]
 }

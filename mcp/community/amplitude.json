@@ -1,9 +1,9 @@
 {
   "id": "amplitude",
   "name": "Amplitude",
-  "icon": "https://cdn.simpleicons.org/amplitude",
+  "icon": "https://amplitude.com/favicon.ico",
   "description": "Search, access, and get insights on your Amplitude data",
-  "longDescription": "Search, access, and get insights on your Amplitude data",
+  "longDescription": "Official Amplitude MCP server for product analytics. Search dashboards, query charts, analyze experiments, access session replays, manage feature flags, and explore user behavior data through natural language.",
   "category": "community",
   "tier": "community",
   "version": "1.0.0",
@@ -11,9 +11,29 @@
   "submittedBy": "com.amplitude",
   "url": "https://mcp.amplitude.com/mcp",
   "transport": "streamable_http",
-  "docsUrl": "",
+  "docsUrl": "https://github.com/amplitude/mcp-server-guide",
   "auth": "none",
   "authFallback": null,
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "search",
+    "query_chart",
+    "query_experiment",
+    "query_dataset",
+    "query_metric",
+    "get_charts",
+    "get_dashboard",
+    "get_notebook",
+    "get_experiments",
+    "get_flags",
+    "get_session_replays",
+    "get_event_properties",
+    "get_context"
+  ],
+  "examplePrompts": [
+    "Search for dashboards related to user retention",
+    "Show me the results of my latest experiment",
+    "Query chart data for the last 30 days",
+    "Find session replays for users who dropped off",
+    "What are my feature flag configurations?"
+  ]
 }

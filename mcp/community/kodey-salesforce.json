@@ -1,9 +1,9 @@
 {
   "id": "kodey-salesforce",
   "name": "Kodey Salesforce",
-  "icon": "https://cdn.simpleicons.org/salesforce",
-  "description": "Run SOQL queries to explore and retrieve Salesforce data. Inspect records, fields, and relationshi\u2026",
-  "longDescription": "Run SOQL queries to explore and retrieve Salesforce data. Inspect records, fields, and relationshi\u2026",
+  "icon": "https://salesforce.com/favicon.ico",
+  "description": "Run SOQL queries to explore and retrieve Salesforce data. Inspect records, fields, and relationshi",
+  "longDescription": "Run SOQL queries to explore and retrieve Salesforce data. Inspect records, fields, and relationshi",
   "category": "community",
   "tier": "community",
   "version": "1.0.0",

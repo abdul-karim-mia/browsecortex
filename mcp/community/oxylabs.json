@@ -1,9 +1,9 @@
 {
   "id": "oxylabs",
   "name": "Oxylabs",
-  "icon": "https://cdn.simpleicons.org/oxylabs",
+  "icon": "https://oxylabs.io/favicon.ico",
   "description": "Fetch and process content from specified URLs using the Oxylabs Web Scraper API.",
-  "longDescription": "Fetch and process content from specified URLs using the Oxylabs Web Scraper API.",
+  "longDescription": "Oxylabs MCP server for web scraping and data extraction. Provides universal scraper, Google Search scraper, Amazon product/search scraper, AI-powered scraper, crawler, browser agent, and search tools.",
   "category": "community",
   "tier": "community",
   "version": "1.13.1",
@@ -19,6 +19,21 @@
     "placeholder": "token...",
     "helperText": "Bearer token for Smithery authentication"
   },
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "universal_scraper",
+    "google_search_scraper",
+    "amazon_search_scraper",
+    "amazon_product_scraper",
+    "ai_scraper",
+    "ai_crawler",
+    "ai_browser_agent",
+    "ai_search"
+  ],
+  "examplePrompts": [
+    "Scrape this webpage and extract the content",
+    "Search Google for 'best MCP servers 2025'",
+    "Find Amazon products for 'wireless headphones'",
+    "Get details for this Amazon product page",
+    "Crawl this website and collect all blog posts"
+  ]
 }

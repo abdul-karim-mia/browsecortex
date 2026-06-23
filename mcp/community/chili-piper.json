@@ -3,7 +3,7 @@
   "name": "Chili Piper",
   "icon": "https://cdn.simpleicons.org/chilipiper",
   "description": "Manage Chili Piper scheduling links, meetings, routing rules, and teams. Admin only. Experimental.",
-  "longDescription": "Manage Chili Piper scheduling links, meetings, routing rules, and teams. Admin only. Experimental.",
+  "longDescription": "ChiliPiper MCP server for lead routing and scheduling. Route leads through Concierge routers, generate booking links, manage scheduling, and handle inbound lead routing from any MCP-compatible client.",
   "category": "community",
   "tier": "community",
   "version": "1.0.0",
@@ -11,9 +11,19 @@
   "submittedBy": "com.chilipiper",
   "url": "https://fire.chilipiper.com/api/fire-edge/v1/org/mcp",
   "transport": "streamable_http",
-  "docsUrl": "",
+  "docsUrl": "https://github.com/hyypeman/chilipiper-mcp",
   "auth": "none",
   "authFallback": null,
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "route_lead",
+    "route_concierge",
+    "get_booking_link",
+    "check_config"
+  ],
+  "examplePrompts": [
+    "Route this lead to the inbound-demo router",
+    "Generate a booking link for the sales team",
+    "Check if my ChiliPiper config is working",
+    "Route john@acme.com through the concierge"
+  ]
 }

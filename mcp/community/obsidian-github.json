@@ -2,8 +2,8 @@
   "id": "obsidian-github",
   "name": "Obsidian GitHub",
   "icon": "https://cdn.simpleicons.org/obsidian",
-  "description": "Connect AI assistants to your GitHub-hosted Obsidian vault to seamlessly access, search, and analy\u2026",
-  "longDescription": "Connect AI assistants to your GitHub-hosted Obsidian vault to seamlessly access, search, and analy\u2026",
+  "description": "Connect AI assistants to your GitHub-hosted Obsidian vault to seamlessly access, search, and analy",
+  "longDescription": "Comprehensive Obsidian MCP server with 43+ tools for notes, search, graph traversal, tags, frontmatter, canvas, templates, and vault management. Supports Dataview queries and semantic search.",
   "category": "community",
   "tier": "community",
   "version": "0.4.0",
@@ -11,7 +11,7 @@
   "submittedBy": "ai.smithery",
   "url": "https://server.smithery.ai/@Hint-Services/obsidian-github-mcp/mcp",
   "transport": "streamable_http",
-  "docsUrl": "https://github.com/Hint-Services/obsidian-github-mcp",
+  "docsUrl": "https://github.com/maloqab/obsidian-mcp-tools",
   "auth": "api_key",
   "authFallback": null,
   "apiKeyConfig": {
@@ -19,6 +19,25 @@
     "placeholder": "token...",
     "helperText": "Bearer token for Smithery authentication"
   },
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "read_note",
+    "create_note",
+    "edit_note",
+    "search_notes",
+    "get_backlinks",
+    "get_outlinks",
+    "get_graph",
+    "list_tags",
+    "get_frontmatter",
+    "set_frontmatter",
+    "read_canvas",
+    "create_canvas"
+  ],
+  "examplePrompts": [
+    "Read the content of my meeting notes",
+    "Search for notes about project planning",
+    "Show me all backlinks to this note",
+    "Create a new note with today's daily template",
+    "Find orphaned notes in my vault"
+  ]
 }

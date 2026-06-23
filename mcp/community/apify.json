@@ -1,7 +1,7 @@
 {
   "id": "apify",
   "name": "Apify",
-  "icon": "https://cdn.simpleicons.org/apify",
+  "icon": "https://apify.com/favicon.ico",
   "description": "Extract data from any website with thousands of scrapers, crawlers, and automations on Apify Store \u26a1",
   "longDescription": "Official Apify MCP server for web scraping and automation. Search for Actors in Apify Store, call Actors, retrieve run results, manage datasets and key-value stores, and search Apify documentation.",
   "category": "community",

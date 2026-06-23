@@ -3,7 +3,7 @@
   "name": "DevCycle",
   "icon": "https://cdn.simpleicons.org/devcycle",
   "description": "DevCycle MCP server for feature flag management",
-  "longDescription": "DevCycle MCP server for feature flag management",
+  "longDescription": "DevCycle MCP server for feature flag management. List, create, update, and delete features and variables. Manage targeting rules, SDK installation, self-targeting overrides, and access feature evaluation analytics.",
   "category": "community",
   "tier": "community",
   "version": "6.0.2",
@@ -11,9 +11,26 @@
   "submittedBy": "com.devcycle",
   "url": "https://mcp.devcycle.com/mcp",
   "transport": "streamable_http",
-  "docsUrl": "",
+  "docsUrl": "https://docs.devcycle.com/cli/docs/mcp",
   "auth": "none",
   "authFallback": null,
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "list_features",
+    "create_feature",
+    "update_feature",
+    "update_feature_status",
+    "delete_feature",
+    "list_variables",
+    "create_variable",
+    "select_project",
+    "get_current_project",
+    "get_feature_total_evaluations"
+  ],
+  "examplePrompts": [
+    "List all feature flags in my project",
+    "Create a new feature flag for dark mode",
+    "Show me the targeting rules for this feature",
+    "What's the evaluation count for this feature?",
+    "Install the DevCycle SDK for my project"
+  ]
 }

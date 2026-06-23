@@ -1,7 +1,7 @@
 {
   "id": "ca-swiftsign",
   "name": "SwiftSign",
-  "icon": "https://cdn.simpleicons.org/docusign",
+  "icon": "https://docusign.com/favicon.ico",
   "description": "E-signatures for agents: mint a sandbox key, send PDFs, track status, download the sealed result.",
   "longDescription": "E-signatures for agents: mint a sandbox key, send PDFs, track status, download the sealed result.",
   "category": "community",

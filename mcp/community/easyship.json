@@ -1,9 +1,9 @@
 {
   "id": "easyship",
   "name": "Easyship",
-  "icon": "https://cdn.simpleicons.org/easyship",
+  "icon": "https://easyship.com/favicon.ico",
   "description": "Unlock global e-commerce shipping with Easyship's automated tools and worldwide courier network.",
-  "longDescription": "Unlock global e-commerce shipping with Easyship's automated tools and worldwide courier network.",
+  "longDescription": "Easyship MCP server for global shipping and logistics. Compare rates across 550+ couriers, create shipments, buy labels, track packages, validate addresses, schedule pickups, and access shipping analytics across 200+ countries.",
   "category": "community",
   "tier": "community",
   "version": "0.2.0",
@@ -11,9 +11,27 @@
   "submittedBy": "com.easyship",
   "url": "https://mcp.easyship.com/mcp",
   "transport": "streamable_http",
-  "docsUrl": "https://github.com/easyship/easyship-mcp",
+  "docsUrl": "https://developers.easyship.com/docs/easyship-mcp-server",
   "auth": "none",
   "authFallback": null,
-  "tools": [],
-  "examplePrompts": []
+  "tools": [
+    "get_rates",
+    "create_shipment",
+    "create_label",
+    "get_shipment",
+    "list_shipments",
+    "track_shipment",
+    "validate_address",
+    "get_pickup_slots",
+    "create_pickup",
+    "analytics_shipments",
+    "analytics_top_couriers"
+  ],
+  "examplePrompts": [
+    "Compare shipping rates from New York to Toronto",
+    "Create a shipment for this package",
+    "Track shipment ESSG10006001",
+    "Validate this shipping address",
+    "Schedule a pickup for tomorrow morning"
+  ]
 }

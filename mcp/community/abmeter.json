@@ -1,7 +1,7 @@
 {
   "id": "abmeter",
   "name": "ABMeter",
-  "icon": "https://cdn.simpleicons.org/abmeter",
+  "icon": "https://abmeter.com/favicon.ico",
   "description": "Feature flagging and A/B testing platform with AI-first experimentation workflows.",
   "longDescription": "Feature flagging and A/B testing platform with AI-first experimentation workflows.",
   "category": "community",

@@ -1,9 +1,9 @@
 {
   "id": "scrapegraph-ai",
   "name": "ScrapeGraph AI",
-  "icon": "https://cdn.simpleicons.org/scrapegraph",
-  "description": "enterprise-grade reliabili\u2026",
-  "longDescription": "Enable language models to perform advanced AI-powered web scraping with enterprise-grade reliabili\u2026",
+  "icon": "https://scrapegraphai.com/favicon.ico",
+  "description": "enterprise-grade reliabili",
+  "longDescription": "Enable language models to perform advanced AI-powered web scraping with enterprise-grade reliabili",
   "category": "community",
   "tier": "community",
   "version": "1.16.0",

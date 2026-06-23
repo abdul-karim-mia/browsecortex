@@ -1,9 +1,9 @@
 {
   "id": "autogen-agents",
   "name": "AutoGen Agents",
-  "icon": "https://cdn.simpleicons.org/microsoft",
-  "description": "Create and manage AI agents that collaborate and solve problems through natural language interacti\u2026",
-  "longDescription": "Create and manage AI agents that collaborate and solve problems through natural language interacti\u2026",
+  "icon": "https://microsoft.com/favicon.ico",
+  "description": "Create and manage AI agents that collaborate and solve problems through natural language interacti",
+  "longDescription": "Create and manage AI agents that collaborate and solve problems through natural language interacti",
   "category": "community",
   "tier": "community",
   "version": "0.3.0",
