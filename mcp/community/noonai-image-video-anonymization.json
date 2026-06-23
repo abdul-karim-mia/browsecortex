@@ -1,7 +1,7 @@
 {
   "id": "noonai-image-video-anonymization",
   "name": "NoonAI Image/Video Anonymization",
-  "icon": "https://cdn.simpleicons.org/noonai",
+  "icon": "https://noon-ai.dyndns-server.com/static/imgs/favicon/android-icon-48x48.png",
   "description": "Remote MCP for image/video anonymization, face/body/license-plate masking, and de-identification.",
   "longDescription": "Remote MCP for image/video anonymization, face/body/license-plate masking, and de-identification.",
   "category": "community",

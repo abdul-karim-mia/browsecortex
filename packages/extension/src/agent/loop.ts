@@ -15,9 +15,9 @@ import { analyzeImage } from './vision';
 import { executeTool, getApiTools, isDestructive, readsExternal } from '@/tools/registry';
 import { blockedToolsForUrl } from '@/tools/site-rules';
 import type { ToolContext } from '@/tools/types';
-import { executeMcpTool, getMcpApiTools, isMcpTool } from '@/mcp/integration';
 import type { ServerMessage } from '@/background/protocol';
 import { retrieveMemories } from '@/memory/retrieval';
+
 import { buildSystemPrompt } from './system-prompt';
 import { compact, shouldCompact } from './compaction';
 import { log } from '@/log';
@@ -178,7 +178,6 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
       runJavascript: settings.runJavascriptEnabled,
       externalAi: settings.externalAiEnabled,
     }),
-    ...(depth === 0 ? await getMcpApiTools() : []),
   ].filter((t) => {
     if (depth > 0 && t.function.name === 'spawn_agent') return false;
     if (args.allowedTools && !args.allowedTools.includes(t.function.name)) return false;
@@ -372,8 +371,6 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
             };
           } else if (isDestructive(tc.function.name, callArgs) && !confirmedDestructive) {
             result = { error: 'User declined this action.' };
-          } else if (isMcpTool(tc.function.name)) {
-            result = await executeMcpTool(tc.function.name, callArgs);
           } else {
             result = await executeTool(
               tc.function.name,

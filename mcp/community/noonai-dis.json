@@ -1,7 +1,7 @@
 {
   "id": "noonai-dis",
   "name": "NoonAI DIS",
-  "icon": "https://cdn.simpleicons.org/noonai",
+  "icon": "https://noon-ai.dyndns-server.com/static/imgs/favicon/android-icon-48x48.png",
   "description": "OAuth-protected Streamable HTTP MCP gateway for NoonAI DIS image and video de-identification.",
   "longDescription": "OAuth-protected Streamable HTTP MCP gateway for NoonAI DIS image and video de-identification.",
   "category": "community",

@@ -1,9 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { mcpToolName, parseMcpToolName } from '@/mcp/types';
-import { getMcpApiTools, isMcpTool } from '@/mcp/integration';
 import { saveServer, removeServer } from '@/mcp/client';
 import { detectAuthMethod } from '@/mcp/directory-types';
 import type { McpServerDefinition } from '@/mcp/directory-types';
+import {
+  listMcpServers,
+  toggleMcpServer,
+  listMcpTools,
+} from '@/tools/builtin/mcp';
 
 const baseDef: McpServerDefinition = {
   id: 'x',
@@ -21,20 +25,15 @@ const baseDef: McpServerDefinition = {
 
 describe('MCP tool naming', () => {
   it('builds a namespaced name', () => {
-    expect(mcpToolName('github', 'create_issue')).toBe('mcp:github:create_issue');
+    expect(mcpToolName('github', 'create_issue')).toBe('mcp__github__create_issue');
   });
 
   it('parses a namespaced name, preserving tool names with separators', () => {
-    expect(parseMcpToolName('mcp:fs:read_file')).toEqual({ server: 'fs', tool: 'read_file' });
+    expect(parseMcpToolName('mcp__fs__read_file')).toEqual({ server: 'fs', tool: 'read_file' });
   });
 
   it('returns null for non-MCP names', () => {
     expect(parseMcpToolName('click_element')).toBeNull();
-  });
-
-  it('isMcpTool detects the prefix', () => {
-    expect(isMcpTool('mcp:github:x')).toBe(true);
-    expect(isMcpTool('open_tab')).toBe(false);
   });
 });
 
@@ -62,23 +61,82 @@ describe('detectAuthMethod', () => {
   });
 });
 
-describe('getMcpApiTools', () => {
-  it('namespaces enabled tools and excludes disabled ones', async () => {
-    await saveServer({
-      id: 'gh',
-      name: 'github',
-      label: 'GitHub',
+describe('MCP Tools execution', () => {
+  it('list_mcp_servers lists connected servers', async () => {
+    const testServer = {
+      id: 'test-srv',
+      name: 'test-server',
+      label: 'Test Server',
       url: 'https://e/mcp',
       enabled: true,
-      tools: [{ name: 'create_issue' }, { name: 'delete_repo' }],
-      disabledTools: ['delete_repo'],
-    });
+      tools: [{ name: 'test_tool' }],
+    };
+    await saveServer(testServer);
     try {
-      const tools = (await getMcpApiTools()).map((t) => t.function.name);
-      expect(tools).toContain('mcp:github:create_issue');
-      expect(tools).not.toContain('mcp:github:delete_repo');
+      const res = (await listMcpServers.execute({}, {} as any)) as { servers: any[] };
+      expect(res.servers).toBeDefined();
+      const s = res.servers.find((srv: any) => srv.id === 'test-srv');
+      expect(s).toBeDefined();
+      expect(s.enabled).toBe(true);
+      expect(s.toolCount).toBe(1);
     } finally {
-      await removeServer('gh');
+      await removeServer('test-srv');
+    }
+  });
+
+  it('list_mcp_tools lists tools of enabled servers', async () => {
+    const testServer = {
+      id: 'test-srv-tools',
+      name: 'test-server-tools',
+      label: 'Test Server Tools',
+      url: 'https://e/mcp',
+      enabled: true,
+      tools: [{ name: 'custom_tool', description: 'desc', inputSchema: { type: 'object' } }],
+    };
+    await saveServer(testServer);
+    try {
+      const res = (await listMcpTools.execute({}, {} as any)) as { tools: any[] };
+      expect(res.tools).toBeDefined();
+      const t = res.tools.find((tool: any) => tool.name === 'custom_tool');
+      expect(t).toBeDefined();
+      expect(t.server).toBe('test-server-tools');
+    } finally {
+      await removeServer('test-srv-tools');
+    }
+  });
+
+  it('toggle_mcp_server toggles enabled state and disconnects', async () => {
+    const testServer = {
+      id: 'test-srv-toggle',
+      name: 'test-server-toggle',
+      url: 'https://e/mcp',
+      enabled: true,
+      tools: [],
+    };
+    await saveServer(testServer);
+    try {
+      // Disable
+      let res = (await toggleMcpServer.execute(
+        { id: 'test-srv-toggle', action: 'disable' },
+        {} as any,
+      )) as { success?: boolean };
+      expect(res.success).toBe(true);
+
+      // Enable
+      res = (await toggleMcpServer.execute(
+        { id: 'test-srv-toggle', action: 'enable' },
+        {} as any,
+      )) as { success?: boolean };
+      expect(res.success).toBe(true);
+
+      // Disconnect
+      res = (await toggleMcpServer.execute(
+        { id: 'test-srv-toggle', action: 'disconnect' },
+        {} as any,
+      )) as { success?: boolean };
+      expect(res.success).toBe(true);
+    } finally {
+      await removeServer('test-srv-toggle');
     }
   });
 });

@@ -1,6 +1,6 @@
 # Tool Reference
 
-Auto-generated from `src/tools/builtin`. 105 built-in tools. External MCP tools appear additionally, namespaced `mcp:<server>:<tool>`.
+Auto-generated from `src/tools/builtin`. 105 built-in tools. External MCP tools appear additionally, namespaced `mcp__<server>__<tool>`.
 
 | Tool                     | Description                                                                                                                                                                    |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |

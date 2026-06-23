@@ -1,7 +1,7 @@
 {
   "id": "waystation-teams",
   "name": "Waystation \u2014 Teams",
-  "icon": "https://cdn.simpleicons.org/microsoftteams",
+  "icon": "https://waystation.ai/images/icon.ico",
   "description": "Collaborate, chat, and manage meetings in Microsoft Teams.",
   "longDescription": "Collaborate, chat, and manage meetings in Microsoft Teams.",
   "category": "community",

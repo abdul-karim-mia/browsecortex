@@ -9,7 +9,7 @@ built-in browser tools.
 
 - **HTTP/SSE servers** work natively. Add the URL in Settings → MCP
   (e.g. `http://localhost:3000/sse`), with an optional bearer token.
-- Tools are namespaced `mcp:<server>:<tool>` to avoid conflicts.
+- Tools are namespaced `mcp__<server>__<tool>` to avoid conflicts.
 - Toggle servers and individual tools on/off; live status is shown per server.
 
 ## BrowseCortex as an MCP server

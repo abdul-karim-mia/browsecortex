@@ -1,7 +1,7 @@
 {
   "id": "noonai-video-anonymization",
   "name": "NoonAI Video Anonymization",
-  "icon": "https://cdn.simpleicons.org/noonai",
+  "icon": "https://noon-ai.dyndns-server.com/static/imgs/favicon/android-icon-48x48.png",
   "description": "Remote MCP for video anonymization, privacy redaction, async video jobs, and downloads.",
   "longDescription": "Remote MCP for video anonymization, privacy redaction, async video jobs, and downloads.",
   "category": "community",

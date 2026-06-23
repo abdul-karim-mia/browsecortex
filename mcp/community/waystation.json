@@ -1,7 +1,7 @@
 {
   "id": "waystation",
   "name": "Waystation",
-  "icon": "https://cdn.simpleicons.org/waystation",
+  "icon": "https://waystation.ai/images/icon.ico",
   "description": "Ultimate toolbox to connect your LLM to popular productivity tools such as Monday, AirTable, Slack",
   "longDescription": "Ultimate toolbox to connect your LLM to popular productivity tools such as Monday, AirTable, Slack",
   "category": "community",

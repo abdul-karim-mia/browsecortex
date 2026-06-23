@@ -1,7 +1,7 @@
 {
   "id": "xray-vision",
   "name": "XRay Vision",
-  "icon": "https://cdn.simpleicons.org/xray",
+  "icon": "https://xray.com/wp-content/uploads/2024/01/logomark.svg",
   "description": "AI-powered codebase analysis \u2014 call graphs, security, dead code, complexity. 150+ tools.",
   "longDescription": "AI-powered codebase analysis \u2014 call graphs, security, dead code, complexity. 150+ tools.",
   "category": "community",

@@ -1,7 +1,7 @@
 {
   "id": "waystation-slack",
   "name": "Waystation \u2014 Slack",
-  "icon": "https://cdn.simpleicons.org/slack",
+  "icon": "https://waystation.ai/images/icon.ico",
   "description": "Send messages, access channels, and manage files in your Slack workspace.",
   "longDescription": "Send messages, access channels, and manage files in your Slack workspace.",
   "category": "community",

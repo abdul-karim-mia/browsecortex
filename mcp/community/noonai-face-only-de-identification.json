@@ -1,7 +1,7 @@
 {
   "id": "noonai-face-only-de-identification",
   "name": "NoonAI Face Only Image/Video De Identification",
-  "icon": "https://cdn.simpleicons.org/noonai",
+  "icon": "https://noon-ai.dyndns-server.com/static/imgs/favicon/android-icon-48x48.png",
   "description": "YOLO face-only image/video de-identification: face blur, redaction, body and plate masking.",
   "longDescription": "YOLO face-only image/video de-identification: face blur, redaction, body and plate masking.",
   "category": "community",

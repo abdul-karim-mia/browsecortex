@@ -1,7 +1,7 @@
 {
   "id": "tenderly",
   "name": "Tenderly",
-  "icon": "https://cdn.simpleicons.org/tenderly",
+  "icon": "https://tenderly.co/assets/brand/favicon.ico",
   "description": "Tenderly MCP server for blockchain dev \u2014 simulate, debug, and test on 70+ networks.",
   "longDescription": "Tenderly MCP server with 59 tools for blockchain development. Simulate transactions, trace execution, inspect contracts, manage Virtual Environments, and access 100+ EVM networks. Full smart contract development workflow.",
   "category": "community",
