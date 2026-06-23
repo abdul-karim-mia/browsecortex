@@ -17,6 +17,13 @@ export interface ExternalAiAdapter {
   responseSelectors: string[];
   /** Candidate selectors for the file-upload input (image passing, best-effort). */
   fileInputSelectors: string[];
+  /**
+   * How to attach an image. `file` feeds a hidden <input type=file> (ChatGPT,
+   * Claude); `paste` dispatches a paste event onto the composer (Gemini, whose
+   * uploader isn't a plain file input). Defaults to `file`, falling back to
+   * `paste` when no file input is present.
+   */
+  imageMethod?: 'file' | 'paste';
 }
 
 export const EXTERNAL_AI_ADAPTERS: ExternalAiAdapter[] = [
@@ -33,9 +40,18 @@ export const EXTERNAL_AI_ADAPTERS: ExternalAiAdapter[] = [
     id: 'claude',
     name: 'Claude',
     url: 'https://claude.ai/new',
-    inputSelectors: ['div[contenteditable="true"]', '.ProseMirror'],
-    sendSelectors: ['button[aria-label*="Send"]', 'button[data-testid="send-button"]'],
-    responseSelectors: ['.font-claude-message', 'div[data-testid="message-content"]'],
+    inputSelectors: ['div.ProseMirror[contenteditable="true"]', '.ProseMirror', 'div[contenteditable="true"]'],
+    sendSelectors: [
+      'button[aria-label="Send message"]',
+      'button[aria-label*="Send"]',
+      'button[type="submit"]',
+    ],
+    responseSelectors: [
+      'div[data-is-streaming] .font-claude-message',
+      '.font-claude-message',
+      'div[data-testid="message-content"]',
+      '.prose',
+    ],
     fileInputSelectors: ['input[type="file"]'],
   },
   {
@@ -46,14 +62,20 @@ export const EXTERNAL_AI_ADAPTERS: ExternalAiAdapter[] = [
     sendSelectors: ['button[aria-label*="Send"]', 'button.send-button'],
     responseSelectors: ['message-content', '.model-response-text', '.markdown'],
     fileInputSelectors: ['input[type="file"]'],
+    imageMethod: 'paste',
   },
   {
     id: 'perplexity',
     name: 'Perplexity',
     url: 'https://www.perplexity.ai/',
-    inputSelectors: ['textarea', 'div[contenteditable="true"]'],
-    sendSelectors: ['button[aria-label*="Submit"]', 'button[aria-label*="Send"]'],
-    responseSelectors: ['.prose', 'div[dir="auto"]'],
+    inputSelectors: ['textarea[placeholder]', 'textarea', 'div[contenteditable="true"]'],
+    sendSelectors: [
+      'button[aria-label="Submit"]',
+      'button[aria-label*="Submit"]',
+      'button[data-testid="submit-button"]',
+      'button[type="submit"]',
+    ],
+    responseSelectors: ['div[id^="markdown-content"]', '.prose', 'div[dir="auto"]'],
     fileInputSelectors: ['input[type="file"]'],
   },
 ];
