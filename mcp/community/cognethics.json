@@ -1,7 +1,7 @@
 {
   "id": "cognethics",
   "name": "Cognethics",
-  "icon": "https://cdn.simpleicons.org/ethics",
+  "icon": "https://{tenant}.cognethics.com/favicon.ico",
   "description": "Multi-tenant business platform \u2014 6,000+ RBAC-gated MCP tools across finance, ops, docs, agents.",
   "longDescription": "Multi-tenant business platform \u2014 6,000+ RBAC-gated MCP tools across finance, ops, docs, agents.",
   "category": "community",

@@ -1,7 +1,7 @@
 {
   "id": "web-search",
   "name": "Web Search",
-  "icon": "https://cdn.simpleicons.org/search",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Web search for AI agents \u2014 one tool across 6 engines, routed to the cheapest + cached.",
   "longDescription": "Web search for AI agents \u2014 one tool across 6 engines, routed to the cheapest + cached.",
   "category": "community",

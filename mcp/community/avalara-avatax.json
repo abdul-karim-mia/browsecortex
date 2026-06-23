@@ -1,7 +1,7 @@
 {
   "id": "avalara-avatax",
   "name": "Avalara AvaTax",
-  "icon": "https://cdn.simpleicons.org/avalara",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Access Avalara AvaTax API for tax calculation, transactions, nexus management, and compliance",
   "longDescription": "Access Avalara AvaTax API for tax calculation, transactions, nexus management, and compliance",
   "category": "community",

@@ -1,7 +1,7 @@
 {
   "id": "axiom",
   "name": "Axiom",
-  "icon": "https://cdn.simpleicons.org/axiom",
+  "icon": "https://mcp.axiom.co/favicon.ico",
   "description": "List datasets, schemas, run APL queries, and use prompts for exploration, anomalies, and monitoring.",
   "longDescription": "List datasets, schemas, run APL queries, and use prompts for exploration, anomalies, and monitoring.",
   "category": "community",

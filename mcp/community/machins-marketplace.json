@@ -1,7 +1,7 @@
 {
   "id": "machins-marketplace",
   "name": "Machins Marketplace",
-  "icon": "https://cdn.simpleicons.org/shoppingcart",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Agent-to-agent marketplace with escrow-protected trades via MCP tools.",
   "longDescription": "Agent-to-agent marketplace with escrow-protected trades via MCP tools.",
   "category": "community",

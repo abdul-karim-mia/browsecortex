@@ -1,7 +1,7 @@
 {
   "id": "eztexting",
   "name": "Eztexting",
-  "icon": "https://cdn.simpleicons.org/sms",
+  "icon": "https://mcp.eztexting.com/favicon.ico",
   "description": "Official EZTexting MCP server: SMS/MMS messaging, contacts, workflows, and account administration.",
   "longDescription": "Official EZTexting MCP server: SMS/MMS messaging, contacts, workflows, and account administration.",
   "category": "community",

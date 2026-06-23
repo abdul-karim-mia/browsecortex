@@ -1,7 +1,7 @@
 {
   "id": "axiorank-agent-firewall",
   "name": "AxioRank Agent Firewall",
-  "icon": "https://cdn.simpleicons.org/firewall",
+  "icon": "https://app.axiorank.com/favicon.ico",
   "description": "Security gateway for AI agents: score tool calls, verify agent cards, enforce policy, audit.",
   "longDescription": "Security gateway for AI agents: score tool calls, verify agent cards, enforce policy, audit.",
   "category": "community",

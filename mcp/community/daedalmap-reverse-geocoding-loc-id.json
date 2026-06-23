@@ -1,7 +1,7 @@
 {
   "id": "daedalmap-reverse-geocoding-loc-id",
   "name": "DaedalMap Reverse Geocoding (Coordinates To Loc Id)",
-  "icon": "https://cdn.simpleicons.org/map",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Convert latitude/longitude to the deepest administrative loc_id plus its full parent chain.",
   "longDescription": "Convert latitude/longitude to the deepest administrative loc_id plus its full parent chain.",
   "category": "community",

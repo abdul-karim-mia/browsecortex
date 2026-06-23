@@ -1,7 +1,7 @@
 {
   "id": "daedalmap-flood-events",
   "name": "DaedalMap Flood Events",
-  "icon": "https://cdn.simpleicons.org/map",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Global flood events and extent 1985-present from the Dartmouth Flood Observatory and GFD.",
   "longDescription": "Global flood events and extent 1985-present from the Dartmouth Flood Observatory and GFD.",
   "category": "community",

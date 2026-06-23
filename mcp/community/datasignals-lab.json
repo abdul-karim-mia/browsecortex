@@ -1,7 +1,7 @@
 {
   "id": "datasignals-lab",
   "name": "Datasignals Lab",
-  "icon": "https://cdn.simpleicons.org/chart",
+  "icon": "https://www.dimetrics.ai/favicon.ico",
   "description": "13 scored financial & market-data tools for AI agents in one MCP endpoint (SEC, FDA, crypto).",
   "longDescription": "13 scored financial & market-data tools for AI agents in one MCP endpoint (SEC, FDA, crypto).",
   "category": "community",

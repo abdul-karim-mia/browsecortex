@@ -1,7 +1,7 @@
 {
   "id": "osint",
   "name": "OSINT",
-  "icon": "https://cdn.simpleicons.org/search",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Agent-ready US power data: capacity, generation, capacity factor (EIA), cited to source.",
   "longDescription": "Agent-ready US power data: capacity, generation, capacity factor (EIA), cited to source.",
   "category": "community",

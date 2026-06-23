@@ -1,7 +1,7 @@
 {
   "id": "avalara-returns",
   "name": "Avalara Returns",
-  "icon": "https://cdn.simpleicons.org/avalara",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Avalara Global Returns API for tax returns, filing calendars, and compliance data",
   "longDescription": "Provides access to Avalara Global Returns API for tax returns, filing calendars, and compliance data",
   "category": "community",

@@ -1,7 +1,7 @@
 {
   "id": "sqlite-browser",
   "name": "SQLite Browser",
-  "icon": "https://cdn.simpleicons.org/database",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Explore, query, and inspect SQLite databases with ease. List tables, preview results, and view det",
   "longDescription": "SQLite database MCP server providing comprehensive database interaction. Execute SQL queries, list tables, describe schemas, and perform CRUD operations. Supports read-only and read-write modes.",
   "category": "community",

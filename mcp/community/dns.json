@@ -1,7 +1,7 @@
 {
   "id": "dns",
   "name": "DNS",
-  "icon": "https://cdn.simpleicons.org/dns",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "DNS & email security scanner \u2014 51 tools for SPF, DMARC, DKIM, DNSSEC, SSL, and more.",
   "longDescription": "DNS & email security scanner \u2014 51 tools for SPF, DMARC, DKIM, DNSSEC, SSL, and more.",
   "category": "community",

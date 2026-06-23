@@ -1,7 +1,7 @@
 {
   "id": "sqlite-explorer",
   "name": "SQLite Explorer",
-  "icon": "https://cdn.simpleicons.org/database",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Explore your Messages SQLite database to browse tables and inspect schemas with ease. Run flexible",
   "longDescription": "SQLite database explorer MCP server with full CRUD operations, custom SQL queries, database exploration and introspection. Provides comprehensive SQLite interaction capabilities.",
   "category": "community",

@@ -1,7 +1,7 @@
 {
   "id": "filingfirehose",
   "name": "FilingFirehose",
-  "icon": "https://cdn.simpleicons.org/document",
+  "icon": "https://changethisfile.com/favicon.ico",
   "description": "SEC EDGAR filings parsed: 8-K body-text classification, 13D activist tagging, S-3 ATM detection.",
   "longDescription": "SEC EDGAR filings parsed: 8-K body-text classification, 13D activist tagging, S-3 ATM detection.",
   "category": "community",

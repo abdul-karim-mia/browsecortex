@@ -1,7 +1,7 @@
 {
   "id": "daedalmap-earthquake-data",
   "name": "DaedalMap Earthquake Data",
-  "icon": "https://cdn.simpleicons.org/map",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Historical earthquake event data and structured earthquake queries from the DaedalMap MCP lane.",
   "longDescription": "Historical earthquake event data and structured earthquake queries from the DaedalMap MCP lane.",
   "category": "community",

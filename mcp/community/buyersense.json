@@ -1,7 +1,7 @@
 {
   "id": "buyersense",
   "name": "Buyersense",
-  "icon": "https://cdn.simpleicons.org/shoppingcart",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "MCP server for the BuyerSense API. Get buyer signals from any MCP client.",
   "longDescription": "MCP server for the BuyerSense API. Get buyer signals from any MCP client.",
   "category": "community",

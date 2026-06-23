@@ -1,7 +1,7 @@
 {
   "id": "metrifyr",
   "name": "Metrifyr",
-  "icon": "https://cdn.simpleicons.org/chart",
+  "icon": "https://www.dimetrics.ai/favicon.ico",
   "description": "Query Google Analytics 4, Search Console, GTM & AdSense with natural language from MCP clients.",
   "longDescription": "Query Google Analytics 4, Search Console, GTM & AdSense with natural language from MCP clients.",
   "category": "community",

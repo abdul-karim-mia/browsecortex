@@ -1,7 +1,7 @@
 {
   "id": "daedalmap-historical-fx-rates",
   "name": "DaedalMap Historical FX Rates",
-  "icon": "https://cdn.simpleicons.org/map",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Historical foreign exchange rates and currency comparisons from the DaedalMap MCP lane.",
   "longDescription": "Historical foreign exchange rates and currency comparisons from the DaedalMap MCP lane.",
   "category": "community",

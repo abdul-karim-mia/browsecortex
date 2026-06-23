@@ -1,7 +1,7 @@
 {
   "id": "artidrop",
   "name": "Artidrop",
-  "icon": "https://cdn.simpleicons.org/artidrop",
+  "icon": "https://artidrop.ai/favicon.ico",
   "description": "The publishing layer for AI agents. Turn HTML and Markdown into shareable URLs instantly via MCP.",
   "longDescription": "The publishing layer for AI agents. Turn HTML and Markdown into shareable URLs instantly via MCP.",
   "category": "community",

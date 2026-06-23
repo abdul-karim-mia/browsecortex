@@ -1,7 +1,7 @@
 {
   "id": "prover",
   "name": "Prover",
-  "icon": "https://cdn.simpleicons.org/prover",
+  "icon": "https://prover.axiomatic-ai.com/favicon.ico",
   "description": "Lean 4 MCP server: compile, prove theorems, and formalize math with Mathlib.",
   "longDescription": "Lean 4 MCP server: compile, prove theorems, and formalize math with Mathlib.",
   "category": "community",

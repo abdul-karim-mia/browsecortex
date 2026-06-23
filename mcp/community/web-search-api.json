@@ -1,7 +1,7 @@
 {
   "id": "web-search-api",
   "name": "Keenable Web Search",
-  "icon": "https://cdn.simpleicons.org/search",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Live web search and clean-markdown page fetch over the Keenable web index.",
   "longDescription": "Live web search and clean-markdown page fetch over the Keenable web index.",
   "category": "community",

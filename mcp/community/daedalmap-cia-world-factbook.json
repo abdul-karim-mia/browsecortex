@@ -1,7 +1,7 @@
 {
   "id": "daedalmap-cia-world-factbook",
   "name": "DaedalMap CIA World Factbook",
-  "icon": "https://cdn.simpleicons.org/map",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "CIA World Factbook country indicators for infrastructure, energy, demographics, and economy. Free.",
   "longDescription": "CIA World Factbook country indicators for infrastructure, energy, demographics, and economy. Free.",
   "category": "community",

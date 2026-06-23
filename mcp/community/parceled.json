@@ -1,7 +1,7 @@
 {
   "id": "parceled",
   "name": "Parceled",
-  "icon": "https://cdn.simpleicons.org/package",
+  "icon": "https://parceled.ai/favicon.ico",
   "description": "US property data: 135M+ parcels with owners, roof permits, and hail history. Free tier + OAuth 2.1.",
   "longDescription": "US property data: 135M+ parcels with owners, roof permits, and hail history. Free tier + OAuth 2.1.",
   "category": "community",

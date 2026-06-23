@@ -1,7 +1,7 @@
 {
   "id": "counterparty-intelligence",
   "name": "Counterparty Intelligence",
-  "icon": "https://cdn.simpleicons.org/intelligence",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Check who your agent is about to pay over x402: real service, relayer, treasury, or buyer.",
   "longDescription": "Check who your agent is about to pay over x402: real service, relayer, treasury, or buyer.",
   "category": "community",

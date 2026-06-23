@@ -1,7 +1,7 @@
 {
   "id": "gateway",
   "name": "Duvera Gateway",
-  "icon": "https://cdn.simpleicons.org/gateway",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Governed AI actions with signed, verifiable receipts: free keyless reads, human-approved writes.",
   "longDescription": "Governed AI actions with signed, verifiable receipts: free keyless reads, human-approved writes.",
   "category": "community",

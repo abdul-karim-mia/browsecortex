@@ -1,7 +1,7 @@
 {
   "id": "avalara-tax-content",
   "name": "Avalara Tax Content",
-  "icon": "https://cdn.simpleicons.org/avalara",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Avalara Tax Content: TTE configs, jobs, communications, lodging, autorental",
   "longDescription": "Provides access to Avalara Tax Content: TTE configs, jobs, communications, lodging, autorental",
   "category": "community",

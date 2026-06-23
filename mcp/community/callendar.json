@@ -1,7 +1,7 @@
 {
   "id": "callendar",
   "name": "Callendar",
-  "icon": "https://cdn.simpleicons.org/calendar",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "WhatsApp\u00ae reminders and rescheduling for Calendly. Public read-only MCP endpoint.",
   "longDescription": "WhatsApp\u00ae reminders and rescheduling for Calendly. Public read-only MCP endpoint.",
   "category": "community",

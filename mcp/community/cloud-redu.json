@@ -1,7 +1,7 @@
 {
   "id": "cloud-redu",
   "name": "Redu Cloud",
-  "icon": "https://cdn.simpleicons.org/cloud",
+  "icon": "https://dchub.cloud/favicon.ico",
   "description": "Agent-native cloud, EU-hosted. Provision VMs, networks & databases on redu.cloud via MCP.",
   "longDescription": "Agent-native cloud, EU-hosted. Provision VMs, networks & databases on redu.cloud via MCP.",
   "category": "community",

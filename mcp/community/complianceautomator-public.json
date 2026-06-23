@@ -1,7 +1,7 @@
 {
   "id": "complianceautomator-public",
   "name": "ComplianceAutomator Public",
-  "icon": "https://cdn.simpleicons.org/compliance",
+  "icon": "https://compliance.appgenie.com.au/favicon.ico",
   "description": "Public read-only MCP for products, frameworks, guides, methodology, and blog metadata.",
   "longDescription": "Public read-only MCP for products, frameworks, guides, methodology, and blog metadata.",
   "category": "community",

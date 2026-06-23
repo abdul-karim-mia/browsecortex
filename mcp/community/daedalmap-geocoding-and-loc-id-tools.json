@@ -1,7 +1,7 @@
 {
   "id": "daedalmap-geocoding-and-loc-id-tools",
   "name": "DaedalMap Geocoding and Loc Id Tools",
-  "icon": "https://cdn.simpleicons.org/map",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Geocoding and reverse geocoding: coordinates and place names to administrative boundaries (loc_id).",
   "longDescription": "Geocoding and reverse geocoding: coordinates and place names to administrative boundaries (loc_id).",
   "category": "community",

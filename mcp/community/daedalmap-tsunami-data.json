@@ -1,7 +1,7 @@
 {
   "id": "daedalmap-tsunami-data",
   "name": "DaedalMap Tsunami Data",
-  "icon": "https://cdn.simpleicons.org/map",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Historical tsunami event data and structured tsunami queries from the DaedalMap MCP lane.",
   "longDescription": "Historical tsunami event data and structured tsunami queries from the DaedalMap MCP lane.",
   "category": "community",

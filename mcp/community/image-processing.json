@@ -1,7 +1,7 @@
 {
   "id": "image-processing",
   "name": "Image Processing",
-  "icon": "https://cdn.simpleicons.org/image",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Image processing for AI agents. Resize, convert, compress, and pipeline images.",
   "longDescription": "Image processing for AI agents. Resize, convert, compress, and pipeline images.",
   "category": "community",

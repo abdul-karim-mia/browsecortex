@@ -1,7 +1,7 @@
 {
   "id": "us-national-weather-service",
   "name": "US National Weather Service",
-  "icon": "https://cdn.simpleicons.org/weather",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Provide real-time and forecast weather information for locations in the United States using natura",
   "longDescription": "Provide real-time and forecast weather information for locations in the United States using natura",
   "category": "community",

@@ -1,7 +1,7 @@
 {
   "id": "browserbase",
   "name": "Browserbase",
-  "icon": "https://cdn.simpleicons.org/browser",
+  "icon": "https://browserbase.com/favicon.ico",
   "description": "i\u2026",
   "longDescription": "Provides cloud browser automation capabilities using Stagehand and Browserbase, enabling LLMs to i",
   "category": "community",

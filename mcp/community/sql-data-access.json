@@ -1,7 +1,7 @@
 {
   "id": "sql-data-access",
   "name": "SQL Data Access",
-  "icon": "https://cdn.simpleicons.org/database",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Read-only PostgreSQL, MySQL, SQL Server access via MCP \u2014 24 dialect-aware hosted tools.",
   "longDescription": "Read-only PostgreSQL, MySQL, SQL Server access via MCP \u2014 24 dialect-aware hosted tools.",
   "category": "community",

@@ -1,7 +1,7 @@
 {
   "id": "prince-pdf-converter",
   "name": "Prince PDF Converter",
-  "icon": "https://cdn.simpleicons.org/pdf",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Convert HTML, Markdown, and XML to high-quality PDF documents using Prince",
   "longDescription": "Convert HTML, Markdown, and XML to high-quality PDF documents using Prince",
   "category": "community",

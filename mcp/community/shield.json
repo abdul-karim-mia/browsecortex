@@ -1,7 +1,7 @@
 {
   "id": "shield",
   "name": "Shield",
-  "icon": "https://cdn.simpleicons.org/shield",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Trust verification for MCP servers. Check scores, scan for security issues, search 4,200+ servers.",
   "longDescription": "Trust verification for MCP servers. Check scores, scan for security issues, search 4,200+ servers.",
   "category": "community",

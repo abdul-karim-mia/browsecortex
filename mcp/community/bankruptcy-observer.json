@@ -1,7 +1,7 @@
 {
   "id": "bankruptcy-observer",
   "name": "Bankruptcy Observer",
-  "icon": "https://cdn.simpleicons.org/bankruptcy",
+  "icon": "https://mcp.bankruptcyobserver.com/favicon.ico",
   "description": "US business bankruptcy data via MCP: search by name, EIN. Lookup docket items.",
   "longDescription": "US business bankruptcy data via MCP: search by name, EIN. Lookup docket items.",
   "category": "community",

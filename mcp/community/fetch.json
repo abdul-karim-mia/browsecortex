@@ -1,7 +1,7 @@
 {
   "id": "fetch",
   "name": "Fetch",
-  "icon": "https://cdn.simpleicons.org/download",
+  "icon": "https://changethisfile.com/favicon.ico",
   "description": "A simple tool that performs a fetch request to a webpage.",
   "longDescription": "A simple tool that performs a fetch request to a webpage.",
   "category": "community",

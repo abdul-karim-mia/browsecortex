@@ -1,7 +1,7 @@
 {
   "id": "drillable",
   "name": "Drillable",
-  "icon": "https://cdn.simpleicons.org/drill",
+  "icon": "https://mcp.drillable.com/favicon.ico",
   "description": "A multi-domain reference corpus where every answer drills down to its cited, verified source.",
   "longDescription": "A multi-domain reference corpus where every answer drills down to its cited, verified source.",
   "category": "community",

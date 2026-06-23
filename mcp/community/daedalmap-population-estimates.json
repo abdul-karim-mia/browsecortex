@@ -1,7 +1,7 @@
 {
   "id": "daedalmap-population-estimates",
   "name": "DaedalMap Population Estimates",
-  "icon": "https://cdn.simpleicons.org/map",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Global population estimates from WorldPop, 2000-2030, at country and sub-national levels.",
   "longDescription": "Global population estimates from WorldPop, 2000-2030, at country and sub-national levels.",
   "category": "community",

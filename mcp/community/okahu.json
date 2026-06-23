@@ -1,7 +1,7 @@
 {
   "id": "okahu",
   "name": "Okahu",
-  "icon": "https://cdn.simpleicons.org/okahu",
+  "icon": "https://okahu.com/favicon.ico",
   "description": "Cloud hosted Okahu MCP server that helps you manage genAI trace data",
   "longDescription": "Cloud hosted Okahu MCP server that helps you manage genAI trace data",
   "category": "community",

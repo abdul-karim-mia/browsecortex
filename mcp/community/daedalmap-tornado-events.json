@@ -1,7 +1,7 @@
 {
   "id": "daedalmap-tornado-events",
   "name": "DaedalMap Tornado Events",
-  "icon": "https://cdn.simpleicons.org/map",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "US tornado events 1950-present from the NOAA Storm Prediction Center: EF rating, tracks, damage.",
   "longDescription": "US tornado events 1950-present from the NOAA Storm Prediction Center: EF rating, tracks, damage.",
   "category": "community",

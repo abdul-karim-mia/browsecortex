@@ -1,7 +1,7 @@
 {
   "id": "daedalmap-volcanic-activity",
   "name": "DaedalMap Volcanic Activity",
-  "icon": "https://cdn.simpleicons.org/map",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Historical volcanic eruption records and volcanic activity queries from the DaedalMap MCP lane.",
   "longDescription": "Historical volcanic eruption records and volcanic activity queries from the DaedalMap MCP lane.",
   "category": "community",

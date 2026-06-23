@@ -1,7 +1,7 @@
 {
   "id": "dragoneye",
   "name": "Dragoneye",
-  "icon": "https://cdn.simpleicons.org/eye",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Build zero-shot video models for object detection, and category and attribute classification.",
   "longDescription": "Build zero-shot video models for object detection, and category and attribute classification.",
   "category": "community",

@@ -1,7 +1,7 @@
 {
   "id": "registry",
   "name": "ShareBench Registry",
-  "icon": "https://cdn.simpleicons.org/registry",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Search and pull AI skills, agents, prompts & playbooks (SKILL.md) into any MCP client",
   "longDescription": "Search and pull AI skills, agents, prompts & playbooks (SKILL.md) into any MCP client",
   "category": "community",

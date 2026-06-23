@@ -1,7 +1,7 @@
 {
   "id": "browserbase-cloud",
   "name": "Browserbase Cloud",
-  "icon": "https://cdn.simpleicons.org/browser",
+  "icon": "https://browserbase.com/favicon.ico",
   "description": "Automate cloud browsers to navigate websites, interact with elements, and extract structured data.",
   "longDescription": "Automate cloud browsers to navigate websites, interact with elements, and extract structured data.",
   "category": "community",

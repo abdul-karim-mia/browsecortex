@@ -1,7 +1,7 @@
 {
   "id": "agentmail",
   "name": "AgentMail",
-  "icon": "https://cdn.simpleicons.org/mail",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "AgentMail is the email inbox API for AI agents. It gives agents their own email inboxes, like Gmail",
   "longDescription": "AgentMail is the email inbox API for AI agents. It gives agents their own email inboxes, like Gmail",
   "category": "community",

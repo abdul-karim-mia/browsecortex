@@ -1,7 +1,7 @@
 {
   "id": "superforms",
   "name": "Superforms",
-  "icon": "https://cdn.simpleicons.org/form",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "Human-input bridge for AI agents with voice-first answer links, MCP tools, and HTTP APIs.",
   "longDescription": "Human-input bridge for AI agents with voice-first answer links, MCP tools, and HTTP APIs.",
   "category": "community",

@@ -1,7 +1,7 @@
 {
   "id": "daedalmap-administrative-boundaries",
   "name": "DaedalMap Administrative Boundaries (Loc Id To Polygon)",
-  "icon": "https://cdn.simpleicons.org/map",
+  "icon": "https://mcp.pipeboard.co/favicon.ico",
   "description": "A loc_id to its bounding box, centroid, and polygon, with place name and admin level.",
   "longDescription": "A loc_id to its bounding box, centroid, and polygon, with place name and admin level.",
   "category": "community",
