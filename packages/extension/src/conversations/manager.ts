@@ -56,6 +56,67 @@ export async function getMessages(conversationId: string): Promise<Message[]> {
   return Storage.messages.byConversation(conversationId);
 }
 
+/**
+ * Fork a conversation at a given message (B1/B8). Creates a new conversation
+ * containing copies of every message up to and including `messageId`, so the
+ * user can branch off without disturbing the original.
+ *
+ * To keep the API history valid, a trailing assistant turn that still has
+ * unanswered tool_calls (its tool results would live after the cut point) is
+ * dropped from the fork — otherwise the next provider call would see an
+ * assistant message with tool_calls and no matching tool responses.
+ */
+export async function forkConversation(
+  sourceId: string,
+  messageId: string,
+): Promise<string | null> {
+  const source = await Storage.conversations.get(sourceId);
+  if (!source) return null;
+  const all = await Storage.messages.byConversation(sourceId);
+  const cut = all.findIndex((m) => m.id === messageId);
+  if (cut < 0) return null;
+
+  const slice = all.slice(0, cut + 1);
+  // Drop a trailing assistant turn whose tool_calls have no following results.
+  while (slice.length > 0) {
+    const last = slice[slice.length - 1];
+    if (last.role === 'assistant' && last.toolCalls && last.toolCalls.length > 0) {
+      slice.pop();
+    } else {
+      break;
+    }
+  }
+  if (slice.length === 0) return null;
+
+  const now = Date.now();
+  const forkId = crypto.randomUUID();
+  const conversation: Conversation = {
+    ...source,
+    id: forkId,
+    name: `${source.name} (fork)`,
+    starred: false,
+    pinned: false,
+    createdAt: new Date(now).toISOString(),
+    updatedAt: new Date(now).toISOString(),
+    taskIds: [],
+    messageCount: slice.length,
+  };
+  await Storage.conversations.save(conversation);
+
+  // Clone messages with fresh ids and strictly increasing timestamps so the
+  // history reconstructs in the same order (see persistNewTurns' note).
+  for (let i = 0; i < slice.length; i++) {
+    const m = slice[i];
+    await Storage.messages.save({
+      ...m,
+      id: crypto.randomUUID(),
+      conversationId: forkId,
+      createdAt: new Date(now + i).toISOString(),
+    });
+  }
+  return forkId;
+}
+
 /** Rebuild the ApiMessage history (excludes the system prompt). */
 export async function getApiHistory(conversationId: string): Promise<ApiMessage[]> {
   return buildApiHistory(await getMessages(conversationId));

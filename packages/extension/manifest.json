@@ -38,6 +38,7 @@
     "search",
     "readingList",
     "alarms",
+    "contextMenus",
     "declarativeNetRequest",
     "debugger"
   ],

@@ -43,6 +43,22 @@ describe('tool registry', () => {
     // A tab the agent never opened still requires confirmation.
     expect(isDestructive('close_tab', { tab_id: opened.id + 12345 })).toBe(true);
   });
+
+  it('gates ask_external_ai behind its opt-in flag (B7)', () => {
+    const names = (opts?: Parameters<typeof getApiTools>[0]) =>
+      getApiTools(opts).map((s) => s.function.name);
+    expect(names()).not.toContain('ask_external_ai');
+    expect(names({ externalAi: true })).toContain('ask_external_ai');
+  });
+});
+
+describe('external-ai adapters (B7)', () => {
+  it('resolves known services case-insensitively and rejects unknown', async () => {
+    const { getAdapter, EXTERNAL_AI_ADAPTERS } = await import('@/adapters');
+    expect(EXTERNAL_AI_ADAPTERS.length).toBeGreaterThanOrEqual(4);
+    expect(getAdapter('ChatGPT')?.id).toBe('chatgpt');
+    expect(getAdapter('nope')).toBeUndefined();
+  });
 });
 
 describe('executeTool', () => {

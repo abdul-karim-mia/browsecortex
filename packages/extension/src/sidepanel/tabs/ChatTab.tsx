@@ -13,6 +13,7 @@ import type { Attachment } from '@/background/protocol';
 import type { Settings } from '@/types';
 import { ModelPickerPopup } from '../ModelPickerPopup';
 import { ModePickerPopup } from '../ModePickerPopup';
+import { forkConversation } from '@/conversations/manager';
 
 type Block = { kind: 'working'; lines: ChatLine[] } | { kind: 'message'; line: ChatLine };
 
@@ -69,9 +70,11 @@ interface Props {
   conversationId: string;
   /** Lets the App header render this tab's clear/new controls (PLAN §7). */
   registerControls?: (controls: ChatControls | null) => void;
+  /** Switch the app to a newly-forked conversation (B8). */
+  onForked?: (newConversationId: string) => void;
 }
 
-export function ChatTab({ conversationId, registerControls }: Props) {
+export function ChatTab({ conversationId, registerControls, onForked }: Props) {
   const [lines, setLines] = useState<ChatLine[]>([]);
   const [input, setInput] = useState('');
   const [running, setRunning] = useState(false);
@@ -80,6 +83,8 @@ export function ChatTab({ conversationId, registerControls }: Props) {
   const [ask, setAsk] = useState<AskUserPayload | null>(null);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [contextWindow, setContextWindow] = useState<number | null>(null);
+  /** Cumulative estimated tokens spent in this conversation (B2). */
+  const [convTokens, setConvTokens] = useState(0);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [modelSupportsThinking, setModelSupportsThinking] = useState(false);
   const [showModelPicker, setShowModelPicker] = useState(false);
@@ -129,6 +134,35 @@ export function ChatTab({ conversationId, registerControls }: Props) {
   useEffect(() => {
     Storage.messages.byConversation(conversationId).then((msgs) => setLines(messagesToLines(msgs)));
   }, [conversationId]);
+
+  // Load the conversation's cumulative token count (B2), refreshed after runs.
+  const loadConvTokens = () =>
+    Storage.conversations.get(conversationId).then((c) => setConvTokens(c?.tokensUsed ?? 0));
+  useEffect(() => {
+    loadConvTokens();
+  }, [conversationId]);
+
+  // Right-click "Send to BrowseCortex" → prefill the input (B4). Consume any
+  // text stashed before the panel opened, then listen for live broadcasts.
+  useEffect(() => {
+    const appendSelection = (text: string) =>
+      setInput((prev) => (prev ? `${prev}\n${text}` : text));
+    chrome.storage?.session
+      ?.get('pending_context_selection')
+      .then((res) => {
+        const text = res?.pending_context_selection;
+        if (typeof text === 'string' && text) {
+          appendSelection(text);
+          chrome.storage.session.remove('pending_context_selection').catch(() => {});
+        }
+      })
+      .catch(() => {});
+    const onMsg = (msg: { type?: string; text?: string }) => {
+      if (msg?.type === 'context_selection' && msg.text) appendSelection(msg.text);
+    };
+    chrome.runtime?.onMessage?.addListener(onMsg);
+    return () => chrome.runtime?.onMessage?.removeListener(onMsg);
+  }, []);
 
   // Auto-scroll to the newest content as it streams in.
   useEffect(() => {
@@ -206,6 +240,7 @@ export function ChatTab({ conversationId, registerControls }: Props) {
       openRef.current = false;
       closeThinkingLine();
       submittedRef.current = false;
+      loadConvTokens();
       // Reload from storage so persisted messages carry ids (enables pin/delete).
       // Guard with submittedRef so a quick second submit doesn't get overwritten.
       Storage.messages.byConversation(conversationId).then((m) => {
@@ -409,14 +444,15 @@ export function ChatTab({ conversationId, registerControls }: Props) {
     setThinking(false);
   };
 
-  const agentMode = settings?.agentMode ?? 'full_auto';
-  const bypassPermissions = agentMode === 'full_auto';
-  const modeLabel =
-    agentMode === 'full_auto'
-      ? 'Bypass permissions'
-      : agentMode === 'notify_only'
-        ? 'Auto mode'
-        : 'Ask permissions';
+  const agentMode = settings?.agentMode ?? 'bypass';
+  const modeLabel = agentMode === 'bypass' ? 'Bypass' : agentMode === 'auto' ? 'Auto' : 'Ask';
+  // Colour cue: ask = green (safe), auto = blue, bypass = amber (prompts off).
+  const modePillClass =
+    agentMode === 'bypass'
+      ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400'
+      : agentMode === 'auto'
+        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400'
+        : 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400';
 
   const reloadFromStore = async () => {
     const m = await Storage.messages.byConversation(conversationId);
@@ -436,6 +472,12 @@ export function ChatTab({ conversationId, registerControls }: Props) {
   const deleteMessage = async (messageId: string) => {
     await Storage.messages.remove(messageId);
     await reloadFromStore();
+  };
+
+  const forkFrom = async (messageId: string) => {
+    if (running) return;
+    const newId = await forkConversation(conversationId, messageId);
+    if (newId) onForked?.(newId);
   };
 
   const clearChat = async () => {
@@ -465,13 +507,18 @@ export function ChatTab({ conversationId, registerControls }: Props) {
     <div class="flex h-full flex-col">
       {/* Toolbar — clear/new conversation live in the App header now. */}
       {contextWindow ? (
-        <div class="px-2 py-1">
+        <div class="flex items-center gap-2 px-2 py-1">
           <span
             class={`text-xs ${ctxPercent >= 80 ? 'text-amber-600' : 'text-gray-400'}`}
             title={`~${usedTokens.toLocaleString()} / ${contextWindow.toLocaleString()} tokens`}
           >
             {ctxPercent < 1 ? 'context: empty' : `context ${ctxPercent.toFixed(0)}%`}
           </span>
+          {convTokens > 0 && (
+            <span class="text-xs text-gray-400" title="Estimated tokens used in this conversation">
+              · {convTokens >= 1000 ? `${(convTokens / 1000).toFixed(1)}k` : convTokens} tokens used
+            </span>
+          )}
         </div>
       ) : null}
       {ctxPercent >= 80 && (
@@ -515,6 +562,7 @@ export function ChatTab({ conversationId, registerControls }: Props) {
               line={block.line}
               onPin={togglePin}
               onDelete={deleteMessage}
+              onFork={forkFrom}
             />
           ),
         )}
@@ -579,11 +627,7 @@ export function ChatTab({ conversationId, registerControls }: Props) {
                 type="button"
                 onClick={() => setShowModePicker((v) => !v)}
                 title="Agent permission mode"
-                class={`flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
-                  bypassPermissions
-                    ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400'
-                    : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
-                }`}
+                class={`flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${modePillClass}`}
               >
                 {modeLabel}
                 <Icon name="chevron-down" size={12} />

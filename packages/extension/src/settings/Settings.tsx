@@ -8,6 +8,7 @@ import { GeneralTab } from './tabs/GeneralTab';
 import { McpTab } from './tabs/McpTab';
 import { McpServerTab } from './tabs/McpServerTab';
 import { SkillsTab } from './tabs/SkillsTab';
+import { SitesTab } from './tabs/SitesTab';
 import { PlaygroundTab } from './tabs/PlaygroundTab';
 import { Icon } from '@/components/Icon';
 
@@ -20,6 +21,7 @@ type Tab =
   | 'mcp_server'
   | 'backup'
   | 'general'
+  | 'sites'
   | 'playground';
 
 const TABS: { id: Tab; label: string }[] = [
@@ -31,6 +33,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'mcp_server', label: 'MCP Server' },
   { id: 'backup', label: 'Backup' },
   { id: 'general', label: 'General' },
+  { id: 'sites', label: 'Sites' },
   // Dev-only Tool Playground (PLAN §38).
   ...(import.meta.env.DEV ? [{ id: 'playground' as Tab, label: '🧪 Playground' }] : []),
 ];
@@ -69,6 +72,7 @@ export function Settings() {
       {tab === 'backup' && <BackupTab />}
       {tab === 'general' && <GeneralTab />}
       {tab === 'skills' && <SkillsTab />}
+      {tab === 'sites' && <SitesTab />}
       {tab === 'playground' && <PlaygroundTab />}
 
       {/* Footer / Sponsorship Section */}

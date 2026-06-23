@@ -13,6 +13,7 @@ import { ChatHttpError, streamChat } from '@/providers/chat';
 import { recordRateLimit } from '@/providers/cooldown';
 import { analyzeImage } from './vision';
 import { executeTool, getApiTools, isDestructive, readsExternal } from '@/tools/registry';
+import { blockedToolsForUrl } from '@/tools/site-rules';
 import type { ToolContext } from '@/tools/types';
 import { executeMcpTool, getMcpApiTools, isMcpTool } from '@/mcp/integration';
 import type { ServerMessage } from '@/background/protocol';
@@ -52,6 +53,8 @@ export interface RunArgs {
   depth?: number;
   /** Replaces the built system prompt (used for subagent runs). */
   systemPromptOverride?: string;
+  /** Stored conversation synopsis to prepend on resume (B6). */
+  conversationSummary?: string;
 }
 
 function truncate(value: string): string {
@@ -70,6 +73,20 @@ function parseArgs(raw: string): Record<string, unknown> {
     log.warn('[chat:loop] malformed tool call args:', raw.slice(0, 200));
     return { __parseError: true, __raw: raw.slice(0, 500) };
   }
+}
+
+/** One-line summary of a tool call (with its key target) for permission prompts. */
+function describeCall(tc: ApiToolCall): string {
+  const callArgs = parseArgs(tc.function.arguments);
+  const fields = ['url', 'tab_id', 'selector', 'path', 'name', 'query', 'text'];
+  const parts: string[] = [];
+  for (const key of fields) {
+    const value = callArgs[key];
+    if (value === undefined || value === null || value === '') continue;
+    const str = String(value);
+    parts.push(`${key}: ${str.length > 50 ? `${str.slice(0, 50)}…` : str}`);
+  }
+  return parts.length ? `${tc.function.name} (${parts.join(', ')})` : tc.function.name;
 }
 
 export type LoopOutcome = 'completed' | 'error' | 'aborted' | 'capped';
@@ -98,6 +115,7 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
       settings,
       memories: await retrieveMemories(args.userContent),
       activeTabUrl: args.activeTabUrl,
+      conversationSummary: args.conversationSummary,
     });
 
   const userMessage = await buildUserMessage(args.userContent, args.attachments ?? [], model);
@@ -156,7 +174,10 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
   // Subagents get a restricted toolset; spawn_agent is never available below
   // the top level (prevents recursive delegation).
   const allApiTools = [
-    ...getApiTools({ runJavascript: settings.runJavascriptEnabled }),
+    ...getApiTools({
+      runJavascript: settings.runJavascriptEnabled,
+      externalAi: settings.externalAiEnabled,
+    }),
     ...(depth === 0 ? await getMcpApiTools() : []),
   ].filter((t) => {
     if (depth > 0 && t.function.name === 'spawn_agent') return false;
@@ -165,9 +186,12 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
   });
   const tools = model.hasToolCalling ? allApiTools : undefined;
   const maxLoops = settings.maxToolCallLoops;
-  // Tracks whether untrusted external content has been read — once true,
-  // destructive actions require confirmation regardless of mode (PLAN §28).
+  // Tracks whether untrusted external content has been read — in `auto` mode
+  // this escalates destructive actions to a confirm (PLAN §28).
   let externalContentRead = false;
+  // Set when the user picks "Allow all for this task" in an `ask`/`auto`
+  // confirm — suppresses further destructive prompts for the rest of this run.
+  let allowAllThisRun = false;
 
   for (let iteration = 0; iteration < maxLoops; iteration++) {
     if (signal.aborted) {
@@ -272,28 +296,44 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
     // Record the assistant turn with its tool calls.
     messages.push({ role: 'assistant', content: assistantText || null, tool_calls: toolCalls });
 
-    // Destructive-action confirmation (PLAN §28, §34). Confirm once for the
-    // batch when the agent mode requires it, or after external content was read
-    // this conversation (prompt-injection guard — overrides the mode).
+    // Destructive-action permission (PLAN §28, §34 — ask/auto/bypass modes).
     const destructiveCalls = toolCalls.filter((tc) =>
       isDestructive(tc.function.name, parseArgs(tc.function.arguments)),
     );
-    const needsConfirm =
-      destructiveCalls.length > 0 &&
-      (settings.agentMode === 'confirm_destructive' || externalContentRead);
-    let confirmedDestructive = !needsConfirm;
-    if (needsConfirm) {
-      const names = destructiveCalls.map((tc) => tc.function.name).join(', ');
-      const answer = await args.askUser({
-        message: `Allow these actions? ${names}`,
-        questions: [{ id: 'ok', type: 'confirm', question: 'Proceed?' }],
-      });
-      confirmedDestructive = answer.ok === true;
-    } else if (settings.agentMode === 'notify_only' && destructiveCalls.length > 0) {
-      emit({
-        type: 'token',
-        content: `\n_Running: ${destructiveCalls.map((c) => c.function.name).join(', ')}_\n`,
-      });
+    let confirmedDestructive = true;
+    if (destructiveCalls.length > 0 && !allowAllThisRun) {
+      // ask    → always confirm.
+      // auto   → confirm only after untrusted content was read (injection net),
+      //          otherwise just announce and proceed.
+      // bypass → never confirm.
+      const mustConfirm =
+        settings.agentMode === 'ask' ||
+        (settings.agentMode === 'auto' && externalContentRead);
+      if (mustConfirm) {
+        const list = destructiveCalls.map((tc) => `• ${describeCall(tc)}`).join('\n');
+        const plural = destructiveCalls.length > 1 ? 's' : '';
+        const answer = await args.askUser({
+          message: `Allow ${destructiveCalls.length} action${plural}?\n${list}`,
+          questions: [
+            {
+              id: 'decision',
+              type: 'single_select',
+              question: 'Choose:',
+              options: ['Allow', 'Allow all for this task', 'Deny'],
+              required: true,
+            },
+          ],
+        });
+        const decision = String(answer.decision ?? 'Deny');
+        if (decision === 'Allow all for this task') allowAllThisRun = true;
+        confirmedDestructive = decision !== 'Deny';
+      } else if (settings.agentMode === 'auto') {
+        emit({
+          type: 'token',
+          content: `\n_Running: ${destructiveCalls.map((c) => c.function.name).join(', ')}_\n`,
+        });
+      }
+      // bypass falls through with confirmedDestructive = true.
     }
 
     // Execute all tool calls in parallel (PLAN §24).
@@ -302,6 +342,15 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
       `[chat:loop] executing tool round ${toolRounds}:`,
       toolCalls.map((c) => c.function.name),
     );
+
+    // Per-site tool restrictions (B5): if any rules are configured, resolve the
+    // current active tab's URL once and block matching tools this round.
+    let blockedTools = new Set<string>();
+    if (settings.siteToolRules?.length) {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      blockedTools = blockedToolsForUrl(settings.siteToolRules, tab?.url);
+    }
+
     const results = await Promise.all(
       toolCalls.map(async (tc) => {
         const callArgs = parseArgs(tc.function.arguments);
@@ -316,6 +365,10 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
               error:
                 'Malformed JSON in tool arguments. Fix the JSON syntax and retry.',
               rawPreview: callArgs.__raw,
+            };
+          } else if (blockedTools.has(tc.function.name)) {
+            result = {
+              error: `Tool '${tc.function.name}' is blocked on the current site by a per-site rule.`,
             };
           } else if (isDestructive(tc.function.name, callArgs) && !confirmedDestructive) {
             result = { error: 'User declined this action.' };

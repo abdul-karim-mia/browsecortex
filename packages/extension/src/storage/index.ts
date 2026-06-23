@@ -31,7 +31,16 @@ export const Storage = {
   settings: {
     async get(): Promise<Settings> {
       const stored = await local.get<Partial<Settings>>(KEYS.settings);
-      return { ...DEFAULT_SETTINGS, ...stored };
+      const merged = { ...DEFAULT_SETTINGS, ...stored };
+      // Migrate legacy agent-mode values to the redesigned ask/auto/bypass set.
+      const legacy: Record<string, Settings['agentMode']> = {
+        confirm_destructive: 'ask',
+        notify_only: 'auto',
+        full_auto: 'bypass',
+      };
+      const mapped = legacy[merged.agentMode as string];
+      if (mapped) merged.agentMode = mapped;
+      return merged;
     },
     async update(patch: Partial<Settings>): Promise<Settings> {
       const next = { ...(await this.get()), ...patch };
@@ -110,20 +119,62 @@ export const Storage = {
     },
     get: (id: string) => db.conversations.get(id),
     save: (c: Conversation) => db.conversations.put(c),
-    async remove(id: string): Promise<void> {
-      // Remove the conversation and its scoped messages + files (PLAN §8, §44).
-      // Tasks are kept but detached so the history isn't lost.
-      await db.transaction('rw', db.conversations, db.messages, db.files, db.tasks, async () => {
-        await db.messages.where('conversationId').equals(id).delete();
-        await db.files.where('conversationId').equals(id).delete();
-        await db.tasks
-          .where('conversationId')
-          .equals(id)
-          .modify((t) => {
-            t.conversationId = null;
-          });
-        await db.conversations.delete(id);
-      });
+    /** Tasks/memories linked to a conversation — drives the delete dialog (PLAN §44). */
+    async linkedCounts(id: string): Promise<{ tasks: number; memories: number }> {
+      const [tasks, memories] = await Promise.all([
+        db.tasks.where('conversationId').equals(id).count(),
+        db.memories.where('conversationId').equals(id).count(),
+      ]);
+      return { tasks, memories };
+    },
+    /**
+     * Remove a conversation and its scoped messages + files (PLAN §8, §44).
+     * Linked tasks and conversation-scoped memories are, by default, preserved
+     * rather than deleted — tasks are detached (conversationId → null) and
+     * conversation memories are converted to `user` memories so nothing is lost.
+     * The optional cascade flags delete them instead.
+     */
+    async remove(
+      id: string,
+      opts: { deleteTasks?: boolean; deleteMemories?: boolean } = {},
+    ): Promise<void> {
+      await db.transaction(
+        'rw',
+        db.conversations,
+        db.messages,
+        db.files,
+        db.tasks,
+        db.memories,
+        async () => {
+          await db.messages.where('conversationId').equals(id).delete();
+          await db.files.where('conversationId').equals(id).delete();
+
+          if (opts.deleteTasks) {
+            await db.tasks.where('conversationId').equals(id).delete();
+          } else {
+            await db.tasks
+              .where('conversationId')
+              .equals(id)
+              .modify((t) => {
+                t.conversationId = null;
+              });
+          }
+
+          if (opts.deleteMemories) {
+            await db.memories.where('conversationId').equals(id).delete();
+          } else {
+            await db.memories
+              .where('conversationId')
+              .equals(id)
+              .modify((m) => {
+                if (m.type === 'conversation') m.type = 'user';
+                delete m.conversationId;
+              });
+          }
+
+          await db.conversations.delete(id);
+        },
+      );
     },
     async search(query: string): Promise<Conversation[]> {
       const q = query.toLowerCase();

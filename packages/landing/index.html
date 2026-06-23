@@ -107,8 +107,16 @@
           <span class="brand-name">BrowseCortex</span>
         </a>
         <button class="mobile-menu-btn" aria-label="Toggle navigation" aria-expanded="false">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path d="M3 12h18M3 6h18M3 18h18"/>
+          <!-- Hamburger Icon (visible when menu is closed) -->
+          <svg class="icon-menu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="4" y1="12" x2="20" y2="12"></line>
+            <line x1="4" y1="6" x2="20" y2="6"></line>
+            <line x1="4" y1="18" x2="20" y2="18"></line>
+          </svg>
+          <!-- Close Icon (visible when menu is open) -->
+          <svg class="icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
         <nav class="nav-links" role="navigation" aria-label="Main navigation">
@@ -116,6 +124,22 @@
           <a href="#how-it-works" class="nav-link">How it Works</a>
           <a href="#relay" class="nav-link">Relay Server</a>
           <a href="#faq" class="nav-link">FAQ</a>
+          <div class="nav-actions-mobile">
+            <a href="https://github.com/abdul-karim-mia/browsecortex" class="btn btn-secondary nav-btn" target="_blank" rel="noopener noreferrer" id="nav-btn-github-mobile">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" />
+              </svg>
+              GitHub <span id="github-stars-pill-mobile" class="stars-pill github-stars-pill">Loading...</span>
+            </a>
+            <a href="https://github.com/abdul-karim-mia/browsecortex/releases/latest" target="_blank" rel="noopener noreferrer" class="btn btn-primary nav-btn" id="nav-btn-download-mobile">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <path d="M7 10l5 5 5-5" />
+                <path d="M12 15V3" />
+              </svg>
+              Install Extension
+            </a>
+          </div>
         </nav>
         <div class="nav-actions">
           <a href="https://github.com/abdul-karim-mia/browsecortex" class="btn btn-secondary nav-btn" target="_blank" rel="noopener noreferrer" id="nav-btn-github">
@@ -123,7 +147,7 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" />
             </svg>
-            GitHub <span id="github-stars-pill" class="stars-pill">Loading...</span>
+            GitHub <span id="github-stars-pill" class="stars-pill github-stars-pill">Loading...</span>
           </a>
           <a href="https://github.com/abdul-karim-mia/browsecortex/releases/latest" target="_blank" rel="noopener noreferrer" class="btn btn-primary nav-btn" id="nav-btn-download">
             <!-- Lucide download icon -->

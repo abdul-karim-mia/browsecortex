@@ -47,6 +47,16 @@ export async function writeRecoverySnapshot(): Promise<void> {
   await local.set('auto_backup_snapshot', { created: new Date().toISOString(), data });
 }
 
+export interface RecoverySnapshot {
+  created: string;
+  data: BackupData;
+}
+
+/** Read the local recovery snapshot, if one was written (PLAN §42). */
+export async function getRecoverySnapshot(): Promise<RecoverySnapshot | null> {
+  return (await local.get<RecoverySnapshot>('auto_backup_snapshot')) ?? null;
+}
+
 export async function createBackup(password: string, hint?: string): Promise<BackupFile> {
   const data = await collect();
   return {

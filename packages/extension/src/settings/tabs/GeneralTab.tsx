@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'preact/hooks';
 import { Storage } from '@/storage';
 import {
+  getStorageEstimate,
+  requestPersistentStorage,
+  type StorageEstimate,
+} from '@/storage/quota';
+import { getStorageBreakdown, type StorageBreakdown } from '@/storage/breakdown';
+import {
   DEFAULT_SETTINGS,
   type Model,
   type Provider,
@@ -161,6 +167,32 @@ export function GeneralTab() {
         Show reasoning tokens
       </label>
 
+      <label class="flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={settings.useConversationSummary}
+          onChange={(e) =>
+            update({ useConversationSummary: (e.target as HTMLInputElement).checked })
+          }
+        />
+        Prepend a conversation's stored summary to context on resume
+      </label>
+
+      <div>
+        <label class="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={settings.externalAiEnabled}
+            onChange={(e) => update({ externalAiEnabled: (e.target as HTMLInputElement).checked })}
+          />
+          Enable ask_external_ai (experimental)
+        </label>
+        <p class="mt-1 text-xs text-gray-500">
+          Lets the agent drive ChatGPT/Claude/Gemini/Perplexity in a tab and read the reply. You
+          must be logged in to those sites. Fragile — depends on each site's layout.
+        </p>
+      </div>
+
       <Field label="Vision fallback">
         <select
           value={settings.visionFallbackMode}
@@ -253,9 +285,80 @@ export function GeneralTab() {
           class="w-full rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800"
         />
       </Field>
+
+      <StorageSection />
     </div>
   );
 }
+
+/** Storage usage + per-category breakdown (PLAN §41). */
+function StorageSection() {
+  const [est, setEst] = useState<StorageEstimate | null>(null);
+  const [breakdown, setBreakdown] = useState<StorageBreakdown | null>(null);
+  const [persistMsg, setPersistMsg] = useState<string | null>(null);
+
+  const refresh = () => {
+    getStorageEstimate().then(setEst);
+    getStorageBreakdown().then(setBreakdown);
+  };
+  useEffect(refresh, []);
+
+  const requestPersist = async () => {
+    const granted = await requestPersistentStorage();
+    setPersistMsg(granted ? 'Persistent storage granted.' : 'Request denied by the browser.');
+  };
+
+  const fmt = (mb: number) => (mb < 0.1 ? '<0.1' : mb.toFixed(1));
+  const rows: { label: string; mb: number }[] = breakdown
+    ? [
+        { label: 'Conversations & messages', mb: breakdown.conversationsMB },
+        { label: 'Virtual filesystem', mb: breakdown.filesMB },
+        { label: 'Memories & tasks', mb: breakdown.memoriesTasksMB },
+        { label: 'Skills', mb: breakdown.skillsMB },
+      ]
+    : [];
+
+  return (
+    <Field label="Storage">
+      {est && (
+        <div class="mb-2">
+          <div class="mb-1 text-xs text-gray-600 dark:text-gray-300">
+            Storage used: {fmt(est.usageMB)} MB of {fmt(est.quotaMB)} MB ({est.percent.toFixed(0)}%)
+          </div>
+          <div class="h-2 w-full overflow-hidden rounded bg-gray-200 dark:bg-gray-700">
+            <div
+              class={`h-full ${est.percent > 85 ? 'bg-red-500' : 'bg-blue-500'}`}
+              style={{ width: `${Math.min(100, est.percent)}%` }}
+            />
+          </div>
+        </div>
+      )}
+      <ul class="space-y-0.5 text-xs text-gray-500">
+        {rows.map((r) => (
+          <li key={r.label} class="flex justify-between">
+            <span>{r.label}</span>
+            <span>{fmt(r.mb)} MB</span>
+          </li>
+        ))}
+      </ul>
+      <div class="mt-2 flex flex-wrap gap-2">
+        <button type="button" onClick={requestPersist} class={btnCls}>
+          Request more storage
+        </button>
+        <button type="button" onClick={refresh} class={btnCls}>
+          Refresh
+        </button>
+      </div>
+      {persistMsg && <p class="mt-1 text-xs text-gray-500">{persistMsg}</p>}
+      <p class="mt-1 text-xs text-gray-400">
+        To free space: export a backup (Backup tab), then delete large files in the Files tab.
+      </p>
+    </Field>
+  );
+}
+
+const btnCls =
+  'rounded border border-gray-300 px-2 py-1 text-xs hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-800';
 
 const selectCls =
   'mt-1 w-full rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800';

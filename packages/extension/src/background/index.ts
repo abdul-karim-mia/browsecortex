@@ -30,10 +30,26 @@ import { writeRecoverySnapshot } from '@/backup/backup';
 import { runMigrationSafety } from '@/db/migration';
 import { executeTool } from '@/tools/registry';
 import { registerLocalOriginFix } from '@/providers/local-origin-fix';
+import { estimateTokens } from '@/agent/compaction';
 import { log } from '@/log';
 
 // Snapshot data on version change before further use (PLAN §42).
 runMigrationSafety();
+
+// Which conversation currently has a live agent run — one at a time (PLAN §48).
+// Broadcast on change so the side panel can show a pulsing indicator.
+let runningConversationId: string | null = null;
+function setRunningConversation(id: string | null): void {
+  runningConversationId = id;
+  chrome.runtime.sendMessage({ type: 'running_conversation', id }).catch(() => {});
+}
+
+// Answer the panel's "what's running?" query on (re)connect.
+chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+  if (msg?.type !== 'get_running_conversation') return;
+  sendResponse({ id: runningConversationId });
+  return true;
+});
 
 // Local providers (Ollama, LM Studio, etc.) 403 on the extension's Origin
 // header — strip it so they treat us like any other local client.
@@ -94,12 +110,43 @@ chrome.action.onClicked.addListener(async (tab) => {
   }
 });
 
+// Context-menu selection → prefill the side panel input (B4).
+const CONTEXT_MENU_ID = 'send-to-browsecortex';
+const PENDING_SELECTION_KEY = 'pending_context_selection';
+
 // Allow the side panel to open from the action icon by default.
 chrome.runtime.onInstalled.addListener(async (details) => {
   await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(() => {});
+  // Right-click selected text → send to chat (B4).
+  chrome.contextMenus?.create(
+    {
+      id: CONTEXT_MENU_ID,
+      title: 'Send to BrowseCortex',
+      contexts: ['selection'],
+    },
+    () => void chrome.runtime.lastError, // ignore "duplicate id" on reload
+  );
   if (details.reason === 'install') {
     await chrome.tabs.create({ url: chrome.runtime.getURL('src/onboarding/index.html') });
   }
+});
+
+// The panel may not be open yet, so stash the text in session storage and also
+// broadcast it; the panel consumes the stash on load and the broadcast while
+// already open.
+chrome.contextMenus?.onClicked.addListener((info, tab) => {
+  if (info.menuItemId !== CONTEXT_MENU_ID || !info.selectionText) return;
+  // Open the panel FIRST, synchronously within the click gesture — any `await`
+  // before this drops the user-gesture context and sidePanel.open() throws.
+  if (tab?.windowId !== undefined) {
+    chrome.sidePanel.open({ windowId: tab.windowId }).catch(() => {});
+  }
+  // Then stash (for a freshly-opening panel to read on mount) + broadcast (for
+  // an already-open panel). The stash resolves well before the panel mounts.
+  chrome.storage.session.set({ [PENDING_SELECTION_KEY]: info.selectionText }).catch(() => {});
+  chrome.runtime
+    .sendMessage({ type: 'context_selection', text: info.selectionText })
+    .catch(() => {});
 });
 
 // Keyboard commands (PLAN §43).
@@ -178,6 +225,7 @@ chrome.runtime.onConnect.addListener((port) => {
       abortController = new AbortController();
       setBadge('running');
       setAgentActive(true);
+      setRunningConversation(msg.conversationId);
 
       const resolved = await resolveActive();
       if ('error' in resolved) {
@@ -185,6 +233,8 @@ chrome.runtime.onConnect.addListener((port) => {
         send({ type: 'error', message: resolved.error });
         send({ type: 'done' });
         abortController = null;
+        setAgentActive(false);
+        setRunningConversation(null);
         return;
       }
       // Surface fallback routing to the user (PLAN §40).
@@ -195,9 +245,15 @@ chrome.runtime.onConnect.addListener((port) => {
       const settings = await Storage.settings.get();
 
       try {
-        await ensureConversation(msg.conversationId, resolved.provider, resolved.model.id);
+        const conv = await ensureConversation(
+          msg.conversationId,
+          resolved.provider,
+          resolved.model.id,
+        );
         const existing = await getMessages(msg.conversationId);
         const isFirstExchange = existing.length === 0;
+        // Prepend the stored synopsis on resume when enabled (B6).
+        const conversationSummary = settings.useConversationSummary ? conv.summary : undefined;
         const pinnedContents = existing.filter((m) => m.pinned).map((m) => m.content);
         // Rebuild history from IndexedDB so chats survive panel reloads (PLAN §8).
         const history = await getApiHistory(msg.conversationId);
@@ -215,6 +271,7 @@ chrome.runtime.onConnect.addListener((port) => {
           attachments: msg.attachments,
           pinnedContents,
           conversationId: msg.conversationId,
+          conversationSummary,
           activeTabUrl: await getActiveTabUrl(),
           signal: abortController.signal,
           emit: send,
@@ -233,6 +290,17 @@ chrome.runtime.onConnect.addListener((port) => {
         // THEN signal done — so the panel's reload-from-storage sees a complete
         // history (avoids a race that dropped the latest turn).
         await persistNewTurns(msg.conversationId, updated, history.length);
+        // Accumulate an estimated token count for this conversation (B2). The
+        // new turns are everything after the prior history (system excluded).
+        const newTurns = updated.filter((m) => m.role !== 'system').slice(history.length);
+        const addedTokens = estimateTokens(newTurns);
+        if (addedTokens > 0) {
+          const conv = await Storage.conversations.get(msg.conversationId);
+          if (conv) {
+            conv.tokensUsed = (conv.tokensUsed ?? 0) + addedTokens;
+            await Storage.conversations.save(conv);
+          }
+        }
         await clearCheckpoint();
         send({ type: 'done' });
 
@@ -275,6 +343,7 @@ chrome.runtime.onConnect.addListener((port) => {
         stopKeepAlive();
         abortController = null;
         setAgentActive(false);
+        setRunningConversation(null);
       }
     } catch (e) {
       // Catches anything thrown before/outside the inner try (e.g. resolveActive,
@@ -287,6 +356,8 @@ chrome.runtime.onConnect.addListener((port) => {
         log.error('[chat:bg] failed to report outer error to panel', sendErr);
       }
       abortController = null;
+      setAgentActive(false);
+      setRunningConversation(null);
     }
   });
 
@@ -300,5 +371,6 @@ chrome.runtime.onConnect.addListener((port) => {
     pendingAsk = null;
     abortController?.abort();
     abortController = null;
+    setRunningConversation(null);
   });
 });

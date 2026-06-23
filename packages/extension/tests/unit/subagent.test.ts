@@ -76,7 +76,7 @@ describe('subagent delegation', () => {
     const result = await runAgentLoop({
       provider,
       model,
-      settings: { ...DEFAULT_SETTINGS, agentMode: 'full_auto' },
+      settings: { ...DEFAULT_SETTINGS, agentMode: 'bypass' },
       history: [],
       userContent: 'Research Rust posts',
       conversationId: 'c1',

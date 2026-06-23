@@ -7,13 +7,13 @@ import type { AgentMode, Settings } from '@/types';
  * `agentMode` value that's already enforced in the agent loop (see
  * agent/loop.ts §28). The number is the 1-based keyboard shortcut. */
 const MODES: { mode: AgentMode; label: string; hint: string }[] = [
+  { mode: 'ask', label: 'Ask', hint: 'Confirm before destructive actions' },
   {
-    mode: 'confirm_destructive',
-    label: 'Ask permissions',
-    hint: 'Confirm before destructive actions',
+    mode: 'auto',
+    label: 'Auto',
+    hint: 'Run everything; confirm after reading web content',
   },
-  { mode: 'notify_only', label: 'Auto mode', hint: 'Run everything, announce destructive steps' },
-  { mode: 'full_auto', label: 'Bypass permissions', hint: 'Run everything without asking' },
+  { mode: 'bypass', label: 'Bypass', hint: 'Run everything, never ask' },
 ];
 
 interface Props {
@@ -29,7 +29,7 @@ interface Props {
  */
 export function ModePickerPopup({ settings, onClose, onChange }: Props) {
   const popupRef = useRef<HTMLDivElement>(null);
-  const current = settings?.agentMode ?? 'full_auto';
+  const current = settings?.agentMode ?? 'bypass';
 
   const select = async (mode: AgentMode) => {
     const next = await Storage.settings.update({ agentMode: mode });

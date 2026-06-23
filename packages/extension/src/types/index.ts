@@ -48,6 +48,10 @@ export interface Conversation {
   model: string;
   taskIds: string[];
   messageCount: number;
+  /** Cumulative estimated tokens spent in this conversation (B2). */
+  tokensUsed?: number;
+  /** Stored synopsis of the conversation (B6). */
+  summary?: string;
 }
 
 export type MessageRole = 'system' | 'user' | 'assistant' | 'tool';
@@ -131,9 +135,29 @@ export interface VFile {
 
 // ── Settings (PLAN §10, §17, §34) ─────────────────────────────────
 
-export type AgentMode = 'full_auto' | 'notify_only' | 'confirm_destructive';
+/**
+ * Agent permission mode (PLAN §34, redesigned).
+ * - `ask`    → pause and confirm before each destructive action.
+ * - `auto`   → run everything; announce destructive steps. Escalates to a
+ *              confirm only after untrusted external content was read (the
+ *              prompt-injection safety net, PLAN §28).
+ * - `bypass` → run everything silently, no prompts at all (the user has
+ *              explicitly accepted the risk, including the injection check).
+ *
+ * Legacy values (`full_auto`/`notify_only`/`confirm_destructive`) are migrated
+ * on read — see `Storage.settings.get`.
+ */
+export type AgentMode = 'ask' | 'auto' | 'bypass';
 
 export type ReasoningEffort = 'low' | 'medium' | 'high';
+
+/** Per-site tool restriction (B5): block these tools while on a matching origin.
+ * `pattern` supports `*` wildcards and is matched against the tab's full URL,
+ * origin, and hostname. */
+export interface SiteToolRule {
+  pattern: string;
+  blockedTools: string[];
+}
 
 export interface Settings {
   selectedProviderId: string | null;
@@ -161,6 +185,12 @@ export interface Settings {
   autoBackupDays: number;
   /** Model id used for spawned subagents; '' = same as the main model. */
   subagentModel: string;
+  /** Per-site tool restrictions (B5). */
+  siteToolRules: SiteToolRule[];
+  /** Prepend a conversation's stored summary to context on resume (B6). */
+  useConversationSummary: boolean;
+  /** Enable the experimental ask_external_ai web-scraping tool (B7, PLAN §16). */
+  externalAiEnabled: boolean;
   /** Per-event notification toggles (PLAN §39). */
   notifications: {
     taskCompleted: boolean;
@@ -173,7 +203,7 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   selectedProviderId: null,
   selectedModel: null,
-  agentMode: 'full_auto',
+  agentMode: 'bypass',
   reasoningEffort: 'medium',
   maxToolCallLoops: 100,
   compactionThreshold: 0.7,
@@ -190,6 +220,9 @@ export const DEFAULT_SETTINGS: Settings = {
   visionFallbackModel: null,
   autoBackupDays: 0,
   subagentModel: '',
+  siteToolRules: [],
+  useConversationSummary: true,
+  externalAiEnabled: false,
   notifications: {
     taskCompleted: true,
     taskFailed: true,

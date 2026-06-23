@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'preact/hooks';
 import { Storage } from '@/storage';
 import { Icon } from '@/components/Icon';
+import { buildExport, type ExportFormat } from '@/conversations/export';
+import { summarizeConversation } from '@/conversations/summarize';
 import type { Conversation } from '@/types';
 
 interface Props {
@@ -8,6 +10,8 @@ interface Props {
   onClose: () => void;
   currentId: string;
   onSelect: (id: string) => void;
+  /** Conversation with a live agent run, shown with a pulsing dot (PLAN §48). */
+  runningId?: string | null;
 }
 
 /** Sliding conversation list (PLAN §7, §8). Search, star, open, delete. */
@@ -20,10 +24,19 @@ function inRange(iso: string, filter: Filter): boolean {
   return filter === 'today' ? days < 1 : days < 7;
 }
 
-export function ConversationDrawer({ open, onClose, currentId, onSelect }: Props) {
+export function ConversationDrawer({ open, onClose, currentId, onSelect, runningId }: Props) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<Filter>('all');
+  // Cascade-delete dialog state (PLAN §44).
+  const [pendingDelete, setPendingDelete] = useState<Conversation | null>(null);
+  const [linked, setLinked] = useState({ tasks: 0, memories: 0 });
+  const [delTasks, setDelTasks] = useState(false);
+  const [delMemories, setDelMemories] = useState(false);
+  // Export dialog (B1).
+  const [exportTarget, setExportTarget] = useState<Conversation | null>(null);
+  // Conversation being summarized (B6).
+  const [summarizingId, setSummarizingId] = useState<string | null>(null);
 
   const refresh = () => Storage.conversations.list(100).then(setConversations);
   useEffect(() => {
@@ -73,10 +86,49 @@ export function ConversationDrawer({ open, onClose, currentId, onSelect }: Props
     }
   };
 
-  const del = async (c: Conversation, e: Event) => {
+  const askDelete = async (c: Conversation, e: Event) => {
     e.stopPropagation();
-    await Storage.conversations.remove(c.id);
+    const counts = await Storage.conversations.linkedCounts(c.id);
+    setLinked(counts);
+    setDelTasks(false);
+    setDelMemories(false);
+    setPendingDelete(c);
+  };
+
+  const confirmDelete = async () => {
+    if (!pendingDelete) return;
+    await Storage.conversations.remove(pendingDelete.id, {
+      deleteTasks: delTasks,
+      deleteMemories: delMemories,
+    });
+    setPendingDelete(null);
     await refresh();
+  };
+
+  const summarize = async (c: Conversation, e: Event) => {
+    e.stopPropagation();
+    if (summarizingId) return;
+    setSummarizingId(c.id);
+    try {
+      await summarizeConversation(c.id);
+      await refresh();
+    } finally {
+      setSummarizingId(null);
+    }
+  };
+
+  const doExport = async (format: ExportFormat) => {
+    if (!exportTarget) return;
+    const out = await buildExport(exportTarget.id, format);
+    setExportTarget(null);
+    if (!out) return;
+    const blob = new Blob([out.content], { type: out.mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = out.filename;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   if (!open) return null;
@@ -126,17 +178,24 @@ export function ConversationDrawer({ open, onClose, currentId, onSelect }: Props
                     onSelect(c.id);
                     onClose();
                   }}
-                  class={`flex cursor-pointer items-center justify-between rounded px-2 py-1 text-sm ${
+                  class={`flex cursor-pointer flex-col rounded px-2 py-1 text-sm ${
                     c.id === currentId
                       ? 'bg-blue-100 dark:bg-blue-950'
                       : 'hover:bg-gray-100 dark:hover:bg-gray-800'
                   }`}
                 >
+                  <div class="flex items-center justify-between">
                   <span
                     class="flex items-center gap-1 truncate"
                     onDblClick={(e) => rename(c, e)}
                     title="Double-click to rename"
                   >
+                    {c.id === runningId && (
+                      <span
+                        class="h-2 w-2 shrink-0 animate-pulse rounded-full bg-green-500"
+                        title="Agent running"
+                      />
+                    )}
                     {c.pinned && <Icon name="pin" size={12} class="shrink-0 text-blue-500" />}
                     {c.name}
                   </span>
@@ -153,19 +212,139 @@ export function ConversationDrawer({ open, onClose, currentId, onSelect }: Props
                     </button>
                     <button
                       type="button"
-                      onClick={(e) => del(c, e)}
+                      onClick={(e) => summarize(c, e)}
+                      disabled={summarizingId === c.id}
+                      title="Summarize conversation"
+                    >
+                      <Icon
+                        name="sparkle"
+                        size={14}
+                        class={summarizingId === c.id ? 'animate-pulse text-blue-500' : ''}
+                      />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setExportTarget(c);
+                      }}
+                      title="Export"
+                    >
+                      <Icon name="download" size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => askDelete(c, e)}
                       class="text-red-500"
                       title="Delete"
                     >
                       <Icon name="trash" size={14} />
                     </button>
                   </span>
+                  </div>
+                  {c.summary && (
+                    <p class="mt-0.5 truncate text-xs text-gray-400" title={c.summary}>
+                      {c.summary}
+                    </p>
+                  )}
                 </div>
               </li>
             ))}
           </ul>
         )}
       </aside>
+
+      {pendingDelete && (
+        <div
+          class="absolute inset-0 z-30 flex items-center justify-center bg-black/40 p-4"
+          onClick={(e) => {
+            e.stopPropagation();
+            setPendingDelete(null);
+          }}
+        >
+          <div
+            class="w-full max-w-xs rounded-lg bg-white p-4 shadow-xl dark:bg-gray-800"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p class="mb-3 text-sm font-medium">
+              Delete “{pendingDelete.name}”?
+            </p>
+            {(linked.tasks > 0 || linked.memories > 0) && (
+              <div class="mb-3 space-y-1.5 text-sm">
+                {linked.tasks > 0 && (
+                  <label class="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={delTasks}
+                      onChange={(e) => setDelTasks((e.target as HTMLInputElement).checked)}
+                    />
+                    Also delete linked tasks ({linked.tasks})
+                  </label>
+                )}
+                {linked.memories > 0 && (
+                  <label class="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={delMemories}
+                      onChange={(e) => setDelMemories((e.target as HTMLInputElement).checked)}
+                    />
+                    Also delete linked memories ({linked.memories})
+                  </label>
+                )}
+              </div>
+            )}
+            <div class="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setPendingDelete(null)}
+                class="rounded px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDelete}
+                class="rounded bg-red-500 px-3 py-1 text-sm font-medium text-white hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {exportTarget && (
+        <div
+          class="absolute inset-0 z-30 flex items-center justify-center bg-black/40 p-4"
+          onClick={(e) => {
+            e.stopPropagation();
+            setExportTarget(null);
+          }}
+        >
+          <div
+            class="w-full max-w-xs rounded-lg bg-white p-4 shadow-xl dark:bg-gray-800"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p class="mb-3 text-sm font-medium">Export “{exportTarget.name}”</p>
+            <div class="flex gap-2">
+              <button
+                type="button"
+                onClick={() => doExport('markdown')}
+                class="flex-1 rounded bg-blue-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-600"
+              >
+                Markdown
+              </button>
+              <button
+                type="button"
+                onClick={() => doExport('json')}
+                class="flex-1 rounded border border-gray-300 px-3 py-1.5 text-sm hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-700"
+              >
+                JSON
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

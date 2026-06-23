@@ -1,6 +1,10 @@
 /**
  * Storage quota monitoring (PLAN §41). Wraps navigator.storage so the UI can
  * warn before IndexedDB fills up and the VFS can block writes past 95%.
+ *
+ * Kept dependency-free (no Dexie import) so lightweight consumers like the
+ * onboarding page can use it without pulling in the database bundle. The
+ * per-category breakdown, which needs Dexie, lives in `storage/breakdown.ts`.
  */
 export interface StorageEstimate {
   usageMB: number;

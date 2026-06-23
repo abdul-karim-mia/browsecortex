@@ -31,6 +31,7 @@ export type IconName =
   | 'eye-off'
   | 'mic'
   | 'chevron-down'
+  | 'fork'
   | 'sparkle';
 
 const PATHS: Record<IconName, JSX.Element> = {
@@ -71,6 +72,15 @@ const PATHS: Record<IconName, JSX.Element> = {
     </>
   ),
   check: <path d="M20 6 9 17l-5-5" />,
+  fork: (
+    <>
+      <circle cx="6" cy="6" r="2.5" />
+      <circle cx="6" cy="18" r="2.5" />
+      <circle cx="18" cy="8" r="2.5" />
+      <path d="M6 8.5v7" />
+      <path d="M18 10.5a6 6 0 0 1-6 6H6" />
+    </>
+  ),
   trash: (
     <>
       <path d="M3 6h18" />

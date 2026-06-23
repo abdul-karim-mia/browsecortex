@@ -36,6 +36,7 @@ import { chromeExtraTools } from './builtin/chrome-extras';
 import { askUser } from './builtin/ask-user';
 import { subagentTools } from './builtin/subagent';
 import { debuggerInteractionTools } from './builtin/debugger-interaction';
+import { externalAiTools } from './builtin/external-ai';
 
 const ALL_TOOLS: ToolDefinition[] = [
   ...tabTools,
@@ -62,13 +63,14 @@ const ALL_TOOLS: ToolDefinition[] = [
   runJavascript,
   askUser,
   ...subagentTools,
+  ...externalAiTools,
 ];
 
 /** Tools that block on user input or run a full nested loop — not timeout-raced. */
-const NO_TIMEOUT = new Set(['ask_user', 'spawn_agent']);
+const NO_TIMEOUT = new Set(['ask_user', 'spawn_agent', 'ask_external_ai']);
 
 /** Opt-in tools excluded from the API schema unless explicitly enabled. */
-const OPT_IN = new Set(['run_javascript']);
+const OPT_IN = new Set(['run_javascript', 'ask_external_ai']);
 
 const registry = new Map<string, ToolDefinition>(ALL_TOOLS.map((t) => [t.name, t]));
 
@@ -92,12 +94,18 @@ export function listTools(): ToolDefinition[] {
 }
 
 /**
- * Wire schemas for the chat request (PLAN §9). Opt-in tools (run_javascript)
- * are excluded unless explicitly enabled.
+ * Wire schemas for the chat request (PLAN §9). Opt-in tools (run_javascript,
+ * ask_external_ai) are excluded unless explicitly enabled.
  */
-export function getApiTools(opts: { runJavascript?: boolean } = {}): ApiToolDefinition[] {
+export function getApiTools(
+  opts: { runJavascript?: boolean; externalAi?: boolean } = {},
+): ApiToolDefinition[] {
+  const enabled: Record<string, boolean | undefined> = {
+    run_javascript: opts.runJavascript,
+    ask_external_ai: opts.externalAi,
+  };
   return listTools()
-    .filter((t) => !OPT_IN.has(t.name) || (t.name === 'run_javascript' && opts.runJavascript))
+    .filter((t) => !OPT_IN.has(t.name) || enabled[t.name])
     .map(toApiTool);
 }
 

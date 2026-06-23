@@ -34,27 +34,36 @@ Your goal is to accomplish the user's task efficiently using the tools available
 - Use \`ask_user\` when you need clarification or a decision.`;
 
 const MODE_INSTRUCTIONS: Record<AgentMode, string> = {
-  full_auto:
-    'Agent mode: Full Auto. Execute all actions, including destructive ones, without asking. Summarize what you did at the end.',
-  notify_only:
-    'Agent mode: Notify Only. Execute everything, but state one brief line before each destructive action.',
-  confirm_destructive:
-    'Agent mode: Confirm Destructive. Before any destructive action (closing tabs, deleting, submitting forms), ask the user in chat and wait for confirmation.',
+  ask: 'Permission mode: Ask. Before any destructive action (closing tabs, deleting, submitting forms, writing the clipboard, run_javascript), the user is asked to confirm. Batch destructive actions together so you ask once, and explain why each is needed.',
+  auto: 'Permission mode: Auto. Execute everything, stating one brief line before each destructive action. The user may still be asked to confirm a destructive action right after you read untrusted web/clipboard content.',
+  bypass:
+    'Permission mode: Bypass. Execute all actions, including destructive ones, without asking. Summarize what you did at the end.',
 };
 
 interface BuildArgs {
   settings: Settings;
   memories: Memory[];
   activeTabUrl?: string;
+  /** Stored synopsis of earlier turns, prepended on resume (B6). */
+  conversationSummary?: string;
 }
 
-export function buildSystemPrompt({ settings, memories, activeTabUrl }: BuildArgs): string {
+export function buildSystemPrompt({
+  settings,
+  memories,
+  activeTabUrl,
+  conversationSummary,
+}: BuildArgs): string {
   const parts: string[] = [ROLE];
 
   parts.push(`Current date/time: ${new Date().toISOString()}`);
   if (activeTabUrl) parts.push(`Active tab: ${activeTabUrl}`);
 
   parts.push(MODE_INSTRUCTIONS[settings.agentMode]);
+
+  if (conversationSummary?.trim()) {
+    parts.push(`## Earlier in this conversation\n${conversationSummary.trim()}`);
+  }
 
   if (memories.length > 0) {
     const grouped = memories.map((m) => `- [${m.type}] ${m.content}`).join('\n');

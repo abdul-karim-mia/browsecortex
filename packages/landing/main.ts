@@ -11,7 +11,7 @@ interface Contributor {
 // When the latest release exposes a packaged extension zip, we upgrade these
 // to a direct download link.
 function setInstallButtonsHref(url: string) {
-  ['nav-btn-download', 'hero-btn-download', 'footer-btn-download'].forEach((id) => {
+  ['nav-btn-download', 'nav-btn-download-mobile', 'hero-btn-download', 'footer-btn-download'].forEach((id) => {
     const btn = document.getElementById(id);
     if (btn instanceof HTMLAnchorElement) {
       btn.href = url;
@@ -60,7 +60,7 @@ async function fetchGithubStats() {
   const releaseUrl = 'https://api.github.com/repos/abdul-karim-mia/browsecortex/releases/latest';
   const contributorsUrl = 'https://api.github.com/repos/abdul-karim-mia/browsecortex/contributors';
 
-  const starsPill = document.getElementById('github-stars-pill');
+  const starsPills = document.querySelectorAll('.github-stars-pill');
   const releaseTag = document.getElementById('github-release-tag');
 
   // Bento card fields
@@ -79,8 +79,10 @@ async function fetchGithubStats() {
   // 1. Process Repository Details (Stars, Forks, Issues)
   if (repoResult.status === 'fulfilled') {
     const data = repoResult.value as Record<string, unknown>;
-    if (starsPill && typeof data.stargazers_count === 'number') {
-      starsPill.textContent = `${data.stargazers_count} Stars`;
+    if (typeof data.stargazers_count === 'number') {
+      starsPills.forEach((p) => {
+        p.textContent = `${data.stargazers_count} Stars`;
+      });
     }
     if (bentoStars && typeof data.stargazers_count === 'number') {
       bentoStars.textContent = String(data.stargazers_count);
@@ -93,7 +95,9 @@ async function fetchGithubStats() {
     }
   } else {
     console.warn('[GitHub Stats] Falling back for repo details:', repoResult.reason);
-    if (starsPill) starsPill.textContent = 'Stars';
+    starsPills.forEach((p) => {
+      p.textContent = 'Stars';
+    });
     if (bentoStars) bentoStars.textContent = '12';
     if (bentoForks) bentoForks.textContent = '3';
     if (bentoIssues) bentoIssues.textContent = '0';
@@ -429,10 +433,26 @@ function initCapabilities() {
 function initMobileMenu() {
   const menuBtn = document.querySelector('.mobile-menu-btn');
   const navLinks = document.querySelector('.nav-links');
+  
+  const toggleMenu = (show: boolean) => {
+    menuBtn?.setAttribute('aria-expanded', String(show));
+    if (show) {
+      navLinks?.classList.add('open');
+    } else {
+      navLinks?.classList.remove('open');
+    }
+  };
+
   menuBtn?.addEventListener('click', () => {
     const expanded = menuBtn.getAttribute('aria-expanded') === 'true';
-    menuBtn.setAttribute('aria-expanded', String(!expanded));
-    navLinks?.classList.toggle('open');
+    toggleMenu(!expanded);
+  });
+
+  // Close mobile menu when clicking on a link
+  navLinks?.querySelectorAll('.nav-link').forEach((link) => {
+    link.addEventListener('click', () => {
+      toggleMenu(false);
+    });
   });
 }
 

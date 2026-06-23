@@ -7,11 +7,12 @@ interface Props {
   line: ChatLine;
   onPin?: (messageId: string, pinned: boolean) => void;
   onDelete?: (messageId: string) => void;
+  onFork?: (messageId: string) => void;
 }
 
 /** A chat message bubble: markdown for assistant, plain for user, with copy /
- * pin / delete actions on hover (PLAN §7). */
-export function MessageBubble({ line, onPin, onDelete }: Props) {
+ * pin / delete / fork actions on hover (PLAN §7, B8). */
+export function MessageBubble({ line, onPin, onDelete, onFork }: Props) {
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {
@@ -65,6 +66,16 @@ export function MessageBubble({ line, onPin, onDelete }: Props) {
               title={line.pinned ? 'Unpin' : 'Pin'}
             >
               <Icon name="pin" size={13} />
+            </button>
+          )}
+          {line.messageId && onFork && (
+            <button
+              type="button"
+              onClick={() => onFork(line.messageId!)}
+              class="rounded bg-white p-1 text-gray-500 shadow dark:bg-gray-700"
+              title="Fork conversation from here"
+            >
+              <Icon name="fork" size={13} />
             </button>
           )}
           {line.messageId && onDelete && (

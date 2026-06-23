@@ -9,6 +9,7 @@ import { Icon, type IconName } from '@/components/Icon';
 import { Logo } from './Logo';
 import { Storage } from '@/storage';
 import { checkDbHealth } from '@/db';
+import { getRecoverySnapshot } from '@/backup/backup';
 
 type Tab = 'chat' | 'tasks' | 'files';
 
@@ -34,11 +35,32 @@ export function App() {
   const [hasFiles, setHasFiles] = useState(false);
   // Clear/new controls live in the header but are owned by ChatTab (PLAN §7).
   const [chatControls, setChatControls] = useState<ChatControls | null>(null);
+  // Which conversation has a live agent run (PLAN §48) — drives the drawer dot.
+  const [runningId, setRunningId] = useState<string | null>(null);
 
   const newChat = () => {
     setConversationId(crypto.randomUUID());
     setTab('chat');
   };
+
+  // Download the pre-migration recovery snapshot so the user can keep their data
+  // even if IndexedDB is broken (PLAN §42).
+  const downloadRecovery = async () => {
+    const snapshot = await getRecoverySnapshot();
+    if (!snapshot) {
+      setDbError('No recovery snapshot is available on this device.');
+      return;
+    }
+    const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `browsecortex-recovery-${snapshot.created.slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const retryDb = () => checkDbHealth().then((h) => setDbError(h.ok ? null : h.error));
 
   // Open the most recent conversation + load density on first load (§8, §26, §35).
   useEffect(() => {
@@ -51,11 +73,18 @@ export function App() {
     });
     Storage.settings.get().then((s) => setDensity(s.density));
 
-    // New-conversation keyboard command (PLAN §43).
-    const onMsg = (msg: { type?: string }) => {
+    // New-conversation keyboard command (PLAN §43) + running-conversation
+    // broadcasts (PLAN §48).
+    const onMsg = (msg: { type?: string; id?: string | null }) => {
       if (msg?.type === 'command_new_conversation') newChat();
+      if (msg?.type === 'running_conversation') setRunningId(msg.id ?? null);
     };
     chrome.runtime?.onMessage?.addListener(onMsg);
+    // Sync current run state on (re)load — a run may already be in progress.
+    chrome.runtime
+      ?.sendMessage?.({ type: 'get_running_conversation' })
+      .then((res?: { id?: string | null }) => setRunningId(res?.id ?? null))
+      .catch(() => {});
     return () => chrome.runtime?.onMessage?.removeListener(onMsg);
   }, []);
 
@@ -151,8 +180,27 @@ export function App() {
 
       {dbError && (
         <div class="bg-red-100 px-3 py-2 text-xs text-red-800 dark:bg-red-950 dark:text-red-200">
-          Some data couldn't be loaded (storage may have been evicted). Your settings and providers
-          are intact; conversations and files may need restoring from a backup.
+          <p>
+            Some data couldn't be loaded (storage may have been evicted or a migration failed). Your
+            settings and providers are intact; conversations and files may need restoring from a
+            backup.
+          </p>
+          <div class="mt-2 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={downloadRecovery}
+              class="rounded bg-red-600 px-2 py-1 font-medium text-white hover:bg-red-700"
+            >
+              Download recovery snapshot
+            </button>
+            <button
+              type="button"
+              onClick={retryDb}
+              class="rounded border border-red-400 px-2 py-1 hover:bg-red-200 dark:hover:bg-red-900"
+            >
+              Retry
+            </button>
+          </div>
         </div>
       )}
 
@@ -185,6 +233,10 @@ export function App() {
               key={conversationId}
               conversationId={conversationId}
               registerControls={setChatControls}
+              onForked={(id) => {
+                setConversationId(id);
+                setTab('chat');
+              }}
             />
           )}
           {tab === 'tasks' && <TasksTab key={conversationId} conversationId={conversationId} />}
@@ -197,6 +249,7 @@ export function App() {
         onClose={() => setDrawerOpen(false)}
         currentId={conversationId}
         onSelect={setConversationId}
+        runningId={runningId}
       />
     </div>
   );
