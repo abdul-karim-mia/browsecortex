@@ -212,7 +212,7 @@ export const DEFAULT_SETTINGS: Settings = {
   systemPromptAdditions: '',
   toolTimeoutMultiplier: 1,
   density: 'comfortable',
-  showReasoningTokens: false,
+  showReasoningTokens: true,
   locale: 'en',
   onboardingComplete: false,
   visionFallbackMode: 'disabled',

@@ -16,9 +16,20 @@ function pretty(value: unknown): string {
 
 export function ToolCallRow({ line }: { line: ChatLine }) {
   const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const done = line.content !== '…';
   const isError = line.tool?.isError;
   const running = !done;
+
+  const copyResult = async () => {
+    try {
+      await navigator.clipboard.writeText(pretty(line.content));
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1200);
+    } catch {
+      /* ignore */
+    }
+  };
 
   return (
     <div class="relative">
@@ -34,6 +45,7 @@ export function ToolCallRow({ line }: { line: ChatLine }) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
         class={`flex w-full items-center gap-1.5 py-0.5 text-left text-xs hover:text-gray-700 dark:hover:text-gray-300 ${
           running ? 'animate-pulse text-blue-400' : 'text-gray-500'
         }`}
@@ -58,8 +70,17 @@ export function ToolCallRow({ line }: { line: ChatLine }) {
           )}
           {done && (
             <div>
-              <div class="mb-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-400">
+              <div class="mb-0.5 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-gray-400">
                 Result
+                <button
+                  type="button"
+                  onClick={copyResult}
+                  class="ml-auto rounded p-0.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                  title="Copy result"
+                  aria-label={copied ? 'Copied' : 'Copy result'}
+                >
+                  <Icon name={copied ? 'check' : 'copy'} size={12} />
+                </button>
               </div>
               <pre
                 class={`max-h-60 overflow-auto whitespace-pre-wrap break-words text-xs ${

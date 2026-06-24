@@ -36,6 +36,11 @@ function renderInline(text: string): string {
 
 import { highlightCode, highlightJSON } from './highlighter';
 
+/** Inline copy glyph (renderer can't import the Preact Icon component); the copy
+ * action is wired via event delegation in MessageBubble. */
+const COPY_GLYPH =
+  '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+
 export function renderMarkdown(src: string): string {
   const codeBlocks: string[] = [];
   // Extract fenced code blocks first so their contents aren't transformed.
@@ -51,8 +56,11 @@ export function renderMarkdown(src: string): string {
       highlightedHtml = highlightCode(cleanCode, `code.${lang}`, `text/${lang}`);
     }
 
+    const langBadge = lang ? `<span class="code-lang">${escapeHtml(lang)}</span>` : '';
     codeBlocks.push(
-      `<pre data-lang="${escapeHtml(lang)}"><code>${highlightedHtml}</code></pre>`,
+      `<div class="code-block"><div class="code-head">${langBadge}` +
+        `<button class="code-copy" type="button" aria-label="Copy code" title="Copy code">${COPY_GLYPH}</button>` +
+        `</div><pre data-lang="${escapeHtml(lang)}"><code>${highlightedHtml}</code></pre></div>`,
     );
     return ` CODE${idx} `;
   });

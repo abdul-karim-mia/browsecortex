@@ -36,11 +36,31 @@ export const createWindow: ToolDefinition = {
   destructive: false,
   timeout: 'tab',
   async execute(args) {
-    const w = await chrome.windows.create({
-      url: args.url ? String(args.url) : undefined,
-      incognito: args.incognito === true,
-    });
-    return { id: w?.id };
+    const wantIncognito = args.incognito === true;
+    if (wantIncognito) {
+      // chrome.windows.create silently fails (resolves with no window) when the
+      // extension lacks incognito access, so check up front and explain why.
+      const allowed = await new Promise<boolean>((resolve) =>
+        chrome.extension.isAllowedIncognitoAccess((res) => resolve(res)),
+      ).catch(() => false);
+      if (!allowed) {
+        return {
+          error:
+            'Cannot open an incognito window: this extension is not allowed in incognito. ' +
+            'Enable "Allow in Incognito" for BrowseCortex in chrome://extensions.',
+        };
+      }
+    }
+    try {
+      const w = await chrome.windows.create({
+        url: args.url ? String(args.url) : undefined,
+        incognito: wantIncognito,
+      });
+      if (!w?.id) return { error: 'Window could not be created.' };
+      return { id: w.id, incognito: w.incognito === true };
+    } catch (e) {
+      return { error: `Failed to create window: ${e instanceof Error ? e.message : String(e)}` };
+    }
   },
 };
 

@@ -73,6 +73,15 @@ export function App() {
     });
     Storage.settings.get().then((s) => setDensity(s.density));
 
+    // Re-apply density live when it's changed in Settings (§3c) — the initial
+    // load above only runs once, so without this the panel needs a reload.
+    const onStorage = (changes: Record<string, chrome.storage.StorageChange>, area: string) => {
+      if (area === 'local' && changes.settings) {
+        Storage.settings.get().then((s) => setDensity(s.density));
+      }
+    };
+    chrome.storage.onChanged.addListener(onStorage);
+
     // New-conversation keyboard command (PLAN §43) + running-conversation
     // broadcasts (PLAN §48).
     const onMsg = (msg: { type?: string; id?: string | null }) => {
@@ -85,7 +94,10 @@ export function App() {
       ?.sendMessage?.({ type: 'get_running_conversation' })
       .then((res?: { id?: string | null }) => setRunningId(res?.id ?? null))
       .catch(() => {});
-    return () => chrome.runtime?.onMessage?.removeListener(onMsg);
+    return () => {
+      chrome.runtime?.onMessage?.removeListener(onMsg);
+      chrome.storage.onChanged.removeListener(onStorage);
+    };
   }, []);
 
   // Detect whether this conversation has tasks/files yet, so their tabs can
@@ -136,6 +148,7 @@ export function App() {
             onClick={() => setDrawerOpen(true)}
             class="rounded p-1.5 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
             title="Conversations"
+            aria-label="Open conversations"
           >
             <Icon name="menu" />
           </button>
@@ -153,6 +166,7 @@ export function App() {
                 disabled={!chatControls || !chatControls.canClear || chatControls.running}
                 class="rounded p-1.5 text-gray-600 hover:bg-gray-100 disabled:opacity-40 dark:text-gray-300 dark:hover:bg-gray-800"
                 title="Clear chat"
+                aria-label="Clear chat"
               >
                 <Icon name="trash" />
               </button>
@@ -162,6 +176,7 @@ export function App() {
                 disabled={chatControls?.running}
                 class="rounded p-1.5 text-gray-600 hover:bg-gray-100 disabled:opacity-40 dark:text-gray-300 dark:hover:bg-gray-800"
                 title={t('new_conversation')}
+                aria-label={t('new_conversation')}
               >
                 <Icon name="plus" />
               </button>
@@ -172,6 +187,7 @@ export function App() {
             onClick={openSettings}
             class="rounded p-1.5 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
             title={t('settings')}
+            aria-label={t('settings')}
           >
             <Icon name="settings" />
           </button>

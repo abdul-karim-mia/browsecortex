@@ -10,6 +10,10 @@ interface Props {
   onFork?: (messageId: string) => void;
 }
 
+/** Check glyph swapped in briefly after a code-block copy (delegated handler). */
+const CHECK_GLYPH =
+  '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+
 /** A chat message bubble: markdown for assistant, plain for user, with copy /
  * pin / delete / fork actions on hover (PLAN §7, B8). */
 export function MessageBubble({ line, onPin, onDelete, onFork }: Props) {
@@ -20,6 +24,25 @@ export function MessageBubble({ line, onPin, onDelete, onFork }: Props) {
       await navigator.clipboard.writeText(line.content);
       setCopied(true);
       setTimeout(() => setCopied(false), 1200);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  // Code-block copy is wired by delegation since the markdown is injected via
+  // dangerouslySetInnerHTML and can't carry Preact handlers (§1a).
+  const onMdClick = async (e: MouseEvent) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.code-copy');
+    if (!btn) return;
+    const code = btn.closest('.code-block')?.querySelector('code');
+    if (!code) return;
+    try {
+      await navigator.clipboard.writeText(code.textContent ?? '');
+      const original = btn.innerHTML;
+      btn.innerHTML = CHECK_GLYPH;
+      setTimeout(() => {
+        btn.innerHTML = original;
+      }, 1200);
     } catch {
       /* ignore */
     }
@@ -42,10 +65,10 @@ export function MessageBubble({ line, onPin, onDelete, onFork }: Props) {
         {isUser ? (
           <span class="whitespace-pre-wrap break-words">{line.content || '…'}</span>
         ) : (
-          <div
-            class="md"
-            dangerouslySetInnerHTML={{ __html: renderMarkdown(line.content || '…') }}
-          />
+          <div class="md" onClick={onMdClick}>
+            <span dangerouslySetInnerHTML={{ __html: renderMarkdown(line.content || '…') }} />
+            {line.streaming && <span class="stream-caret" aria-hidden="true" />}
+          </div>
         )}
       </div>
       {line.content && (
@@ -55,6 +78,7 @@ export function MessageBubble({ line, onPin, onDelete, onFork }: Props) {
             onClick={copy}
             class="rounded bg-white p-1 text-gray-500 shadow dark:bg-gray-700"
             title="Copy"
+            aria-label={copied ? 'Copied' : 'Copy message'}
           >
             <Icon name={copied ? 'check' : 'copy'} size={13} />
           </button>
@@ -64,6 +88,8 @@ export function MessageBubble({ line, onPin, onDelete, onFork }: Props) {
               onClick={() => onPin(line.messageId!, !line.pinned)}
               class={`rounded bg-white p-1 shadow dark:bg-gray-700 ${line.pinned ? 'text-amber-500' : 'text-gray-500'}`}
               title={line.pinned ? 'Unpin' : 'Pin'}
+              aria-label={line.pinned ? 'Unpin message' : 'Pin message'}
+              aria-pressed={!!line.pinned}
             >
               <Icon name="pin" size={13} />
             </button>
@@ -74,6 +100,7 @@ export function MessageBubble({ line, onPin, onDelete, onFork }: Props) {
               onClick={() => onFork(line.messageId!)}
               class="rounded bg-white p-1 text-gray-500 shadow dark:bg-gray-700"
               title="Fork conversation from here"
+              aria-label="Fork conversation from here"
             >
               <Icon name="fork" size={13} />
             </button>
@@ -84,6 +111,7 @@ export function MessageBubble({ line, onPin, onDelete, onFork }: Props) {
               onClick={() => onDelete(line.messageId!)}
               class="rounded bg-white p-1 text-gray-500 shadow hover:text-red-500 dark:bg-gray-700"
               title="Delete"
+              aria-label="Delete message"
             >
               <Icon name="trash" size={13} />
             </button>

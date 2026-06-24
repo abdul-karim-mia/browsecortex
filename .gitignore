@@ -11,7 +11,3 @@ test-results/
 *.tsbuildinfo
 
 .claude/
-PLAN.md
-TASK.md
-REMAINING.md
-toolIdea.md

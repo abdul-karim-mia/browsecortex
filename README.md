@@ -4,7 +4,7 @@
 
 BrowseCortex gives you a persistent AI chat assistant with autonomous browser control. You bring your own AI provider (any OpenAI-compatible API). The AI controls the browser through a rich tool system, manages memory across conversations, handles tasks, and maintains a virtual filesystem.
 
-> ⚠️ **Work in progress.** This repo is being built out from [PLAN.md](PLAN.md). See [TASK.md](TASK.md) for current status.
+> ⚠️ **Work in progress.** See [CHANGELOG.md](CHANGELOG.md) for release history.
 
 ## Key principles
 

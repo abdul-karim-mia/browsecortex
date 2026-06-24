@@ -542,7 +542,7 @@ export const getConsoleLogs: ToolDefinition = {
       const tabIdVal = await tabId(args, ctx.getActiveTabId);
       const [res] = await chrome.scripting.executeScript({
         target: { tabId: tabIdVal },
-        func: (levels?: string[], clear?: boolean) => {
+        func: (levels: string[] | null, clear?: boolean) => {
           const logs = (window as any).__browsecortex_logs || [];
           const filtered = levels && levels.length > 0
             ? logs.filter((l: any) => levels.includes(l.level))
@@ -552,7 +552,7 @@ export const getConsoleLogs: ToolDefinition = {
           }
           return filtered;
         },
-        args: [args.levels as string[], !!args.clear],
+        args: [(args.levels as string[]) ?? null, !!args.clear],
       });
       return { logs: (res?.result as any[]) || [] };
     } catch (e) {
@@ -615,13 +615,13 @@ export const getNetworkRequests: ToolDefinition = {
       const [res] = await chrome.scripting.executeScript({
         target: { tabId: tabIdVal },
         func: (
-          urlPattern?: string,
-          method?: string,
-          statusCode?: number,
-          contentType?: string,
-          body?: boolean,
-          lastIdVal?: string,
-          clear?: boolean
+          urlPattern: string | null,
+          method: string | null,
+          statusCode: number | null,
+          contentType: string | null,
+          body: boolean,
+          lastIdVal: string | null,
+          clear: boolean
         ) => {
           const requests = (window as any).__browsecortex_requests || [];
           
@@ -641,7 +641,7 @@ export const getNetworkRequests: ToolDefinition = {
             const m = method.toUpperCase();
             filtered = filtered.filter((r: any) => r.method.toUpperCase() === m);
           }
-          if (statusCode !== undefined) {
+          if (statusCode != null) {
             filtered = filtered.filter((r: any) => r.status === statusCode);
           }
           if (contentType) {
@@ -678,12 +678,12 @@ export const getNetworkRequests: ToolDefinition = {
           };
         },
         args: [
-          args.url_pattern as string,
-          args.method as string,
-          args.status_code as number,
-          args.content_type as string,
+          (args.url_pattern as string) ?? null,
+          (args.method as string) ?? null,
+          (args.status_code as number) ?? null,
+          (args.content_type as string) ?? null,
           !!args.body,
-          lastId,
+          lastId ?? null,
           !!args.clear,
         ],
       });
@@ -778,7 +778,7 @@ export const getPageHtml: ToolDefinition = {
       const outer = !!args.outer;
       const [res] = await chrome.scripting.executeScript({
         target: { tabId: id, frameIds: [targetFrameId] },
-        func: (sel?: string, out?: boolean) => {
+        func: (sel: string | null, out?: boolean) => {
           if (sel) {
             const el = document.querySelector(sel);
             if (!el) return null;
@@ -786,7 +786,7 @@ export const getPageHtml: ToolDefinition = {
           }
           return document.documentElement.outerHTML;
         },
-        args: [selector, outer],
+        args: [selector ?? null, outer],
       });
       if (res?.result === null) {
         return { error: `Element not found for selector: ${selector}` };

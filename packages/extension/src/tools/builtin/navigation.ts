@@ -66,6 +66,44 @@ export async function waitForLoad(
   return { complete: false, url: tab?.url };
 }
 
+/**
+ * Resolves a user-supplied navigation target into a fully-qualified URL.
+ *
+ * Without this, a bare string like "not-a-valid-url" is treated by
+ * chrome.tabs.update as a relative path and silently resolves against the
+ * extension's own origin (chrome-extension://.../not-a-valid-url). We instead
+ * require an explicit, recognised scheme — or a host that looks like a domain,
+ * which we promote to https:// — and reject anything else with a clear error.
+ */
+function normalizeNavigationUrl(raw: string): { url: string } | { error: string } {
+  const input = raw.trim();
+  if (!input) return { error: 'No URL provided.' };
+
+  // Already absolute with a scheme we accept.
+  const schemeMatch = /^([a-z][a-z0-9+.-]*):/i.exec(input);
+  if (schemeMatch) {
+    const scheme = schemeMatch[1].toLowerCase();
+    const allowed = ['http', 'https', 'chrome', 'about', 'file', 'view-source', 'data'];
+    if (!allowed.includes(scheme)) {
+      return { error: `Refusing to navigate to unsupported scheme "${scheme}:".` };
+    }
+    return { url: input };
+  }
+
+  // No scheme: only promote to https:// if it plausibly looks like a host
+  // (a dot-separated domain or localhost, with no spaces). Otherwise it's not
+  // a navigable URL — surface an error rather than hitting the extension origin.
+  const hostCandidate = input.split('/')[0];
+  const looksLikeHost =
+    !/\s/.test(input) &&
+    (/^localhost(:\d+)?$/i.test(hostCandidate) || /^[^\s/]+\.[^\s/]+/.test(hostCandidate));
+  if (looksLikeHost) return { url: `https://${input}` };
+
+  return {
+    error: `"${raw}" is not a valid URL. Include a scheme (e.g. https://) or a valid domain.`,
+  };
+}
+
 export const navigateTo: ToolDefinition = {
   name: 'navigate_to',
   description: 'Navigate the active tab (or a given tab) to a URL.',
@@ -81,13 +119,16 @@ export const navigateTo: ToolDefinition = {
   timeout: 'navigation',
   async execute(args, ctx) {
     const tabId = await resolveTabId(args, ctx.getActiveTabId);
-    await chrome.tabs.update(tabId, { url: String(args.url) });
+    const normalized = normalizeNavigationUrl(String(args.url));
+    if ('error' in normalized) return { error: normalized.error };
+    const targetUrl = normalized.url;
+    await chrome.tabs.update(tabId, { url: targetUrl });
     const { complete, url } = await waitForLoad(tabId);
     return {
-      navigated: String(args.url),
+      navigated: targetUrl,
       tab_id: tabId,
       loaded: complete,
-      url: url ?? String(args.url),
+      url: url ?? targetUrl,
       ...(complete
         ? {}
         : { note: 'Tab update was sent but the page had not finished loading by the timeout.' }),

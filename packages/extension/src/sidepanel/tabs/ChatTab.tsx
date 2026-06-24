@@ -90,7 +90,16 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
   const [showModelPicker, setShowModelPicker] = useState(false);
   const [showModePicker, setShowModePicker] = useState(false);
   const [listening, setListening] = useState(false);
+  /** Whether the last run ended in an error (drives the Retry affordance). */
+  const [errored, setErrored] = useState(false);
+  /** Whether the message list is scrolled to (near) the bottom — gates auto-scroll. */
+  const [atBottom, setAtBottom] = useState(true);
+  /** True while a file is being dragged over the input (drag-drop attachments). */
+  const [dragOver, setDragOver] = useState(false);
+  /** Last submitted payload, replayed by the Retry button after an error. */
+  const lastSubmitRef = useRef<{ content: string; attachments: Attachment[] } | null>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   /** Whether the trailing assistant line is still receiving tokens. */
   const openRef = useRef(false);
   /** Whether the trailing thinking line is still receiving reasoning tokens. */
@@ -164,11 +173,42 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
     return () => chrome.runtime?.onMessage?.removeListener(onMsg);
   }, []);
 
-  // Auto-scroll to the newest content as it streams in.
+  // Auto-scroll to the newest content as it streams in — but only when the user
+  // is already near the bottom, so scrolling up to read history isn't yanked
+  // back down mid-stream (§1b).
   useEffect(() => {
     const el = scrollRef.current;
+    if (el && atBottom) el.scrollTop = el.scrollHeight;
+  }, [lines, ask, thinking, atBottom]);
+
+  const SCROLL_BOTTOM_THRESHOLD = 80;
+  const onScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const distance = el.scrollHeight - el.scrollTop - el.clientHeight;
+    setAtBottom(distance <= SCROLL_BOTTOM_THRESHOLD);
+  };
+  const scrollToBottom = () => {
+    const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, [lines, ask, thinking]);
+    setAtBottom(true);
+  };
+
+  // Auto-grow the input as the user types, up to a max height then scroll (§5a).
+  const MAX_TEXTAREA_PX = 160;
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight, MAX_TEXTAREA_PX)}px`;
+  }, [input]);
+
+  // Drag-and-drop file attachments onto the input area (§5b).
+  const onDrop = (e: DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    if (e.dataTransfer?.files?.length) addFiles(e.dataTransfer.files);
+  };
 
   const onServerMessage = (msg: ServerMessage) => {
     if (msg.type === 'reasoning') {
@@ -191,15 +231,16 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
         const next = [...prev];
         const last = next[next.length - 1];
         if (openRef.current && last?.role === 'assistant') {
-          next[next.length - 1] = { ...last, content: last.content + msg.content };
+          next[next.length - 1] = { ...last, content: last.content + msg.content, streaming: true };
         } else {
-          next.push({ role: 'assistant', content: msg.content });
+          next.push({ role: 'assistant', content: msg.content, streaming: true });
           openRef.current = true;
         }
         return next;
       });
     } else if (msg.type === 'tool_call') {
       openRef.current = false;
+      closeAssistantStream();
       setThinking(false);
       closeThinkingLine();
       setLines((prev) => [
@@ -231,6 +272,7 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
       setThinking(true);
     } else if (msg.type === 'ask_user') {
       openRef.current = false;
+      closeAssistantStream();
       setThinking(false);
       closeThinkingLine();
       setAsk(msg.questions as AskUserPayload);
@@ -238,6 +280,7 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
       setRunning(false);
       setThinking(false);
       openRef.current = false;
+      closeAssistantStream();
       closeThinkingLine();
       submittedRef.current = false;
       loadConvTokens();
@@ -246,24 +289,36 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
       Storage.messages.byConversation(conversationId).then((m) => {
         if (!m.length || submittedRef.current) return;
         setLines((prev) => {
+          // Storage doesn't persist reasoning (PLAN §8 keeps only user/
+          // assistant/tool turns), so rebuilding straight from storage would
+          // drop every thinking line. The live `prev` already has thinking
+          // correctly interleaved between each round's tool calls, so keep that
+          // ordering and only borrow the persisted ids/pinned flags. Non-thinking
+          // live lines map 1:1 to persisted messages in order; thinking lines
+          // stay exactly where they streamed in (fixes multi-step think groups
+          // being merged/lost — B-thinking).
           const reloaded = messagesToLines(m);
-          // Reasoning content isn't persisted (PLAN §8 stores only user/
-          // assistant/tool turns), so the reload above drops any thinking
-          // lines shown during this run. Splice them back in, just before
-          // the final reply, instead of letting them disappear.
-          const thinkingLines = prev.filter((l) => l.role === 'thinking');
-          if (thinkingLines.length) {
-            const lastAssistantIdx = reloaded.map((l) => l.role).lastIndexOf('assistant');
-            const insertAt = lastAssistantIdx === -1 ? reloaded.length : lastAssistantIdx;
-            reloaded.splice(insertAt, 0, ...thinkingLines);
+          let ri = 0;
+          const merged: ChatLine[] = [];
+          for (const line of prev) {
+            // Keep thinking lines verbatim (not persisted), and for every other
+            // live line take the next id-bearing persisted line. If storage
+            // returned fewer rows than the live view, keep the live line as-is
+            // rather than dropping it — nothing should vanish (B-thinking).
+            if (line.role === 'thinking') merged.push(line);
+            else merged.push(ri < reloaded.length ? reloaded[ri++] : line);
           }
-          return reloaded;
+          // Append any persisted lines the live view never showed (defensive).
+          while (ri < reloaded.length) merged.push(reloaded[ri++]);
+          return merged;
         });
       });
     } else if (msg.type === 'error') {
       setRunning(false);
       setThinking(false);
+      setErrored(true);
       openRef.current = false;
+      closeAssistantStream();
       closeThinkingLine();
       // The background's abortController can get stuck non-null (e.g. the
       // service worker died mid-run) with no UI affordance to recover, since
@@ -274,6 +329,17 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
       }
       setLines((prev) => [...prev, { role: 'assistant', content: `⚠️ ${msg.message}` }]);
     }
+  };
+
+  /** Clears the streaming caret on the trailing assistant line once it's done. */
+  const closeAssistantStream = () => {
+    setLines((prev) => {
+      const last = prev[prev.length - 1];
+      if (last?.role !== 'assistant' || !last.streaming) return prev;
+      const next = [...prev];
+      next[next.length - 1] = { ...last, streaming: false };
+      return next;
+    });
   };
 
   /** Marks the trailing thinking line as finished, if one is still open. */
@@ -428,14 +494,35 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
     const displayed = atts.length
       ? `${content}\n📎 ${atts.map((a) => a.name).join(', ')}`
       : content;
+    lastSubmitRef.current = { content, attachments: atts };
     setInput('');
     setAttachments([]);
+    setErrored(false);
     setRunning(true);
     setThinking(true);
+    setAtBottom(true);
     openRef.current = false;
     submittedRef.current = true;
     setLines((prev) => [...prev, { role: 'user', content: displayed }]);
     send({ type: 'send', conversationId, content, attachments: atts.length ? atts : undefined });
+  };
+
+  /** Re-send the last payload after an error (§1c). */
+  const retry = () => {
+    const last = lastSubmitRef.current;
+    if (!last || running) return;
+    setErrored(false);
+    setRunning(true);
+    setThinking(true);
+    setAtBottom(true);
+    openRef.current = false;
+    submittedRef.current = true;
+    send({
+      type: 'send',
+      conversationId,
+      content: last.content,
+      attachments: last.attachments.length ? last.attachments : undefined,
+    });
   };
 
   const stop = () => {
@@ -529,7 +616,15 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
       )}
 
       {/* Messages */}
-      <div ref={scrollRef} class="min-h-0 flex-1 space-y-3 overflow-y-auto p-3">
+      <div class="relative min-h-0 flex-1">
+      <div
+        ref={scrollRef}
+        onScroll={onScroll}
+        role="log"
+        aria-label="Conversation"
+        aria-busy={running}
+        class="h-full space-y-3 overflow-y-auto p-3"
+      >
         {lines.length === 0 && (
           <div class="mt-8 text-center text-sm text-gray-400">
             {connected ? (
@@ -567,12 +662,37 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
           ),
         )}
         {thinking && (
-          <div class="flex max-w-[88%] items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-400 dark:bg-gray-800">
+          <div
+            role="status"
+            aria-live="polite"
+            class="flex max-w-[88%] items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-400 dark:bg-gray-800"
+          >
             <BrainPulse size={18} />
             Thinking…
           </div>
         )}
+        {errored && !running && lastSubmitRef.current && (
+          <button
+            type="button"
+            onClick={retry}
+            class="flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+          >
+            <Icon name="refresh" size={13} /> Retry last message
+          </button>
+        )}
         {ask && <AskUserWidget payload={ask} onSubmit={submitAnswers} />}
+      </div>
+        {!atBottom && (
+          <button
+            type="button"
+            onClick={scrollToBottom}
+            aria-label="Scroll to latest"
+            title="Scroll to latest"
+            class="absolute bottom-3 right-3 flex items-center justify-center rounded-full border border-gray-200 bg-white p-2 text-gray-600 shadow-md hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+          >
+            <Icon name="chevron-down" size={16} />
+          </button>
+        )}
       </div>
 
       {/* Input */}
@@ -584,12 +704,21 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
                 key={i}
                 class="flex items-center gap-1 rounded bg-gray-100 px-2 py-0.5 text-xs dark:bg-gray-800"
               >
-                <Icon name={a.kind === 'image' ? 'file' : 'file'} size={12} />
+                {a.kind === 'image' && a.dataUrl ? (
+                  <img
+                    src={a.dataUrl}
+                    alt={a.name}
+                    class="h-6 w-6 rounded object-cover"
+                  />
+                ) : (
+                  <Icon name={a.kind === 'image' ? 'image' : 'file'} size={12} />
+                )}
                 {a.name}
                 <button
                   type="button"
                   onClick={() => setAttachments((prev) => prev.filter((_, j) => j !== i))}
                   class="text-gray-400 hover:text-red-500"
+                  aria-label={`Remove ${a.name}`}
                 >
                   <Icon name="close" size={12} />
                 </button>
@@ -597,10 +726,24 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
             ))}
           </div>
         )}
-        <div class="rounded-2xl border border-gray-300 bg-white px-3 py-2 dark:border-gray-600 dark:bg-gray-900">
+        <div
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragOver(true);
+          }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={onDrop}
+          class={`rounded-2xl border bg-white px-3 py-2 dark:bg-gray-900 ${
+            dragOver
+              ? 'border-blue-500 ring-2 ring-blue-300 dark:ring-blue-700'
+              : 'border-gray-300 dark:border-gray-600'
+          }`}
+        >
           <textarea
+            ref={textareaRef}
             value={input}
             onInput={(e) => setInput((e.target as HTMLTextAreaElement).value)}
+            aria-label={t('type_a_message')}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -618,8 +761,8 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
               }
             }}
             placeholder={t('type_a_message')}
-            rows={2}
-            class="min-h-[40px] w-full resize-none border-none bg-transparent p-0 text-sm focus:outline-none"
+            rows={1}
+            class="max-h-40 min-h-[40px] w-full resize-none overflow-y-auto border-none bg-transparent p-0 text-sm focus:outline-none"
           />
           <div class="mt-2 flex items-center justify-between">
             <div class="relative flex items-center gap-1">
@@ -627,6 +770,9 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
                 type="button"
                 onClick={() => setShowModePicker((v) => !v)}
                 title="Agent permission mode"
+                aria-label={`Agent permission mode: ${modeLabel}`}
+                aria-haspopup="menu"
+                aria-expanded={showModePicker}
                 class={`flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${modePillClass}`}
               >
                 {modeLabel}
@@ -643,12 +789,13 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
                 class="flex cursor-pointer items-center rounded p-1.5 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
                 title="Attach files"
               >
-                <Icon name="plus" size={16} />
+                <Icon name="plus" size={16} title="Attach files" />
                 <input
                   type="file"
                   multiple
                   accept="image/*,.txt,.md,.csv,.json"
                   class="hidden"
+                  aria-label="Attach files"
                   onChange={(e) => {
                     addFiles((e.target as HTMLInputElement).files);
                     (e.target as HTMLInputElement).value = '';
@@ -659,6 +806,8 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
                 type="button"
                 onClick={toggleDictation}
                 title={listening ? 'Stop dictation' : 'Dictate message'}
+                aria-label={listening ? 'Stop dictation' : 'Dictate message'}
+                aria-pressed={listening}
                 class={`flex items-center rounded p-1.5 ${
                   listening
                     ? 'text-red-500'
@@ -667,11 +816,19 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
               >
                 <Icon name="mic" size={16} />
               </button>
+              {input.trim() && (
+                <span class="ml-1 text-[11px] tabular-nums text-gray-400" aria-hidden="true">
+                  {input.trim().split(/\s+/).length}w · {input.length}c
+                </span>
+              )}
             </div>
             <div class="relative flex items-center gap-2 text-xs text-gray-400">
               <button
                 type="button"
                 onClick={() => setShowModelPicker((v) => !v)}
+                aria-label="Select model"
+                aria-haspopup="menu"
+                aria-expanded={showModelPicker}
                 class="flex items-center gap-1 rounded px-1.5 py-1 hover:bg-gray-100 dark:hover:bg-gray-800"
               >
                 {settings?.selectedModel && <span>{settings.selectedModel}</span>}
@@ -693,6 +850,7 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
                   onClick={stop}
                   class="flex items-center rounded-full bg-red-500 p-1.5 text-white"
                   title={t('stop')}
+                  aria-label={t('stop')}
                 >
                   <Icon name="stop" size={14} />
                 </button>
@@ -702,6 +860,7 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
                   onClick={() => submit()}
                   class="flex items-center rounded-full bg-blue-500 p-1.5 text-white disabled:opacity-50"
                   title={t('send_message')}
+                  aria-label={t('send_message')}
                 >
                   <Icon name="send" size={14} />
                 </button>

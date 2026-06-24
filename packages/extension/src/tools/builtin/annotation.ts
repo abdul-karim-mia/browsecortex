@@ -49,7 +49,7 @@ export const annotatePage: ToolDefinition = {
 
     const [res] = await chrome.scripting.executeScript({
       target: { tabId: tabIdVal, frameIds: [targetFrameId] },
-      func: (types?: string[], containerSel?: string) => {
+      func: (types: string[] | null, containerSel: string | null) => {
         const w = window as unknown as { __bmAnnotations?: Element[] };
         document.querySelectorAll('[data-bm-badge]').forEach((b) => b.remove());
 
@@ -113,7 +113,7 @@ export const annotatePage: ToolDefinition = {
         });
         return map;
       },
-      args: [elementTypes, containerSelector],
+      args: [elementTypes ?? null, containerSelector ?? null],
     });
     const elements = (res?.result as unknown[]) ?? [];
     return { count: elements.length, elements };

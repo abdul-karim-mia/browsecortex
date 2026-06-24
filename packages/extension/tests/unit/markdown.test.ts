@@ -19,6 +19,19 @@ describe('renderMarkdown', () => {
     expect(html).toContain('&lt; <span class="text-amber-600 dark:text-amber-400">2</span>');
   });
 
+  it('wraps fenced code with a copy button and shows the language badge', () => {
+    const html = renderMarkdown('```ts\nconst x = 1;\n```');
+    expect(html).toContain('<div class="code-block">');
+    expect(html).toContain('class="code-copy"');
+    expect(html).toContain('<span class="code-lang">ts</span>');
+  });
+
+  it('omits the language badge for unlabelled code blocks but keeps copy', () => {
+    const html = renderMarkdown('```\nplain\n```');
+    expect(html).toContain('class="code-copy"');
+    expect(html).not.toContain('class="code-lang"');
+  });
+
   it('renders unordered and ordered lists', () => {
     expect(renderMarkdown('- a\n- b')).toContain('<ul>');
     expect(renderMarkdown('1. a\n2. b')).toContain('<ol>');

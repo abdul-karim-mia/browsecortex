@@ -32,7 +32,9 @@ export type IconName =
   | 'mic'
   | 'chevron-down'
   | 'fork'
-  | 'sparkle';
+  | 'sparkle'
+  | 'image'
+  | 'refresh';
 
 const PATHS: Record<IconName, JSX.Element> = {
   brain: (
@@ -173,6 +175,21 @@ const PATHS: Record<IconName, JSX.Element> = {
   'chevron-down': <path d="m6 9 6 6 6-6" />,
   sparkle: (
     <path d="M12 2c.4 2.6 1 4.6 2.2 5.8S17.4 9.6 20 10c-2.6.4-4.6 1-5.8 2.2S12.4 15.4 12 18c-.4-2.6-1-4.6-2.2-5.8S6.6 10.4 4 10c2.6-.4 4.6-1 5.8-2.2S11.6 4.6 12 2Z" />
+  ),
+  image: (
+    <>
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <circle cx="9" cy="9" r="2" />
+      <path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21" />
+    </>
+  ),
+  refresh: (
+    <>
+      <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
+      <path d="M21 3v5h-5" />
+      <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+      <path d="M3 21v-5h5" />
+    </>
   ),
 };
 

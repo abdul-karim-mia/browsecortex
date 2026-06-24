@@ -48,7 +48,7 @@ export const readPageContent: ToolDefinition = {
     try {
       const [result] = await chrome.scripting.executeScript({
         target: { tabId, frameIds: [targetFrameId] },
-        func: (limit: number, incMeta: boolean, sel?: string, incHidden?: boolean) => {
+        func: (limit: number, incMeta: boolean, sel: string | null, incHidden?: boolean) => {
           const root = sel ? document.querySelector(sel) : document.body;
           if (!root) return null;
 
@@ -104,7 +104,7 @@ export const readPageContent: ToolDefinition = {
             metadata,
           };
         },
-        args: [maxLength, includeMetadata, selector, includeHidden],
+        args: [maxLength, includeMetadata, selector ?? null, includeHidden],
       });
 
       const data = result?.result as any;

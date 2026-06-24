@@ -207,11 +207,17 @@ export const getScrollPosition: ToolDefinition = {
     return runInPage(
       id,
       targetFrameId,
-      () => ({
-        x: window.scrollX,
-        y: window.scrollY,
-        maxY: document.body.scrollHeight - window.innerHeight,
-      }),
+      () => {
+        const doc = document.documentElement;
+        const scrollHeight = Math.max(document.body.scrollHeight, doc.scrollHeight);
+        const scrollWidth = Math.max(document.body.scrollWidth, doc.scrollWidth);
+        return {
+          x: window.scrollX,
+          y: window.scrollY,
+          maxX: Math.max(0, scrollWidth - window.innerWidth),
+          maxY: Math.max(0, scrollHeight - window.innerHeight),
+        };
+      },
       [],
     );
   },
