@@ -2913,6 +2913,16 @@
       "path": "community/us-national-weather-service.json"
     },
     {
+      "id": "mcp-weather-server",
+      "name": "Weather MCP Server",
+      "description": "Provides weather information using the free and open-source Open-Meteo API. No API key required.",
+      "icon": "https://cdn.simpleicons.org/weather",
+      "category": "community",
+      "tier": "community",
+      "popularity": 0,
+      "path": "community/mcp-weather-server.json"
+    },
+    {
       "id": "valid",
       "name": "Valid",
       "description": "Conversational access to advertising performance data, creative analysis, and campaign insights",
