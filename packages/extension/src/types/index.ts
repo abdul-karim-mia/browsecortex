@@ -75,6 +75,13 @@ export interface Message {
   content: string;
   toolCalls?: ToolCall[];
   toolResult?: ToolResult;
+  /** Reasoning/thinking tokens for this assistant turn (PLAN §6). Persisted so
+   * thinking blocks survive reloads/conversation switches instead of living
+   * only in transient UI state. */
+  reasoning?: string;
+  /** How long this turn's reasoning streamed, in ms — shown per thinking block
+   * and summed for a group's total think time. */
+  reasoningMs?: number;
   pinned?: boolean;
   createdAt: string;
 }

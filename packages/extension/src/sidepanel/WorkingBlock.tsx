@@ -3,11 +3,23 @@ import { Icon } from '@/components/Icon';
 import type { ChatLine } from './displayLines';
 import { ToolCallRow } from './ToolCallGroup';
 
+/** Human duration: sub-10s gets one decimal (so brief blocks still read >0),
+ * longer rounds to whole seconds. */
+function fmtDuration(ms: number): string {
+  const s = ms / 1000;
+  return s < 10 ? `${s.toFixed(1)}s` : `${Math.round(s)}s`;
+}
+
 /** Reasoning rendered as a collapsible tile that mirrors ToolCallRow, so a
  * thinking step reads as a labelled box alongside the tool calls it sits
  * between rather than floating raw text. */
-function ThinkingRow({ line }: { line: ChatLine }) {
-  const [open, setOpen] = useState(true);
+function ThinkingRow({ line, liveMs }: { line: ChatLine; liveMs?: number }) {
+  const [open, setOpen] = useState(false);
+  // While streaming: "Thinking". Once done: show this block's own measured
+  // duration — persisted per-turn (line.thinkingMs), falling back to a live
+  // timer passed by a standalone block.
+  const ms = line.thinkingMs ?? liveMs ?? 0;
+  const label = line.streaming ? 'Thinking' : ms > 0 ? `Thought for ${fmtDuration(ms)}` : 'Thought';
   return (
     <div class="relative">
       {/* timeline node — matches the tool rows' left rail */}
@@ -23,7 +35,7 @@ function ThinkingRow({ line }: { line: ChatLine }) {
           line.streaming ? 'animate-pulse text-blue-400' : 'text-gray-500'
         }`}
       >
-        <span class="font-medium">Thinking</span>
+        <span class="font-medium">{label}</span>
         {line.streaming && <span class="text-blue-400">…</span>}
         <span class="ml-auto opacity-60">{open ? '▾' : '▸'}</span>
       </button>
@@ -37,18 +49,6 @@ function ThinkingRow({ line }: { line: ChatLine }) {
       )}
     </div>
   );
-}
-
-/** Build a human-readable summary of which tools ran, e.g. "read_page, click +2 more". */
-function summarizeNames(tools: ChatLine[]): string {
-  const names: string[] = [];
-  for (const t of tools) {
-    const name = t.tool?.name ?? 'tool';
-    if (names[names.length - 1] !== name) names.push(name);
-  }
-  const shown = names.slice(0, 2);
-  const rest = names.length - shown.length;
-  return rest > 0 ? `${shown.join(', ')} +${rest} more` : shown.join(', ');
 }
 
 /**
@@ -80,17 +80,44 @@ export function WorkingBlock({ items }: { items: ChatLine[] }) {
     if (!running) setCollapsed(true);
   }, [running]);
 
-  const summaryParts: string[] = [];
-  // Show a duration only when we actually measured one — blocks restored from
-  // history never ran in this session, so `elapsed` stays 0 there and "Thought
-  // for 0s" would be misleading.
-  if (thinkingLines.length) summaryParts.push(elapsed > 0 ? `Thought for ${elapsed}s` : 'Thought');
-  if (toolLines.length) {
-    summaryParts.push(
-      `Ran ${summarizeNames(toolLines)}${toolLines.length > 1 ? ` (${toolLines.length})` : ''}`,
+  // Group title. Combined work reads "Thought for Ns and worked"; a lone tool
+  // call shows its own name; thinking-only shows the duration. The think time is
+  // the sum of each sub-thought's measured duration (persisted), falling back to
+  // the live timer while a fresh run is still in flight.
+  const hasThinking = thinkingLines.length > 0;
+  const hasTools = toolLines.length > 0;
+  // Total think time = sum of each sub-thought's persisted duration; while a
+  // fresh run is still in flight (no persisted ms yet) use the live timer.
+  const thinkingMsTotal = thinkingLines.reduce((n, l) => n + (l.thinkingMs ?? 0), 0);
+  const totalThinkMs = thinkingMsTotal > 0 ? thinkingMsTotal : elapsed * 1000;
+  const thoughtLabel = totalThinkMs > 0 ? `Thought for ${fmtDuration(totalThinkMs)}` : 'Thought';
+  let summary: string;
+  if (hasThinking && hasTools) {
+    summary = `${thoughtLabel} and worked`;
+  } else if (hasThinking) {
+    summary = thoughtLabel;
+  } else {
+    summary = toolLines.length === 1 ? (toolLines[0].tool?.name ?? 'Worked') : 'Worked';
+  }
+  if (errors > 0) summary += ` · ${errors} error${errors > 1 ? 's' : ''}`;
+
+  const runningLabel = stillThinking ? 'Thinking…' : `Running ${runningTool?.tool?.name ?? 'tool'}…`;
+
+  // A lone tool call or single thinking step doesn't need group chrome — render
+  // it directly (still its own collapsible row), just indented enough for the
+  // row's left-rail icon node.
+  if (items.length === 1) {
+    const line = items[0];
+    return (
+      <div class="my-1 pl-6">
+        {line.role === 'thinking' ? (
+          <ThinkingRow line={line} liveMs={elapsed * 1000} />
+        ) : (
+          <ToolCallRow line={line} />
+        )}
+      </div>
     );
   }
-  if (errors > 0) summaryParts.push(`${errors} error${errors > 1 ? 's' : ''}`);
 
   return (
     <div class="my-1">
@@ -105,13 +132,15 @@ export function WorkingBlock({ items }: { items: ChatLine[] }) {
           size={13}
           class={running ? 'animate-pulse text-blue-400' : ''}
         />
-        <span class={running ? 'animate-pulse text-blue-400' : ''}>
-          {running
-            ? stillThinking
-              ? 'Thinking…'
-              : `Running ${runningTool?.tool?.name}…`
-            : summaryParts.join(' · ')}
-        </span>
+        {running ? (
+          // Keyed so the label re-mounts and replays the slide-up as the
+          // active task changes (thinking → running tool → next tool).
+          <span key={runningLabel} class="status-phase text-blue-400">
+            {runningLabel}
+          </span>
+        ) : (
+          <span>{summary}</span>
+        )}
         {running && (
           <span class="text-gray-400">
             {elapsed > 0 && `${elapsed}s`}

@@ -10,6 +10,8 @@ export interface ChatLine {
   content: string;
   /** For thinking lines: true while reasoning tokens are still streaming in. */
   streaming?: boolean;
+  /** For thinking lines: how long the reasoning took, in ms (if measured). */
+  thinkingMs?: number;
   /** Tool-call id, used to attach the matching result to the right row. */
   id?: string;
   /** Stored message id (present once persisted) — enables pin/delete. */
@@ -28,6 +30,9 @@ export function messagesToLines(messages: Message[]): ChatLine[] {
     if (m.role === 'user') {
       lines.push({ role: 'user', content: m.content, messageId: m.id, pinned: m.pinned });
     } else if (m.role === 'assistant') {
+      // Reasoning precedes the round's tool calls / reply, so emit it first.
+      if (m.reasoning)
+        lines.push({ role: 'thinking', content: m.reasoning, thinkingMs: m.reasoningMs });
       for (const tc of m.toolCalls ?? [])
         callInfo.set(tc.id, { name: tc.name, args: tc.arguments });
       if (m.content.trim())

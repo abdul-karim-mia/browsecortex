@@ -117,7 +117,13 @@ export function fromApiMessage(
         name: tc.function.name,
         arguments: safeParse(tc.function.arguments),
       }));
-      return { ...base, role: 'assistant', content: m.content ?? '', toolCalls };
+      return {
+        ...base,
+        role: 'assistant',
+        content: m.content ?? '',
+        toolCalls,
+        ...(m.reasoning ? { reasoning: m.reasoning, reasoningMs: m.reasoningMs } : {}),
+      };
     }
     case 'tool':
       return {

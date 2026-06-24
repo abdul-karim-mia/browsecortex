@@ -216,6 +216,8 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
     }
 
     let assistantText = '';
+    let reasoningText = '';
+    let reasoningMs = 0;
     let toolCalls: ApiToolCall[] = [];
 
     try {
@@ -223,6 +225,20 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
       // nothing has streamed yet, to avoid duplicating output (PLAN §30).
       for (let attempt = 0; ; attempt++) {
         let streamed = false;
+        // Wall-clock anchor for this round's "thinking time": from the request
+        // start until the model produces its first output (token/tool call).
+        // Measuring token spread is unreliable — some providers send reasoning
+        // as one delta, which would read as 0s.
+        const roundStart = Date.now();
+        // Lock in this round's reasoning duration once (when output begins or the
+        // stream ends) and tell the panel, so its live number equals what we
+        // persist — a single authoritative clock, no completion-time jump.
+        const markReasoningDone = () => {
+          if (reasoningText && reasoningMs === 0) {
+            reasoningMs = Date.now() - roundStart;
+            emit({ type: 'reasoning_done', ms: reasoningMs });
+          }
+        };
         try {
           for await (const event of streamChat({
             provider,
@@ -234,13 +250,21 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
           })) {
             if (event.type === 'token') {
               streamed = true;
+              markReasoningDone();
               assistantText += event.content;
               emit({ type: 'token', content: event.content });
             } else if (event.type === 'reasoning') {
               streamed = true;
-              if (settings.showReasoningTokens) emit({ type: 'reasoning', content: event.content });
+              // Accumulate + persist + show only when the user opted in, so
+              // stored reasoning matches what was displayed (no surprise blocks
+              // appearing after a reload if the toggle was off).
+              if (settings.showReasoningTokens) {
+                reasoningText += event.content;
+                emit({ type: 'reasoning', content: event.content });
+              }
             } else if (event.type === 'tool_calls') {
               streamed = true;
+              markReasoningDone();
               toolCalls = event.calls.map((c) => ({
                 id: c.id || crypto.randomUUID(),
                 type: 'function',
@@ -257,6 +281,8 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
               }
             }
           }
+          // Reasoning with no following output (rare) — close it out now.
+          markReasoningDone();
           break;
         } catch (err) {
           log.error(`[chat:loop] streamChat threw (attempt ${attempt})`, err);
@@ -264,6 +290,8 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
           if (attempt === 0 && transient && !streamed && !signal.aborted) {
             await new Promise((r) => setTimeout(r, 1000));
             assistantText = '';
+            reasoningText = '';
+            reasoningMs = 0;
             toolCalls = [];
             continue;
           }
@@ -288,12 +316,21 @@ export async function runAgentLoop(args: RunArgs): Promise<RunResult> {
     // No tool calls → final answer, loop terminates (PLAN §24). 'done' is sent
     // by the caller after persistence, so the UI can safely reload from storage.
     if (toolCalls.length === 0) {
-      messages.push({ role: 'assistant', content: assistantText });
+      messages.push({
+        role: 'assistant',
+        content: assistantText,
+        ...(reasoningText ? { reasoning: reasoningText, reasoningMs } : {}),
+      });
       return { messages, outcome: 'completed', toolRounds };
     }
 
-    // Record the assistant turn with its tool calls.
-    messages.push({ role: 'assistant', content: assistantText || null, tool_calls: toolCalls });
+    // Record the assistant turn with its tool calls (+ this round's reasoning).
+    messages.push({
+      role: 'assistant',
+      content: assistantText || null,
+      tool_calls: toolCalls,
+      ...(reasoningText ? { reasoning: reasoningText, reasoningMs } : {}),
+    });
 
     // Destructive-action permission (PLAN §28, §34 — ask/auto/bypass modes).
     const destructiveCalls = toolCalls.filter((tc) =>

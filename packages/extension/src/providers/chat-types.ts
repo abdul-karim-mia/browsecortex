@@ -18,7 +18,15 @@ export type ContentPart =
 export type ApiMessage =
   | { role: 'system'; content: string }
   | { role: 'user'; content: string | ContentPart[] }
-  | { role: 'assistant'; content: string | null; tool_calls?: ApiToolCall[] }
+  // `reasoning`/`reasoningMs` are carried only for persistence (PLAN §6); they
+  // are never sent to providers — request builders read content/tool_calls only.
+  | {
+      role: 'assistant';
+      content: string | null;
+      tool_calls?: ApiToolCall[];
+      reasoning?: string;
+      reasoningMs?: number;
+    }
   | { role: 'tool'; tool_call_id: string; content: string };
 
 export interface ApiToolDefinition {

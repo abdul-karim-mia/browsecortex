@@ -26,6 +26,9 @@ export type ClientMessage =
 export type ServerMessage =
   | { type: 'token'; content: string }
   | { type: 'reasoning'; content: string }
+  /** Authoritative duration (ms) of the round's reasoning, sent once it ends so
+   * the UI shows the same value that gets persisted (no jump on completion). */
+  | { type: 'reasoning_done'; ms: number }
   | { type: 'tool_call'; call: ToolCall }
   | { type: 'tool_result'; toolCallId: string; content: string; isError?: boolean }
   | { type: 'ask_user'; questions: unknown }

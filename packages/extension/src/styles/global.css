@@ -163,6 +163,25 @@ body {
   outline-offset: 2px;
 }
 
+/* Slide-up: the run-status bar appearing, and each phase/label swap (§run) */
+@keyframes slide-up {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.run-status-bar {
+  animation: slide-up 0.2s ease-out;
+}
+.status-phase {
+  display: inline-block;
+  animation: slide-up 0.22s ease-out;
+}
+
 /* "AI is working" brain indicator (ChatTab) */
 @keyframes brain-pulse {
   0%,

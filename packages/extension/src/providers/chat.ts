@@ -38,11 +38,23 @@ interface ChatOptions {
   reasoningEffort?: 'low' | 'medium' | 'high';
 }
 
+/** Drop the persistence-only `reasoning` field so it's never sent upstream —
+ * it's non-standard and strict providers can reject unknown message keys. */
+function stripReasoning(m: ApiMessage): ApiMessage {
+  if (m.role === 'assistant' && (m.reasoning !== undefined || m.reasoningMs !== undefined)) {
+    const copy = { ...m };
+    delete copy.reasoning;
+    delete copy.reasoningMs;
+    return copy;
+  }
+  return m;
+}
+
 function buildRequest(opts: ChatOptions): ChatRequest {
   const { model, messages, tools, reasoningEffort } = opts;
   const req: ChatRequest = {
     model: model.id,
-    messages,
+    messages: messages.map(stripReasoning),
     stream: true,
   };
   if (tools && tools.length > 0) {

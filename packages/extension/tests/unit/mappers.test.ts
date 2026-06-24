@@ -68,6 +68,23 @@ describe('round-trip fidelity', () => {
   });
 });
 
+describe('reasoning persistence (B-thinking)', () => {
+  it('persists assistant reasoning through fromApiMessage', () => {
+    const stored = fromApiMessage(
+      { role: 'assistant', content: 'done', reasoning: 'let me think' },
+      'c1',
+    )!;
+    expect(stored.reasoning).toBe('let me think');
+  });
+
+  it('never sends reasoning back upstream (toApiMessage drops it)', () => {
+    const api = toApiMessage(
+      msg({ role: 'assistant', content: 'done', reasoning: 'private thoughts' }),
+    )!;
+    expect('reasoning' in api).toBe(false);
+  });
+});
+
 describe('fromApiMessage multimodal flatten (PLAN §15)', () => {
   it('flattens image + text content parts to a text-only stored message', () => {
     const stored = fromApiMessage(

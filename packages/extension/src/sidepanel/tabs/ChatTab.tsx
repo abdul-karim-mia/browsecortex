@@ -7,7 +7,7 @@ import { messagesToLines, type ChatLine } from '../displayLines';
 import { AskUserWidget, type AskUserPayload } from '../AskUserWidget';
 import { MessageBubble } from '../MessageBubble';
 import { WorkingBlock } from '../WorkingBlock';
-import { BrainPulse } from '../BrainPulse';
+import { RunStatusBar } from '../RunStatusBar';
 import { Icon } from '@/components/Icon';
 import type { Attachment } from '@/background/protocol';
 import type { Settings } from '@/types';
@@ -80,6 +80,10 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
   const [running, setRunning] = useState(false);
   /** True while waiting on the provider with nothing visible yet (no tokens, no tool row). */
   const [thinking, setThinking] = useState(false);
+  /** Wall-clock start of the current run (ms epoch) for the status bar's total timer. */
+  const [runStart, setRunStart] = useState(0);
+  /** Estimated output tokens produced in the current run (status bar). */
+  const [runTokens, setRunTokens] = useState(0);
   const [ask, setAsk] = useState<AskUserPayload | null>(null);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [contextWindow, setContextWindow] = useState<number | null>(null);
@@ -213,6 +217,7 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
   const onServerMessage = (msg: ServerMessage) => {
     if (msg.type === 'reasoning') {
       setThinking(false);
+      setRunTokens((n) => n + Math.ceil(msg.content.length / 4));
       setLines((prev) => {
         const next = [...prev];
         const last = next[next.length - 1];
@@ -224,8 +229,20 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
         }
         return next;
       });
+    } else if (msg.type === 'reasoning_done') {
+      // Authoritative per-block duration from the loop — same value we persist,
+      // so the number never changes when the run completes.
+      openThinkingRef.current = false;
+      setLines((prev) => {
+        const next = [...prev];
+        const last = next[next.length - 1];
+        if (last?.role === 'thinking')
+          next[next.length - 1] = { ...last, streaming: false, thinkingMs: msg.ms };
+        return next;
+      });
     } else if (msg.type === 'token') {
       setThinking(false);
+      setRunTokens((n) => n + Math.ceil(msg.content.length / 4));
       closeThinkingLine();
       setLines((prev) => {
         const next = [...prev];
@@ -285,33 +302,13 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
       submittedRef.current = false;
       loadConvTokens();
       // Reload from storage so persisted messages carry ids (enables pin/delete).
+      // Reasoning is now persisted too (mappers + messagesToLines), so the
+      // reload faithfully reconstructs every thinking block in order — no fragile
+      // merge with the live view needed (B-thinking).
       // Guard with submittedRef so a quick second submit doesn't get overwritten.
       Storage.messages.byConversation(conversationId).then((m) => {
         if (!m.length || submittedRef.current) return;
-        setLines((prev) => {
-          // Storage doesn't persist reasoning (PLAN §8 keeps only user/
-          // assistant/tool turns), so rebuilding straight from storage would
-          // drop every thinking line. The live `prev` already has thinking
-          // correctly interleaved between each round's tool calls, so keep that
-          // ordering and only borrow the persisted ids/pinned flags. Non-thinking
-          // live lines map 1:1 to persisted messages in order; thinking lines
-          // stay exactly where they streamed in (fixes multi-step think groups
-          // being merged/lost — B-thinking).
-          const reloaded = messagesToLines(m);
-          let ri = 0;
-          const merged: ChatLine[] = [];
-          for (const line of prev) {
-            // Keep thinking lines verbatim (not persisted), and for every other
-            // live line take the next id-bearing persisted line. If storage
-            // returned fewer rows than the live view, keep the live line as-is
-            // rather than dropping it — nothing should vanish (B-thinking).
-            if (line.role === 'thinking') merged.push(line);
-            else merged.push(ri < reloaded.length ? reloaded[ri++] : line);
-          }
-          // Append any persisted lines the live view never showed (defensive).
-          while (ri < reloaded.length) merged.push(reloaded[ri++]);
-          return merged;
-        });
+        setLines(messagesToLines(m));
       });
     } else if (msg.type === 'error') {
       setRunning(false);
@@ -342,7 +339,8 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
     });
   };
 
-  /** Marks the trailing thinking line as finished, if one is still open. */
+  /** Marks the trailing thinking line as finished, if one is still open. The
+   * duration is set authoritatively by the `reasoning_done` event, not here. */
   const closeThinkingLine = () => {
     if (!openThinkingRef.current) return;
     openThinkingRef.current = false;
@@ -501,6 +499,8 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
     setRunning(true);
     setThinking(true);
     setAtBottom(true);
+    setRunStart(Date.now());
+    setRunTokens(0);
     openRef.current = false;
     submittedRef.current = true;
     setLines((prev) => [...prev, { role: 'user', content: displayed }]);
@@ -515,6 +515,8 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
     setRunning(true);
     setThinking(true);
     setAtBottom(true);
+    setRunStart(Date.now());
+    setRunTokens(0);
     openRef.current = false;
     submittedRef.current = true;
     send({
@@ -590,24 +592,48 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
   }, [lines.length, running, conversationId]);
   useEffect(() => () => registerControls?.(null), [registerControls]);
 
+  // Derive the live phase shown in the run-status bar from the current state.
+  const runningToolLine = running
+    ? [...lines].reverse().find((l) => l.role === 'tool' && l.content === '…')
+    : undefined;
+  const lastLine = lines[lines.length - 1];
+  const runPhase: { label: string; detail?: string } = runningToolLine
+    ? { label: 'Working', detail: `Running ${runningToolLine.tool?.name ?? 'tool'}` }
+    : lastLine?.role === 'thinking' && lastLine.streaming
+      ? { label: 'Thinking' }
+      : lastLine?.role === 'assistant' && lastLine.streaming
+        ? { label: 'Responding' }
+        : thinking
+          ? { label: 'Thinking more', detail: 'Reasoning about the next step…' }
+          : { label: 'Working' };
+
   return (
     <div class="flex h-full flex-col">
-      {/* Toolbar — clear/new conversation live in the App header now. */}
-      {contextWindow ? (
+      {/* Context + token meter. The context readout shows a % when the model's
+       * window is known, otherwise the raw in-context token estimate — so it
+       * still appears for models with no catalogued context window. */}
+      {(contextWindow || usedTokens > 0 || convTokens > 0) && (
         <div class="flex items-center gap-2 px-2 py-1">
-          <span
-            class={`text-xs ${ctxPercent >= 80 ? 'text-amber-600' : 'text-gray-400'}`}
-            title={`~${usedTokens.toLocaleString()} / ${contextWindow.toLocaleString()} tokens`}
-          >
-            {ctxPercent < 1 ? 'context: empty' : `context ${ctxPercent.toFixed(0)}%`}
-          </span>
+          {contextWindow ? (
+            <span
+              class={`text-xs ${ctxPercent >= 80 ? 'text-amber-600' : 'text-gray-400'}`}
+              title={`~${usedTokens.toLocaleString()} / ${contextWindow.toLocaleString()} tokens`}
+            >
+              {ctxPercent < 1 ? 'context: empty' : `context ${ctxPercent.toFixed(0)}%`}
+            </span>
+          ) : usedTokens > 0 ? (
+            <span class="text-xs text-gray-400" title={`~${usedTokens.toLocaleString()} tokens in context`}>
+              context ~{usedTokens >= 1000 ? `${(usedTokens / 1000).toFixed(1)}k` : usedTokens}
+            </span>
+          ) : null}
           {convTokens > 0 && (
             <span class="text-xs text-gray-400" title="Estimated tokens used in this conversation">
-              · {convTokens >= 1000 ? `${(convTokens / 1000).toFixed(1)}k` : convTokens} tokens used
+              {contextWindow || usedTokens > 0 ? '· ' : ''}
+              {convTokens >= 1000 ? `${(convTokens / 1000).toFixed(1)}k` : convTokens} tokens used
             </span>
           )}
         </div>
-      ) : null}
+      )}
       {ctxPercent >= 80 && (
         <div class="bg-amber-100 px-3 py-1 text-xs text-amber-800 dark:bg-amber-950 dark:text-amber-200">
           Context window {ctxPercent.toFixed(0)}% full — older turns will be compacted
@@ -661,16 +687,6 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
             />
           ),
         )}
-        {thinking && (
-          <div
-            role="status"
-            aria-live="polite"
-            class="flex max-w-[88%] items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-400 dark:bg-gray-800"
-          >
-            <BrainPulse size={18} />
-            Thinking…
-          </div>
-        )}
         {errored && !running && lastSubmitRef.current && (
           <button
             type="button"
@@ -694,6 +710,16 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
           </button>
         )}
       </div>
+
+      {/* Persistent run-status bar — phase, total time, output tokens (§run). */}
+      {running && (
+        <RunStatusBar
+          phase={runPhase.label}
+          detail={runPhase.detail}
+          startMs={runStart}
+          outputTokens={runTokens}
+        />
+      )}
 
       {/* Input */}
       <div class="border-t border-gray-200 p-2 dark:border-gray-700">
