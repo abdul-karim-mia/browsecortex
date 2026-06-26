@@ -1,6 +1,6 @@
 import { useState } from 'preact/hooks';
 import { Icon } from '@/components/Icon';
-import type { ChatLine } from './displayLines';
+import type { ChatLine } from '../../types/chat';
 
 /** Pretty-print a JSON-ish value; falls back to the raw string. */
 function pretty(value: unknown): string {
@@ -38,7 +38,7 @@ export function ToolCallRow({ line }: { line: ChatLine }) {
         <Icon
           name={isError ? 'alert' : 'tool'}
           size={13}
-          class={isError ? 'text-red-500' : running ? 'animate-spin text-blue-400' : ''}
+          class={isError ? 'text-red-500' : running ? 'animate-pulse text-blue-400' : ''}
         />
       </span>
 
@@ -75,7 +75,7 @@ export function ToolCallRow({ line }: { line: ChatLine }) {
                 <button
                   type="button"
                   onClick={copyResult}
-                  class="ml-auto rounded p-0.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                  class="ml-auto rounded p-1 text-gray-600 hover:bg-blue-200 hover:text-blue-700 dark:text-gray-300 dark:hover:bg-blue-500 dark:hover:text-white transition-colors"
                   title="Copy result"
                   aria-label={copied ? 'Copied' : 'Copy result'}
                 >

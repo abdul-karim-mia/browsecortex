@@ -20,6 +20,7 @@ export function GeneralTab() {
   const [providers, setProviders] = useState<Provider[]>([]);
   const [models, setModels] = useState<Model[]>([]);
   const [visionModels, setVisionModels] = useState<Model[]>([]);
+  const [assistModels, setAssistModels] = useState<Model[]>([]);
 
   useEffect(() => {
     Storage.settings.get().then(setSettings);
@@ -37,6 +38,12 @@ export function GeneralTab() {
     if (!settings.visionFallbackProviderId) return setVisionModels([]);
     Storage.models.listByProvider(settings.visionFallbackProviderId).then(setVisionModels);
   }, [settings.visionFallbackProviderId]);
+
+  // Assist model options come from the selected assist provider.
+  useEffect(() => {
+    if (!settings.assistProviderId) return setAssistModels([]);
+    Storage.models.listByProvider(settings.assistProviderId).then(setAssistModels);
+  }, [settings.assistProviderId]);
 
   const update = async (patch: Partial<Settings>) => {
     const next = await Storage.settings.update(patch);
@@ -244,6 +251,44 @@ export function GeneralTab() {
             </select>
           </div>
         )}
+      </Field>
+
+      <Field label="In-page assist model">
+        <select
+          value={settings.assistProviderId ?? ''}
+          onChange={(e) => {
+            const provId = (e.target as HTMLSelectElement).value || null;
+            update({ assistProviderId: provId, assistModel: null });
+          }}
+          class={selectCls}
+        >
+          <option value="">Use active provider (default)</option>
+          {providers.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.name}
+            </option>
+          ))}
+        </select>
+        {settings.assistProviderId && (
+          <select
+            value={settings.assistModel ?? ''}
+            onChange={(e) =>
+              update({ assistModel: (e.target as HTMLSelectElement).value || null })
+            }
+            class={`${selectCls} mt-2`}
+          >
+            <option value="">First enabled model</option>
+            {assistModels.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.id}
+              </option>
+            ))}
+          </select>
+        )}
+        <p class="mt-1 text-xs text-gray-500">
+          Used by the Highlight Toolbar, Inline Assist, Floating Bubble, and Email Reply. Leave on
+          “Use active provider” to follow your selected chat model.
+        </p>
       </Field>
 
       <Field label="Notifications">

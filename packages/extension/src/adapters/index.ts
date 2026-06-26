@@ -68,7 +68,13 @@ export const EXTERNAL_AI_ADAPTERS: ExternalAiAdapter[] = [
     id: 'perplexity',
     name: 'Perplexity',
     url: 'https://www.perplexity.ai/',
-    inputSelectors: ['textarea[placeholder]', 'textarea', 'div[contenteditable="true"]'],
+    inputSelectors: [
+      'textarea[placeholder*="Ask anything"]',
+      'textarea#ask-input',
+      'textarea[placeholder]',
+      'textarea',
+      'div[contenteditable="true"]',
+    ],
     sendSelectors: [
       'button[aria-label="Submit"]',
       'button[aria-label*="Submit"]',

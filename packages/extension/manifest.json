@@ -26,6 +26,12 @@
       "matches": ["<all_urls>"],
       "run_at": "document_start",
       "world": "MAIN"
+    },
+    {
+      "js": ["src/content/assist/index.ts"],
+      "matches": ["<all_urls>"],
+      "run_at": "document_idle",
+      "world": "ISOLATED"
     }
   ],
   "permissions": [

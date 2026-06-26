@@ -25,16 +25,21 @@ import { autoName } from '@/conversations/naming';
 import { notify, setBadge } from './notify';
 import { clearCheckpoint, getCheckpoint, saveCheckpoint } from './checkpoint';
 import { connect as connectRelay } from '@/mcp-server/relay-client';
-import { setAgentActive } from './glow-manager';
+import { setAgentActive, setAnimationState } from './glow-manager';
 import { writeRecoverySnapshot } from '@/backup/backup';
 import { runMigrationSafety } from '@/db/migration';
 import { executeTool } from '@/tools/registry';
 import { registerLocalOriginFix } from '@/providers/local-origin-fix';
 import { estimateTokens } from '@/agent/compaction';
+import { registerAssistBridge } from './assist';
 import { log } from '@/log';
 
 // Snapshot data on version change before further use (PLAN §42).
 runMigrationSafety();
+
+// In-page assist features (Highlight Toolbar, Inline Assist, Floating Bubble,
+// Email Reply) talk to the provider through a dedicated 'bc-assist' port.
+registerAssistBridge();
 
 // Which conversation currently has a live agent run — one at a time (PLAN §48).
 // Broadcast on change so the side panel can show a pulsing indicator.
@@ -314,6 +319,23 @@ chrome.runtime.onConnect.addListener((port) => {
         // Rebuild history from IndexedDB so chats survive panel reloads (PLAN §8).
         const history = await getApiHistory(msg.conversationId);
 
+        // Wrap emit to automatically update glow state based on agent events
+        let hasToolCalls = false;
+        const emitWithGlowTracking = (msg: ServerMessage) => {
+          // Update glow state based on event type
+          if (msg.type === 'reasoning') {
+            setAnimationState('thinking');
+          } else if (msg.type === 'tool_call') {
+            hasToolCalls = true;
+            setAnimationState('working');
+          } else if (msg.type === 'done') {
+            // Don't disable glow yet - let the finally block handle it
+            // Just reset thinking state
+            setAnimationState('working');
+          }
+          send(msg);
+        };
+
         const {
           messages: updated,
           outcome,
@@ -330,7 +352,7 @@ chrome.runtime.onConnect.addListener((port) => {
           conversationSummary,
           activeTabUrl: await getActiveTabUrl(),
           signal: abortController.signal,
-          emit: send,
+          emit: emitWithGlowTracking,
           askUser,
           onCheckpoint: (messages) =>
             saveCheckpoint({
@@ -382,6 +404,7 @@ chrome.runtime.onConnect.addListener((port) => {
         // notify on completion when the run actually did tool work (avoid spam).
         if (outcome === 'error') {
           setBadge('error');
+          setAnimationState('error'); // Show error state in glow
           notify('taskFailed', 'BrowseCortex', 'Task failed.');
         } else if (outcome === 'aborted') {
           setBadge('clear');
@@ -392,6 +415,7 @@ chrome.runtime.onConnect.addListener((port) => {
       } catch (e) {
         log.error('[chat:bg] agent loop threw', e);
         setBadge('error');
+        setAnimationState('error'); // Show error state in glow
         notify('taskFailed', 'BrowseCortex', 'Task failed.');
         send({ type: 'error', message: e instanceof Error ? e.message : String(e) });
         send({ type: 'done' });
@@ -403,7 +427,9 @@ chrome.runtime.onConnect.addListener((port) => {
           }
           activeRun = null;
         }
+        // Disable glow and reset state
         setAgentActive(false);
+        setAnimationState('idle');
         setRunningConversation(null);
       }
     } catch (e) {

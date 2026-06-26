@@ -4,22 +4,30 @@
  * tool_calls, since the stored tool message only carries the call id.
  */
 import type { Message } from '@/types';
+import type { ChatLine } from '../types/chat';
 
-export interface ChatLine {
-  role: 'user' | 'assistant' | 'tool' | 'thinking';
-  content: string;
-  /** For thinking lines: true while reasoning tokens are still streaming in. */
-  streaming?: boolean;
-  /** For thinking lines: how long the reasoning took, in ms (if measured). */
-  thinkingMs?: number;
-  /** Tool-call id, used to attach the matching result to the right row. */
-  id?: string;
-  /** Stored message id (present once persisted) — enables pin/delete. */
-  messageId?: string;
-  pinned?: boolean;
-  /** For tool lines: the request arguments shown alongside the result. */
-  args?: Record<string, unknown>;
-  tool?: { name: string; isError?: boolean };
+// Note: ChatLine is now imported from types/chat.ts
+// Type definition moved there for better organization
+
+export type Block =
+  | { kind: 'working'; lines: ChatLine[] }
+  | { kind: 'message'; line: ChatLine };
+
+/** Group consecutive tool/thinking lines into one "working" block,
+ * so reasoning and tool calls before the final reply render as a single
+ * collapsible section instead of separate disjoint boxes. */
+export function groupLines(lines: ChatLine[]): Block[] {
+  const blocks: Block[] = [];
+  for (const line of lines) {
+    if (line.role === 'tool' || line.role === 'thinking') {
+      const last = blocks[blocks.length - 1];
+      if (last?.kind === 'working') last.lines.push(line);
+      else blocks.push({ kind: 'working', lines: [line] });
+    } else {
+      blocks.push({ kind: 'message', line });
+    }
+  }
+  return blocks;
 }
 
 export function messagesToLines(messages: Message[]): ChatLine[] {

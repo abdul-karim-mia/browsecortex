@@ -15,6 +15,8 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "format": "prettier --write \"**/*.{ts,tsx,json,md,css,html}\"",
+    "relay": "npx browsecortex-relay --port 7822 --token sk-bc-df4c6ba0dac741c6914ecfdb7da2941d",
+    "relay:dev": "node --watch packages/relay/dist/index.js --port 7822 --token sk-bc-df4c6ba0dac741c6914ecfdb7da2941d",
     "release": "bash scripts/release.sh",
     "release:major": "bash scripts/release.sh major",
     "release:minor": "bash scripts/release.sh minor",

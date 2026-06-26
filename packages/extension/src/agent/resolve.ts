@@ -73,3 +73,21 @@ export async function resolveActive(): Promise<Resolved | { error: string }> {
     error: `${provider.name} is rate limited for ~${seconds}s and no fallback is available. Try again shortly.`,
   };
 }
+
+/**
+ * Resolves the provider + model for in-page assist features (Highlight Toolbar,
+ * Inline Assist, Floating Bubble, Email Reply). When the user has set a
+ * dedicated assist provider in Settings it's used; otherwise this defers to
+ * `resolveActive()` so assist follows the active chat selection by default.
+ */
+export async function resolveAssist(): Promise<Resolved | { error: string }> {
+  const settings = await Storage.settings.get();
+  if (!settings.assistProviderId) return resolveActive();
+
+  const provider = await Storage.providers.get(settings.assistProviderId);
+  // Override provider was removed — fall back to the active selection instead
+  // of erroring, so a stale setting never breaks the in-page features.
+  if (!provider) return resolveActive();
+
+  return { provider, model: await modelFor(provider, settings.assistModel) };
+}

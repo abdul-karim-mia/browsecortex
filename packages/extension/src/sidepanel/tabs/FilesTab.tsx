@@ -4,8 +4,8 @@ import * as vfs from '@/fs/vfs';
 import { getStorageEstimate } from '@/storage/quota';
 import { Icon } from '@/components/Icon';
 import type { VFile } from '@/types';
-import { renderMarkdown } from '../markdown';
-import { highlightCode, highlightJSON } from '../highlighter';
+import { renderMarkdown } from '../utils/markdown';
+import { highlightCode, highlightJSON } from '../utils/highlighter';
 
 interface Props {
   conversationId: string;
@@ -419,14 +419,19 @@ export function FilesTab({ conversationId }: Props) {
                         <Icon name="file" size={14} class="shrink-0 text-gray-400" />
                         <span class="truncate">{f.path}</span>
                       </button>
-                      <span class="flex shrink-0 items-center gap-2 text-gray-500">
-                        <button type="button" onClick={() => exportFile(f)} title="Download">
+                      <span class="flex shrink-0 items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => exportFile(f)}
+                          title="Download"
+                          class="rounded p-1 text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 transition-colors"
+                        >
                           <Icon name="download" size={14} />
                         </button>
                         <button
                           type="button"
                           onClick={() => del(f)}
-                          class="text-red-500"
+                          class="rounded p-1 text-gray-500 hover:bg-red-100 hover:text-red-600 dark:text-gray-400 dark:hover:bg-red-900/40 dark:hover:text-red-400 transition-colors"
                           title="Delete"
                         >
                           <Icon name="trash" size={14} />

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
-import { BrainPulse } from './BrainPulse';
+import { BrainPulse } from '../../BrainPulse';
 import { Icon } from '@/components/Icon';
 
 /** mm ss / ss clock for the run's total elapsed time. */

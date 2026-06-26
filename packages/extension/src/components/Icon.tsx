@@ -34,7 +34,8 @@ export type IconName =
   | 'fork'
   | 'sparkle'
   | 'image'
-  | 'refresh';
+  | 'refresh'
+  | 'expand';
 
 const PATHS: Record<IconName, JSX.Element> = {
   brain: (
@@ -191,6 +192,12 @@ const PATHS: Record<IconName, JSX.Element> = {
       <path d="M3 21v-5h5" />
     </>
   ),
+  expand: (
+    <>
+      <path d="M28,4H10A2.0059,2.0059,0,0,0,8,6V20a2.0059,2.0059,0,0,0,2,2H28a2.0059,2.0059,0,0,0,2-2V6A2.0059,2.0059,0,0,0,28,4Zm0,16H10V6H28Z" />
+      <path d="M18,26H4V16H6V14H4a2.0059,2.0059,0,0,0-2,2V26a2.0059,2.0059,0,0,0,2,2H18a2.0059,2.0059,0,0,0,2-2V24H18Z" />
+    </>
+  ),
 };
 
 interface Props {
@@ -201,16 +208,17 @@ interface Props {
 }
 
 export function Icon({ name, size = 18, class: cls, title }: Props) {
+  const isFilledIcon = name === 'expand';
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      viewBox={isFilledIcon ? '0 0 32 32' : '0 0 24 24'}
+      fill={isFilledIcon ? 'currentColor' : 'none'}
+      stroke={isFilledIcon ? 'none' : 'currentColor'}
+      stroke-width={isFilledIcon ? undefined : '2'}
+      stroke-linecap={isFilledIcon ? undefined : 'round'}
+      stroke-linejoin={isFilledIcon ? undefined : 'round'}
       class={cls}
       aria-hidden={title ? undefined : 'true'}
       role={title ? 'img' : undefined}

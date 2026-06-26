@@ -5,6 +5,7 @@ import { ModelsTab } from './tabs/ModelsTab';
 import { MemoryTab } from './tabs/MemoryTab';
 import { BackupTab } from './tabs/BackupTab';
 import { GeneralTab } from './tabs/GeneralTab';
+import { FeaturesTab } from './tabs/FeaturesTab';
 import { McpTab } from './tabs/McpTab';
 import { McpServerTab } from './tabs/McpServerTab';
 import { SkillsTab } from './tabs/SkillsTab';
@@ -21,19 +22,25 @@ type Tab =
   | 'mcp_server'
   | 'backup'
   | 'general'
+  | 'features'
   | 'sites'
   | 'playground';
 
 const TABS: { id: Tab; label: string }[] = [
+  // Connection setup
   { id: 'providers', label: 'Providers' },
   { id: 'models', label: 'Models' },
-  { id: 'memory', label: 'Memory' },
+  // Behaviour
+  { id: 'general', label: 'General' },
+  { id: 'features', label: 'Features' },
+  // Extensions / capabilities
   { id: 'skills', label: 'Skills' },
   { id: 'mcp', label: 'MCP' },
   { id: 'mcp_server', label: 'MCP Server' },
-  { id: 'backup', label: 'Backup' },
-  { id: 'general', label: 'General' },
+  // Data & scope
+  { id: 'memory', label: 'Memory' },
   { id: 'sites', label: 'Sites' },
+  { id: 'backup', label: 'Backup' },
   // Dev-only Tool Playground (PLAN §38).
   ...(import.meta.env.DEV ? [{ id: 'playground' as Tab, label: '🧪 Playground' }] : []),
 ];
@@ -71,6 +78,7 @@ export function Settings() {
       {tab === 'mcp_server' && <McpServerTab />}
       {tab === 'backup' && <BackupTab />}
       {tab === 'general' && <GeneralTab />}
+      {tab === 'features' && <FeaturesTab />}
       {tab === 'skills' && <SkillsTab />}
       {tab === 'sites' && <SitesTab />}
       {tab === 'playground' && <PlaygroundTab />}

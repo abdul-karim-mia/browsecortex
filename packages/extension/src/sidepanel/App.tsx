@@ -3,7 +3,7 @@ import { t } from '@/i18n';
 import { ChatTab, type ChatControls } from './tabs/ChatTab';
 import { TasksTab } from './tabs/TasksTab';
 import { FilesTab } from './tabs/FilesTab';
-import { ConversationDrawer } from './ConversationDrawer';
+import { ConversationDrawer } from './components/conversation/ConversationDrawer';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Icon, type IconName } from '@/components/Icon';
 import { Logo } from './Logo';
@@ -37,6 +37,8 @@ export function App() {
   const [chatControls, setChatControls] = useState<ChatControls | null>(null);
   // Which conversation has a live agent run (PLAN §48) — drives the drawer dot.
   const [runningId, setRunningId] = useState<string | null>(null);
+  // Whether this is a popped-out window (as opposed to the sidebar)
+  const isPopout = new URLSearchParams(window.location.search).has('state') || window.self !== window.top;
 
   const newChat = () => {
     setConversationId(crypto.randomUUID());
@@ -68,9 +70,28 @@ export function App() {
     checkDbHealth().then((h) => {
       if (!h.ok) setDbError(h.error);
     });
-    Storage.conversations.list(1).then(([recent]) => {
-      if (recent) setConversationId(recent.id);
-    });
+
+    // Restore state from URL if popped out
+    const params = new URLSearchParams(window.location.search);
+    const stateParam = params.get('state');
+    if (stateParam) {
+      try {
+        const state = JSON.parse(decodeURIComponent(stateParam));
+        if (state.conversationId) setConversationId(state.conversationId);
+        if (state.tab) setTab(state.tab);
+      } catch {
+        // Fall back to recent conversation if state parsing fails
+        Storage.conversations.list(1).then(([recent]) => {
+          if (recent) setConversationId(recent.id);
+        });
+      }
+    } else {
+      // Load most recent conversation if not popped out
+      Storage.conversations.list(1).then(([recent]) => {
+        if (recent) setConversationId(recent.id);
+      });
+    }
+
     Storage.settings.get().then((s) => setDensity(s.density));
 
     // Re-apply density live when it's changed in Settings (§3c) — the initial
@@ -136,6 +157,17 @@ export function App() {
 
   const openSettings = () => chrome.runtime?.openOptionsPage?.();
 
+  const popOut = async () => {
+    const url = chrome.runtime.getURL('src/sidepanel/index.html');
+    const state = { tab, conversationId };
+    await chrome.windows.create({
+      url: `${url}?state=${encodeURIComponent(JSON.stringify(state))}`,
+      type: 'popup',
+      width: 600,
+      height: 800,
+    });
+  };
+
   return (
     <div
       class={`density-${density} relative flex h-full flex-col bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100`}
@@ -164,7 +196,7 @@ export function App() {
                 type="button"
                 onClick={() => chatControls?.clearChat()}
                 disabled={!chatControls || !chatControls.canClear || chatControls.running}
-                class="rounded p-1.5 text-gray-600 hover:bg-gray-100 disabled:opacity-40 dark:text-gray-300 dark:hover:bg-gray-800"
+                class="rounded p-1.5 text-gray-600 hover:bg-red-100 hover:text-red-600 disabled:opacity-40 dark:text-gray-300 dark:hover:bg-red-900/40 dark:hover:text-red-400 transition-colors"
                 title="Clear chat"
                 aria-label="Clear chat"
               >
@@ -174,13 +206,24 @@ export function App() {
                 type="button"
                 onClick={newChat}
                 disabled={chatControls?.running}
-                class="rounded p-1.5 text-gray-600 hover:bg-gray-100 disabled:opacity-40 dark:text-gray-300 dark:hover:bg-gray-800"
+                class="rounded p-1.5 text-gray-600 hover:bg-green-100 hover:text-green-600 disabled:opacity-40 dark:text-gray-300 dark:hover:bg-green-900/40 dark:hover:text-green-400 transition-colors"
                 title={t('new_conversation')}
                 aria-label={t('new_conversation')}
               >
                 <Icon name="plus" />
               </button>
             </>
+          )}
+          {!isPopout && (
+            <button
+              type="button"
+              onClick={popOut}
+              class="rounded p-1.5 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+              title="Pop out to window"
+              aria-label="Pop out to window"
+            >
+              <Icon name="expand" />
+            </button>
           )}
           <button
             type="button"

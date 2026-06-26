@@ -182,46 +182,41 @@ body {
   animation: slide-up 0.22s ease-out;
 }
 
-/* "AI is working" brain indicator (ChatTab) */
-@keyframes brain-pulse {
+/* "AI is working" brain indicator (RunStatusBar). The two hemispheres pulse
+   out of phase around their own centres while the synapse strokes brighten —
+   identical to the in-page Floating Bubble's working animation. */
+@keyframes bp-think {
   0%,
   100% {
     transform: scale(1);
-    opacity: 0.85;
+    opacity: 0.9;
   }
   50% {
-    transform: scale(1.08);
+    transform: scale(1.07);
     opacity: 1;
   }
 }
-@keyframes brain-glow {
+@keyframes bp-synapse {
   0%,
   100% {
-    opacity: 0.25;
-    transform: scale(0.9);
-  }
-  50% {
     opacity: 0.55;
-    transform: scale(1.25);
-  }
-}
-@keyframes synapse-flash {
-  0%,
-  100% {
-    opacity: 0.25;
   }
   50% {
     opacity: 1;
   }
 }
-.brain-pulse {
-  animation: brain-pulse 1.4s ease-in-out infinite;
+.bp-hemi {
+  transform-box: fill-box;
+  transform-origin: center;
 }
-.brain-glow {
-  animation: brain-glow 1.4s ease-in-out infinite;
+.bp-hemi-l {
+  animation: bp-think 1.5s ease-in-out infinite;
 }
-.synapse-dot {
-  animation: synapse-flash 1.2s ease-in-out infinite;
+.bp-hemi-r {
+  animation: bp-think 1.5s ease-in-out infinite 0.75s;
+}
+.bp-synapse {
+  animation: bp-synapse 1.5s ease-in-out infinite;
 }
 
 /* Checkered pattern background for transparent images */

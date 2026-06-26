@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'preact/hooks';
 import { Storage } from '@/storage';
 import { testConnection } from '@/providers/client';
-import { searchSuggestions } from '@/providers/suggestions';
+import {
+  searchSuggestions,
+  PROVIDER_SUGGESTIONS,
+  type ProviderSuggestion,
+} from '@/providers/suggestions';
 import { syncProviderModels } from '@/models/enrich';
 import { ProviderRow } from './ProviderRow';
 import { Icon } from '@/components/Icon';
@@ -23,7 +27,9 @@ export function ProvidersTab() {
   const [providers, setProviders] = useState<Provider[]>([]);
   const [draft, setDraft] = useState<Provider>(empty());
   const [showKey, setShowKey] = useState(false);
-  const [showSuggest, setShowSuggest] = useState(false);
+  const [showSuggestName, setShowSuggestName] = useState(false);
+  const [showSuggestBaseUrl, setShowSuggestBaseUrl] = useState(false);
+  const [selectedSuggestion, setSelectedSuggestion] = useState<ProviderSuggestion | null>(null);
   const [status, setStatus] = useState<string | null>(null);
 
   const refresh = () => Storage.providers.list().then(setProviders);
@@ -31,7 +37,19 @@ export function ProvidersTab() {
     refresh();
   }, []);
 
-  const suggestions = searchSuggestions(draft.baseUrl);
+  const nameSuggestions = searchSuggestions(draft.name);
+  const urlSuggestions = searchSuggestions(draft.baseUrl);
+
+  // Find a suggestion that matches the current draft.baseUrl or draft.name
+  const activeSuggestion =
+    selectedSuggestion ||
+    PROVIDER_SUGGESTIONS.find(
+      (s) =>
+        s.baseUrl === draft.baseUrl ||
+        (draft.name && s.name.toLowerCase() === draft.name.toLowerCase()),
+    );
+
+  const keyUrl = activeSuggestion?.affiliateUrl || activeSuggestion?.apiKeyUrl;
 
   const save = async () => {
     if (!draft.name || !draft.baseUrl) {
@@ -54,6 +72,7 @@ export function ProvidersTab() {
     }
     setDraft(empty());
     setShowKey(false);
+    setSelectedSuggestion(null);
     await refresh();
   };
 
@@ -77,32 +96,64 @@ export function ProvidersTab() {
       <section class="space-y-3 rounded border border-gray-200 p-4 dark:border-gray-700">
         <h2 class="text-sm font-semibold">Add a provider</h2>
 
-        <label class="block">
+        <label class="relative block">
           <span class="text-xs text-gray-500">Name</span>
           <input
             value={draft.name}
-            onInput={(e) => setDraft({ ...draft, name: (e.target as HTMLInputElement).value })}
+            onFocus={() => setShowSuggestName(true)}
+            onInput={(e) => {
+              setDraft({ ...draft, name: (e.target as HTMLInputElement).value });
+              setSelectedSuggestion(null);
+              setShowSuggestName(true);
+            }}
+            onBlur={() => setShowSuggestName(false)}
             placeholder="My Groq"
             class="mt-1 w-full rounded border border-gray-300 px-2 py-1 dark:border-gray-600 dark:bg-gray-800"
           />
+          {showSuggestName && nameSuggestions.length > 0 && (
+            <ul class="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded border border-gray-200 bg-white shadow dark:border-gray-600 dark:bg-gray-800">
+              {nameSuggestions.map((s) => (
+                <li key={s.baseUrl}>
+                  <button
+                    type="button"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      setDraft({
+                        ...draft,
+                        name: s.name,
+                        baseUrl: s.baseUrl,
+                      });
+                      setSelectedSuggestion(s);
+                      setShowSuggestName(false);
+                    }}
+                    class="flex w-full items-center justify-between px-2 py-1 text-left hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <span>{s.name}</span>
+                    <span class="text-xs text-gray-400">{s.baseUrl}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </label>
 
         <label class="relative block">
           <span class="text-xs text-gray-500">Base URL</span>
           <input
             value={draft.baseUrl}
-            onFocus={() => setShowSuggest(true)}
+            onFocus={() => setShowSuggestBaseUrl(true)}
             onInput={(e) => {
               setDraft({ ...draft, baseUrl: (e.target as HTMLInputElement).value });
-              setShowSuggest(true);
+              setSelectedSuggestion(null);
+              setShowSuggestBaseUrl(true);
             }}
-            onBlur={() => setShowSuggest(false)}
+            onBlur={() => setShowSuggestBaseUrl(false)}
             placeholder="https://api.groq.com/openai/v1"
             class="mt-1 w-full rounded border border-gray-300 px-2 py-1 dark:border-gray-600 dark:bg-gray-800"
           />
-          {showSuggest && suggestions.length > 0 && (
+          {showSuggestBaseUrl && urlSuggestions.length > 0 && (
             <ul class="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded border border-gray-200 bg-white shadow dark:border-gray-600 dark:bg-gray-800">
-              {suggestions.map((s) => (
+              {urlSuggestions.map((s) => (
                 <li key={s.baseUrl}>
                   <button
                     type="button"
@@ -113,7 +164,8 @@ export function ProvidersTab() {
                         name: draft.name || s.name,
                         baseUrl: s.baseUrl,
                       });
-                      setShowSuggest(false);
+                      setSelectedSuggestion(s);
+                      setShowSuggestBaseUrl(false);
                     }}
                     class="flex w-full items-center justify-between px-2 py-1 text-left hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
@@ -127,7 +179,19 @@ export function ProvidersTab() {
         </label>
 
         <label class="block">
-          <span class="text-xs text-gray-500">API Key</span>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-gray-500">API Key</span>
+            {keyUrl && (
+              <a
+                href={keyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-xs text-blue-500 hover:underline"
+              >
+                Get API Key
+              </a>
+            )}
+          </div>
           <div class="mt-1 flex gap-2">
             <input
               type={showKey ? 'text' : 'password'}

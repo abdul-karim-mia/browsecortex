@@ -199,15 +199,24 @@ export function ConversationDrawer({ open, onClose, currentId, onSelect, running
                     {c.pinned && <Icon name="pin" size={12} class="shrink-0 text-blue-500" />}
                     {c.name}
                   </span>
-                  <span class="flex shrink-0 items-center gap-1.5 opacity-60 hover:opacity-100">
-                    <button type="button" onClick={(e) => pin(c, e)} title="Pin to top">
-                      <Icon name="pin" size={14} class={c.pinned ? 'text-blue-500' : ''} />
+                  <span class="flex shrink-0 items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={(e) => pin(c, e)}
+                      title="Pin to top"
+                      class={`rounded p-1 transition-colors ${c.pinned ? 'text-blue-500 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/40 dark:text-blue-400 dark:hover:bg-blue-900/60' : 'text-gray-500 hover:bg-blue-100 hover:text-blue-600 dark:text-gray-400 dark:hover:bg-blue-900/40 dark:hover:text-blue-400'}`}
+                    >
+                      <Icon name="pin" size={14} />
                     </button>
-                    <button type="button" onClick={(e) => star(c, e)} title="Star">
+                    <button
+                      type="button"
+                      onClick={(e) => star(c, e)}
+                      title="Star"
+                      class={`rounded p-1 transition-colors ${c.starred ? 'text-amber-400 bg-amber-100 hover:bg-amber-200 dark:bg-amber-900/40 dark:hover:bg-amber-900/60' : 'text-gray-500 hover:bg-amber-100 hover:text-amber-600 dark:text-gray-400 dark:hover:bg-amber-900/40 dark:hover:text-amber-400'}`}
+                    >
                       <Icon
                         name={c.starred ? 'star-filled' : 'star'}
                         size={14}
-                        class={c.starred ? 'text-amber-400' : ''}
                       />
                     </button>
                     <button
@@ -215,11 +224,12 @@ export function ConversationDrawer({ open, onClose, currentId, onSelect, running
                       onClick={(e) => summarize(c, e)}
                       disabled={summarizingId === c.id}
                       title="Summarize conversation"
+                      class="rounded p-1 text-gray-500 hover:bg-blue-100 hover:text-blue-600 disabled:opacity-50 dark:text-gray-400 dark:hover:bg-blue-900/40 dark:hover:text-blue-400 transition-colors"
                     >
                       <Icon
                         name="sparkle"
                         size={14}
-                        class={summarizingId === c.id ? 'animate-pulse text-blue-500' : ''}
+                        class={summarizingId === c.id ? 'animate-pulse' : ''}
                       />
                     </button>
                     <button
@@ -229,13 +239,14 @@ export function ConversationDrawer({ open, onClose, currentId, onSelect, running
                         setExportTarget(c);
                       }}
                       title="Export"
+                      class="rounded p-1 text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 transition-colors"
                     >
                       <Icon name="download" size={14} />
                     </button>
                     <button
                       type="button"
                       onClick={(e) => askDelete(c, e)}
-                      class="text-red-500"
+                      class="rounded p-1 text-gray-500 hover:bg-red-100 hover:text-red-600 dark:text-gray-400 dark:hover:bg-red-900/40 dark:hover:text-red-400 transition-colors"
                       title="Delete"
                     >
                       <Icon name="trash" size={14} />

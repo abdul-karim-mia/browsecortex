@@ -192,6 +192,18 @@ export interface Settings {
   autoBackupDays: number;
   /** Model id used for spawned subagents; '' = same as the main model. */
   subagentModel: string;
+  /** Provider/model used by in-page assist features (Highlight Toolbar, Inline
+   * Assist, Floating Bubble, Email Reply). null = use the active selection. */
+  assistProviderId: string | null;
+  assistModel: string | null;
+  /** Per-feature on/off toggles for the in-page assist widgets. Applied when a
+   * page's content script loads (reload a tab to pick up a change). */
+  assistFeatures: {
+    highlightToolbar: boolean;
+    inlineAssist: boolean;
+    floatingBubble: boolean;
+    emailReply: boolean;
+  };
   /** Per-site tool restrictions (B5). */
   siteToolRules: SiteToolRule[];
   /** Prepend a conversation's stored summary to context on resume (B6). */
@@ -227,6 +239,14 @@ export const DEFAULT_SETTINGS: Settings = {
   visionFallbackModel: null,
   autoBackupDays: 0,
   subagentModel: '',
+  assistProviderId: null,
+  assistModel: null,
+  assistFeatures: {
+    highlightToolbar: true,
+    inlineAssist: true,
+    floatingBubble: true,
+    emailReply: true,
+  },
   siteToolRules: [],
   useConversationSummary: true,
   externalAiEnabled: false,

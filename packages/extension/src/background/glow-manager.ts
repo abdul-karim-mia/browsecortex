@@ -1,15 +1,42 @@
-import { injectGlowEffect, removeGlowEffect } from './glow';
+import { injectGlowEffect, removeGlowEffect, updateGlowState } from './glow';
 import { log } from '@/log';
 
+export type AnimationState = 'idle' | 'thinking' | 'working' | 'error';
+
 let isAgentActive = false;
+let currentAnimationState: AnimationState = 'idle';
 let currentTabId: number | null = null;
 
-export function setAgentActive(active: boolean) {
+/**
+ * Activate/deactivate agent and update glow state
+ * @param active - Whether agent is active
+ * @param state - Animation state (working, thinking, error)
+ */
+export function setAgentActive(active: boolean, state: AnimationState = 'working') {
   isAgentActive = active;
+  currentAnimationState = active ? state : 'idle';
+
   if (!active) {
     clearGlow();
   } else {
     updateGlowForActiveTab();
+  }
+}
+
+/**
+ * Update animation state (thinking, working, error)
+ * Called during agent execution to provide visual feedback
+ */
+export function setAnimationState(state: AnimationState) {
+  if (!isAgentActive) return;
+
+  currentAnimationState = state;
+
+  // Send state update to all active tabs
+  if (currentTabId !== null) {
+    updateGlowState(currentTabId, state).catch(() => {
+      // Ignore errors (tab may have been closed)
+    });
   }
 }
 

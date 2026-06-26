@@ -20,6 +20,8 @@ function driveExternalChat(
   fileInputSelectors: string[],
   image: { b64: string; mime: string; name: string } | null,
   imageMethod: 'file' | 'paste',
+  incognito: boolean,
+  serviceId: string,
 ): Promise<{ ok: true; text: string; imageAttached?: boolean } | { ok: false; reason: string }> {
   return new Promise((resolve) => {
     const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -58,6 +60,61 @@ function driveExternalChat(
     };
 
     (async () => {
+      if (incognito) {
+        if (serviceId === 'claude') {
+          const hasIncognitoLabel = document.body.innerText.includes('Incognito chat');
+          if (!hasIncognitoLabel) {
+            const ghostBtn = find(['button[aria-label*="incognito" i]', 'button[aria-label*="Incognito"]']);
+            if (ghostBtn) {
+              ghostBtn.click();
+              await sleep(1500);
+            } else {
+              window.dispatchEvent(
+                new KeyboardEvent('keydown', {
+                  key: 'I',
+                  code: 'KeyI',
+                  ctrlKey: true,
+                  shiftKey: true,
+                  bubbles: true,
+                  cancelable: true,
+                }),
+              );
+              await sleep(1500);
+            }
+          }
+        } else if (serviceId === 'gemini') {
+          const tempBtn = find(['button[aria-label*="Temporary chat"]', 'button[aria-label*="temporary chat" i]']);
+          if (tempBtn) {
+            tempBtn.click();
+            await sleep(1500);
+          }
+        } else if (serviceId === 'perplexity') {
+          const isIncognito = document.body.innerText.includes('Incognito');
+          if (!isIncognito) {
+            const incognitoBtn = find([
+              'button[aria-label="Use incognito: create anonymous sessions that aren\'t saved to your history and expire after 24 hours"]',
+              'button[aria-label*="Use incognito" i]',
+              'button[aria-label*="incognito" i]',
+            ]);
+            if (incognitoBtn) {
+              incognitoBtn.click();
+              await sleep(1500);
+            } else {
+              window.dispatchEvent(
+                new KeyboardEvent('keydown', {
+                  key: ';',
+                  code: 'Semicolon',
+                  ctrlKey: true,
+                  bubbles: true,
+                  cancelable: true,
+                }),
+              );
+              await sleep(1500);
+            }
+          }
+        }
+      }
+
       const input = findInput();
       if (!input) {
         resolve({ ok: false, reason: 'input-not-found' });
@@ -106,24 +163,33 @@ function driveExternalChat(
       // (ProseMirror/Lexical, as Claude/Perplexity use) ignore textContent and
       // need execCommand('insertText') to update their internal model.
       input.focus();
-      if (input instanceof HTMLTextAreaElement) {
-        const setter = Object.getOwnPropertyDescriptor(
-          HTMLTextAreaElement.prototype,
-          'value',
-        )?.set;
-        setter?.call(input, prompt);
+      if (input instanceof HTMLTextAreaElement || input instanceof HTMLInputElement) {
+        const proto = input instanceof HTMLTextAreaElement ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
+        const setter = Object.getOwnPropertyDescriptor(proto, 'value')?.set;
+        if (setter) {
+          setter.call(input, prompt);
+        } else {
+          input.value = prompt;
+        }
+        // Dispatch key, input, and change events to trigger all framework listeners
+        input.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true }));
+        input.dispatchEvent(new KeyboardEvent('keypress', { bubbles: true }));
         input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+        input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
       } else {
         const selection = window.getSelection();
         selection?.selectAllChildren(input);
         const inserted = document.execCommand('insertText', false, prompt);
         // Fallback if execCommand is a no-op for this editor.
-        if (!inserted || !(input.textContent ?? '').includes(prompt.slice(0, 12))) {
+        if (!inserted) {
           input.textContent = prompt;
-          input.dispatchEvent(
-            new InputEvent('input', { bubbles: true, inputType: 'insertText', data: prompt }),
-          );
         }
+        // Dispatch events to notify editor framework without duplicating input
+        input.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true }));
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+        input.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
       }
       await sleep(400);
 
@@ -246,7 +312,13 @@ function driveExternalChat(
         for (const sel of [...responseSelectors, ...FALLBACK]) {
           const found = root.querySelectorAll<HTMLElement>(sel);
           for (let i = found.length - 1; i >= 0; i--) {
-            const text = (found[i].innerText ?? '').trim();
+            const el = found[i];
+            // Only read from elements that have actually been mutated (or their descendants/ancestors)
+            // to avoid returning static pre-existing content on page load.
+            const wasMutated = Array.from(touched).some((t) => t.contains(el) || el.contains(t));
+            if (!wasMutated) continue;
+
+            const text = (el.innerText ?? '').trim();
             if (text && !isEcho(text)) return text;
           }
         }
@@ -318,7 +390,7 @@ export const askExternalAi: ToolDefinition = {
   description:
     'Ask a public AI chat website (ChatGPT, Claude, Gemini, or Perplexity) a question by ' +
     'driving the page in a tab, and return its reply. The user must already be logged in to ' +
-    `that site (unless using incognito). Optionally attach an image. Experimental and may fail ` +
+    `that site. Optionally attach an image. Experimental and may fail ` +
     `if the site's layout changed. Available services: ${EXTERNAL_AI_ADAPTERS.map((a) => a.id).join(', ')}.`,
   parameters: {
     type: 'object',
@@ -337,7 +409,7 @@ export const askExternalAi: ToolDefinition = {
       incognito: {
         type: 'boolean',
         description:
-          'Open the site in an incognito window (default false). Requires "Allow in incognito" enabled for the extension.',
+          "Use the service's native temporary/incognito chat mode (e.g. temporary chat in ChatGPT/Gemini, incognito mode in Claude/Perplexity) so history is not saved, while remaining logged in.",
       },
       timeout_ms: {
         type: 'number',
@@ -377,28 +449,16 @@ export const askExternalAi: ToolDefinition = {
       image = fetched;
     }
 
-    // Open the service. Incognito uses a private window (needs the extension to
-    // be allowed in incognito); otherwise a normal background tab.
-    let tabId: number | undefined;
-    if (args.incognito === true) {
-      try {
-        const win = await chrome.windows.create({
-          url: adapter.url,
-          incognito: true,
-          focused: false,
-        });
-        tabId = win.tabs?.[0]?.id;
-      } catch {
-        return {
-          error:
-            "Couldn't open an incognito window. Enable 'Allow in incognito' for BrowseCortex at chrome://extensions.",
-          service: adapter.id,
-        };
-      }
-    } else {
-      const tab = await chrome.tabs.create({ url: adapter.url, active: false });
-      tabId = tab.id;
+    // Open the service. Incognito uses the service's native private/temporary chat mode.
+    let targetUrl = adapter.url;
+    if (args.incognito === true && adapter.id === 'chatgpt') {
+      const urlObj = new URL(adapter.url);
+      urlObj.searchParams.set('temporary-chat', 'true');
+      targetUrl = urlObj.toString();
     }
+
+    const tab = await chrome.tabs.create({ url: targetUrl, active: false });
+    const tabId = tab.id;
     if (tabId === undefined) return { error: 'Could not open a tab.', service: adapter.id };
 
     try {
@@ -423,6 +483,8 @@ export const askExternalAi: ToolDefinition = {
           adapter.fileInputSelectors,
           image,
           adapter.imageMethod ?? 'file',
+          args.incognito === true,
+          adapter.id,
         ],
       });
       const result = res?.result as

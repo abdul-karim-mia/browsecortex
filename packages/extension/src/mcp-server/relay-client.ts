@@ -11,6 +11,7 @@ import type { ToolContext } from '@/tools/types';
 import { log } from '@/log';
 import { getConfig } from './config';
 import { runUseAgent } from './use-agent';
+import { setWebSocketConnected } from './connection-manager';
 
 let socket: WebSocket | null = null;
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
@@ -125,14 +126,18 @@ async function attemptConnect(): Promise<void> {
   socket.onopen = () => {
     connected = true;
     failedAttempts = 0;
+    log.debug('[relay] WebSocket connected at port', cfg.port);
+    setWebSocketConnected(true);
   };
   socket.onclose = () => {
     connected = false;
     failedAttempts++;
+    log.debug('[relay] WebSocket disconnected. Reconnection attempt', failedAttempts);
+    setWebSocketConnected(false);
     scheduleReconnect();
   };
   socket.onerror = (ev) => {
-    log.warn('[relay] ws error', ev);
+    log.warn('[relay] WebSocket error:', (ev as Event).type);
     socket?.close();
   };
   socket.onmessage = async (ev) => {

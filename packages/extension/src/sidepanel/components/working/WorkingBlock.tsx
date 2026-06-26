@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from '@/components/Icon';
-import type { ChatLine } from './displayLines';
+import type { ChatLine } from '../../types/chat';
 import { ToolCallRow } from './ToolCallGroup';
 
 /** Human duration: sub-10s gets one decimal (so brief blocks still read >0),
@@ -57,9 +57,12 @@ function ThinkingRow({ line, liveMs }: { line: ChatLine; liveMs?: number }) {
  * Previously these rendered as separate ThinkBlock/ToolCallGroup elements;
  * grouping them avoids a wall of disjoint boxes while the agent is working.
  */
-export function WorkingBlock({ items }: { items: ChatLine[] }) {
-  const [collapsed, setCollapsed] = useState(false);
+export function WorkingBlock({ items, runActive = false }: { items: ChatLine[]; runActive?: boolean }) {
+  // Collapsed by default (even while running); a manual open sticks.
+  const [collapsed, setCollapsed] = useState(true);
   const [elapsed, setElapsed] = useState(0);
+  // Once the user toggles the group themselves, stop auto-collapsing it.
+  const userToggledRef = useRef(false);
 
   const thinkingLines = items.filter((l) => l.role === 'thinking');
   const toolLines = items.filter((l) => l.role === 'tool');
@@ -75,10 +78,16 @@ export function WorkingBlock({ items }: { items: ChatLine[] }) {
     return () => clearInterval(interval);
   }, [running]);
 
-  // Collapse automatically once everything settles, unless the user has it open.
+  // Collapse only when the whole run has settled — not on the brief gaps between
+  // rounds (where this block's own `running` dips false), which previously
+  // collapsed it mid-run and fought a manual expand. A manual toggle wins.
+  const toggle = () => {
+    userToggledRef.current = true;
+    setCollapsed((v) => !v);
+  };
   useEffect(() => {
-    if (!running) setCollapsed(true);
-  }, [running]);
+    if (!runActive && !userToggledRef.current) setCollapsed(true);
+  }, [runActive]);
 
   // Group title. Combined work reads "Thought for Ns and worked"; a lone tool
   // call shows its own name; thinking-only shows the duration. The think time is
@@ -123,7 +132,7 @@ export function WorkingBlock({ items }: { items: ChatLine[] }) {
     <div class="my-1">
       <button
         type="button"
-        onClick={() => setCollapsed((v) => !v)}
+        onClick={toggle}
         aria-expanded={!collapsed}
         class="flex w-full items-center gap-1.5 text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
       >
