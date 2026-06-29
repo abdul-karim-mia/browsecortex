@@ -13,6 +13,29 @@ async function resolveTabId(args: Record<string, unknown>, getActive: () => Prom
   return getActive();
 }
 
+function smartTruncate(text: string, limit: number): string {
+  if (text.length <= limit) return text;
+
+  let truncated = text.slice(0, limit);
+
+  // Try to find a complete sentence boundary within 80% of limit
+  const sentenceThreshold = limit * 0.8;
+  for (const terminator of ['. ', '? ', '! ', '\n']) {
+    const idx = truncated.lastIndexOf(terminator);
+    if (idx > sentenceThreshold && idx > 0) {
+      return truncated.slice(0, idx + 1).trim() + ' [...]';
+    }
+  }
+
+  // Fallback: find last word boundary
+  const lastSpace = truncated.lastIndexOf(' ');
+  if (lastSpace > 0) {
+    return truncated.slice(0, lastSpace).trim() + ' [...]';
+  }
+
+  return truncated + ' [...]';
+}
+
 export const readPageContent: ToolDefinition = {
   name: 'read_page_content',
   description:
@@ -123,7 +146,8 @@ export const readPageContent: ToolDefinition = {
           return {
             title: document.title,
             url: location.href,
-            text: truncated ? raw.slice(0, limit) : raw,
+            text: raw,
+            limit,
             truncated,
             metadata,
             structureOnly: structOnly,
@@ -134,14 +158,18 @@ export const readPageContent: ToolDefinition = {
 
       const data = result?.result as any;
       if (!data) return { error: `Element not found for selector: ${selector}` };
+
+      // Apply smart truncation if needed
+      const finalText = data.truncated ? smartTruncate(data.text, data.limit) : data.text;
+
       return {
         title: data.title,
         url: data.url,
-        text: data.text,
+        text: finalText,
         truncated: data.truncated,
         ...(data.structureOnly ? { mode: 'structure-only' } : {}),
         ...(data.metadata ? { metadata: data.metadata } : {}),
-        ...(data.truncated ? { note: `[...truncated, limited to ${maxLength} chars]` } : {}),
+        ...(data.truncated ? { note: `Content truncated at sentence boundary, limited to ~${maxLength} chars` } : {}),
       };
     } catch (e) {
       return { error: `Cannot read this page: ${e instanceof Error ? e.message : String(e)}` };
