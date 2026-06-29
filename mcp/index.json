@@ -7,7 +7,7 @@
       "name": "Cloudflare",
       "description": "Access the entire Cloudflare API (DNS, Workers, R2, Zero Trust) via 2 tools",
       "icon": "https://cdn.simpleicons.org/cloudflare",
-      "category": "devops",
+      "category": "code",
       "tier": "featured",
       "popularity": 0,
       "path": "featured/cloudflare.json"
@@ -17,7 +17,7 @@
       "name": "Hugging Face",
       "description": "Search models, datasets, Spaces, and run Gradio apps from the Hugging Face Hub",
       "icon": "https://cdn.simpleicons.org/huggingface",
-      "category": "ai",
+      "category": "code",
       "tier": "featured",
       "popularity": 0,
       "path": "featured/hugging-face.json"
@@ -127,7 +127,7 @@
       "name": "Stripe",
       "description": "Manage payments, customers, subscriptions, and products via Stripe API",
       "icon": "https://cdn.simpleicons.org/stripe",
-      "category": "finance",
+      "category": "data",
       "tier": "featured",
       "popularity": 13,
       "path": "featured/stripe.json"
@@ -147,7 +147,7 @@
       "name": "Sanity",
       "description": "Query content, manage schemas, run GROQ queries, and deploy studio changes",
       "icon": "https://cdn.simpleicons.org/sanity",
-      "category": "content",
+      "category": "data",
       "tier": "featured",
       "popularity": 15,
       "path": "featured/sanity.json"
@@ -157,7 +157,7 @@
       "name": "Shopify",
       "description": "Full Admin API access: products, orders, customers, inventory, analytics (75 tools)",
       "icon": "https://cdn.simpleicons.org/shopify",
-      "category": "commerce",
+      "category": "data",
       "tier": "featured",
       "popularity": 16,
       "path": "featured/shopify.json"
@@ -167,7 +167,7 @@
       "name": "Semrush",
       "description": "Access SEO, Trends, and Projects APIs for keyword research, domain analysis, and rank tracking",
       "icon": "https://cdn.simpleicons.org/semrush",
-      "category": "marketing",
+      "category": "data",
       "tier": "featured",
       "popularity": 17,
       "path": "featured/semrush.json"
@@ -177,7 +177,7 @@
       "name": "Datadog",
       "description": "Query logs, metrics, traces, monitors, dashboards, and security signals",
       "icon": "https://cdn.simpleicons.org/datadog",
-      "category": "devops",
+      "category": "data",
       "tier": "featured",
       "popularity": 18,
       "path": "featured/datadog.json"
@@ -187,7 +187,7 @@
       "name": "Ahrefs",
       "description": "SEO data: Site Explorer, Keywords Explorer, Rank Tracker, Site Audit via MCP",
       "icon": "https://cdn.simpleicons.org/ahrefs",
-      "category": "marketing",
+      "category": "data",
       "tier": "featured",
       "popularity": 19,
       "path": "featured/ahrefs.json"
@@ -1022,16 +1022,7 @@
       "popularity": 0,
       "path": "community/close.json"
     },
-    {
-      "id": "cloudflare",
-      "name": "Cloudflare",
-      "description": "Cloudflare MCP servers",
-      "icon": "https://cdn.simpleicons.org/cloudflare",
-      "category": "community",
-      "tier": "community",
-      "popularity": 0,
-      "path": "community/cloudflare.json"
-    },
+
     {
       "id": "clutch-co",
       "name": "Clutch",
@@ -1827,7 +1818,7 @@
       "name": "GoDaddy",
       "description": "Search domain availability and find domain suggestions (no auth required)",
       "icon": "https://cdn.simpleicons.org/godaddy",
-      "category": "utility",
+      "category": "productivity",
       "tier": "community",
       "popularity": 0,
       "path": "community/godaddy.json"
@@ -1872,16 +1863,7 @@
       "popularity": 0,
       "path": "community/heyspark.json"
     },
-    {
-      "id": "hugging-face",
-      "name": "Hugging Face",
-      "description": "Connect to Hugging Face Hub and thousands of Gradio AI Applications",
-      "icon": "https://cdn.simpleicons.org/huggingface",
-      "category": "community",
-      "tier": "community",
-      "popularity": 0,
-      "path": "community/hugging-face.json"
-    },
+
     {
       "id": "image-processing",
       "name": "Image Processing",
@@ -2107,7 +2089,7 @@
       "name": "n8n",
       "description": "Execute workflows, manage nodes, and automate tasks via n8n MCP server",
       "icon": "https://cdn.simpleicons.org/n8n",
-      "category": "automation",
+      "category": "productivity",
       "tier": "community",
       "popularity": 0,
       "path": "community/n8n.json"
@@ -2527,7 +2509,7 @@
       "name": "Sentry",
       "description": "Debug production errors, query issues, and analyze performance (local stdio with PAT)",
       "icon": "https://cdn.simpleicons.org/sentry",
-      "category": "devops",
+      "category": "data",
       "tier": "community",
       "popularity": 0,
       "path": "community/sentry.json"
