@@ -50,7 +50,17 @@ export const annotatePage: ToolDefinition = {
     const [res] = await chrome.scripting.executeScript({
       target: { tabId: tabIdVal, frameIds: [targetFrameId] },
       func: (types: string[] | null, containerSel: string | null) => {
-        const w = window as unknown as { __bmAnnotations?: Element[] };
+        interface AnnotationMeta {
+          tag: string;
+          id: string;
+          name: string;
+          type: string;
+          text: string;
+        }
+        const w = window as unknown as {
+          __bmAnnotations?: Element[];
+          __bmAnnotationMeta?: AnnotationMeta[];
+        };
         document.querySelectorAll('[data-bm-badge]').forEach((b) => b.remove());
 
         let selector = 'a,button,input,textarea,select,[role="button"],[role="link"],summary';
@@ -75,6 +85,23 @@ export const annotatePage: ToolDefinition = {
         });
 
         w.__bmAnnotations = els;
+        // Store durable attributes in parallel so click_element can re-resolve an
+        // annotation whose live reference went stale (node replaced by a re-render).
+        w.__bmAnnotationMeta = els.map((el) => ({
+          tag: el.tagName.toLowerCase(),
+          id: el.id || '',
+          name: el.getAttribute('name') || '',
+          type: (el as HTMLInputElement).type || '',
+          text: (
+            el.innerText ||
+            (el as HTMLInputElement).value ||
+            el.getAttribute('aria-label') ||
+            (el as HTMLInputElement).placeholder ||
+            ''
+          )
+            .trim()
+            .slice(0, 80),
+        }));
         const map = els.map((el, i) => {
           const id = i + 1;
           const r = el.getBoundingClientRect();

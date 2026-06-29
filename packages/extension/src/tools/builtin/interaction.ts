@@ -125,9 +125,54 @@ export const clickElement: ToolDefinition = {
         const el = (() => {
           // Priority 1: Annotation ID
           if (annId !== null) {
-            const w = window as unknown as { __bmAnnotations?: Element[] };
+            interface AnnotationMeta {
+              tag: string;
+              id: string;
+              name: string;
+              type: string;
+              text: string;
+            }
+            const w = window as unknown as {
+              __bmAnnotations?: Element[];
+              __bmAnnotationMeta?: AnnotationMeta[];
+            };
             const ref = w.__bmAnnotations?.[annId - 1];
-            if (ref) return (ref as HTMLElement) ?? null;
+            // Use the live reference only if it's still attached to the document.
+            // After a re-render the original node can be detached, in which case
+            // clicking it does nothing — fall through to attribute re-resolution.
+            if (ref && document.contains(ref)) return ref as HTMLElement;
+
+            const meta = w.__bmAnnotationMeta?.[annId - 1];
+            if (meta) {
+              if (meta.id) {
+                const byId = document.getElementById(meta.id);
+                if (byId) return byId as HTMLElement;
+              }
+              // Score live candidates of the same tag by durable attributes.
+              const cands = Array.from(document.querySelectorAll<HTMLElement>(meta.tag || '*'));
+              let best: HTMLElement | null = null;
+              let bestScore = 0;
+              for (const c of cands) {
+                let score = 0;
+                if (meta.name && c.getAttribute('name') === meta.name) score += 50;
+                if (meta.type && (c as HTMLInputElement).type === meta.type) score += 10;
+                const t = (
+                  c.innerText ||
+                  (c as HTMLInputElement).value ||
+                  c.getAttribute('aria-label') ||
+                  (c as HTMLInputElement).placeholder ||
+                  ''
+                ).trim();
+                if (meta.text && t === meta.text) score += 40;
+                else if (meta.text && t.includes(meta.text)) score += 20;
+                if (score > bestScore) {
+                  bestScore = score;
+                  best = c;
+                }
+              }
+              // Require a meaningful match (name, exact text, or strong partial).
+              if (bestScore >= 40) return best;
+            }
           }
           // Priority 2: CSS Selector
           if (selector) {
