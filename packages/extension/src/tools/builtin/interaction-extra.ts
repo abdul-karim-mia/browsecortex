@@ -148,9 +148,31 @@ function clickVariant(name: string, event: string, description: string): ToolDef
         tabIdVal,
         targetFrameId,
         (selector: string, ev: string) => {
-          const el = document.querySelector(selector);
+          const el = document.querySelector<HTMLElement>(selector);
           if (!el) return { error: 'Element not found.' };
-          el.dispatchEvent(new MouseEvent(ev, { bubbles: true, cancelable: true }));
+          try {
+            el.scrollIntoView({ block: 'center', inline: 'center' });
+          } catch {
+            /* ignore */
+          }
+          const base = { bubbles: true, cancelable: true, view: window } as MouseEventInit;
+
+          if (ev === 'dblclick') {
+            // A real double-click is two full click sequences followed by dblclick.
+            for (let i = 0; i < 2; i++) {
+              el.dispatchEvent(new MouseEvent('mousedown', base));
+              el.dispatchEvent(new MouseEvent('mouseup', base));
+              el.dispatchEvent(new MouseEvent('click', { ...base, detail: i + 1 }));
+            }
+            el.dispatchEvent(new MouseEvent('dblclick', { ...base, detail: 2 }));
+          } else if (ev === 'contextmenu') {
+            // Right-click: press the secondary button, then raise contextmenu.
+            el.dispatchEvent(new MouseEvent('mousedown', { ...base, button: 2 }));
+            el.dispatchEvent(new MouseEvent('mouseup', { ...base, button: 2 }));
+            el.dispatchEvent(new MouseEvent('contextmenu', base));
+          } else {
+            el.dispatchEvent(new MouseEvent(ev, base));
+          }
           return { ok: true };
         },
         [String(args.selector), event],
