@@ -129,33 +129,52 @@ export const clickElement: ToolDefinition = {
       const annotationId = validated.annotation_id ?? null;
     const [res] = await chrome.scripting.executeScript({
       target: { tabId, frameIds: [targetFrameId] },
-      func: (annId: number | null, selector: string | null, text: string | null) => {
+      func: (annId: number | null, selector: string | null, text: string | null, xpath: string | null) => {
         // Inline finder — injected functions cannot reference outer-scope helpers.
         const el = (() => {
+          // Priority 1: Annotation ID
           if (annId !== null) {
             const w = window as unknown as { __bmAnnotations?: Element[] };
             const ref = w.__bmAnnotations?.[annId - 1];
-            return (ref as HTMLElement) ?? null;
+            if (ref) return (ref as HTMLElement) ?? null;
           }
+          // Priority 2: CSS Selector
           if (selector) {
             const e = document.querySelector(selector);
             if (e) return e as HTMLElement;
           }
+          // Priority 3: Visible text
           if (text) {
             const cands = Array.from(
               document.querySelectorAll<HTMLElement>(
                 'a,button,input,[role="button"],summary,label',
               ),
             );
-            return (
-              cands.find((e) => (e.innerText || e.getAttribute('value') || '').trim() === text) ||
-              cands.find((e) =>
-                (e.innerText || e.getAttribute('value') || '')
-                  .toLowerCase()
-                  .includes((text || '').toLowerCase()),
-              ) ||
-              null
+            const exact = cands.find((e) => (e.innerText || e.getAttribute('value') || '').trim() === text);
+            if (exact) return exact;
+            const partial = cands.find((e) =>
+              (e.innerText || e.getAttribute('value') || '')
+                .toLowerCase()
+                .includes((text || '').toLowerCase()),
             );
+            if (partial) return partial;
+          }
+          // Priority 4: XPath (fallback)
+          if (xpath) {
+            try {
+              const result = document.evaluate(
+                xpath,
+                document,
+                null,
+                XPathResult.FIRST_ORDERED_NODE_TYPE,
+                null
+              );
+              if (result.singleNodeValue instanceof HTMLElement) {
+                return result.singleNodeValue;
+              }
+            } catch {
+              // Invalid XPath, continue
+            }
           }
           return null;
         })();
@@ -163,7 +182,7 @@ export const clickElement: ToolDefinition = {
         (el as HTMLElement).click();
         return { found: true, tag: el.tagName, text: (el as HTMLElement).innerText?.slice(0, 80) };
       },
-      args: [annotationId, validated.selector ?? null, validated.text ?? null],
+      args: [annotationId, validated.selector ?? null, validated.text ?? null, validated.xpath ?? null],
     });
       const data = res?.result as { found: boolean; tag?: string; text?: string } | undefined;
       if (!data?.found)
@@ -416,4 +435,89 @@ export const findTextOnPage: ToolDefinition = {
   },
 };
 
-export const interactionTools = [clickElement, fillInput, scrollPage, submitForm, findTextOnPage];
+export const scrollToText: ToolDefinition = {
+  name: 'scroll_to_text',
+  description:
+    'Find text on the page and scroll it into view. Useful for discovering content or navigating to specific sections.',
+  parameters: {
+    type: 'object',
+    properties: {
+      text: { type: 'string', description: 'The text to search for on the page.' },
+      nth: {
+        type: 'number',
+        description: 'Which occurrence to scroll to (1-indexed, default is 1 for first occurrence).',
+      },
+      tab_id: { type: 'number' },
+      frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe to search within.' },
+    },
+    required: ['text'],
+  },
+  destructive: false,
+  readsExternal: true,
+  timeout: 'page_interact',
+  async execute(args, ctx) {
+    try {
+      const validated = scrollToTextSchema.parse(args);
+      const tabId = await resolveTabId(validated, ctx.getActiveTabId);
+      let targetFrameId = 0;
+      if (validated.frame_selector) {
+        const resolved = await findFrameId(tabId, validated.frame_selector);
+        if (resolved === undefined) {
+          return { error: `Iframe not found for selector: ${validated.frame_selector}` };
+        }
+        targetFrameId = resolved;
+      }
+
+      const [res] = await chrome.scripting.executeScript({
+        target: { tabId, frameIds: [targetFrameId] },
+        func: (searchText: string, occurrence: number) => {
+          const walker = document.createTreeWalker(
+            document.body,
+            NodeFilter.SHOW_TEXT,
+            null
+          );
+
+          let node: Node | null;
+          let count = 0;
+
+          while ((node = walker.nextNode())) {
+            if (node.textContent && node.textContent.includes(searchText)) {
+              count++;
+              if (count === occurrence) {
+                const parent = node.parentElement;
+                if (parent) {
+                  parent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  return {
+                    found: true,
+                    text: node.textContent.slice(0, 200),
+                    position: 'scrolled',
+                    occurrence,
+                  };
+                }
+              }
+            }
+          }
+
+          return {
+            found: false,
+            message:
+              count === 0
+                ? `Text "${searchText}" not found on page`
+                : `Text found ${count} time(s), but requested occurrence #${occurrence} does not exist`,
+          };
+        },
+        args: [validated.text, validated.nth],
+      });
+
+      return (res?.result as Record<string, unknown>) ?? { found: false, error: 'Script failed' };
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const messages = error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+        return { error: `Validation error: ${messages}` };
+      }
+      return { error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  },
+};
+
+export const interactionTools = [clickElement, fillInput, scrollPage, submitForm, findTextOnPage, scrollToText];
