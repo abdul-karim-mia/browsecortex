@@ -288,9 +288,18 @@ export const selectDropdown: ToolDefinition = {
           (o) => o.value === value || o.text.trim() === value,
         );
         if (!opt) return { error: 'Option not found.' };
-        el.value = opt.value;
+
+        // Use the native value setter so React/Vue-controlled <select>s register
+        // the change (a plain `el.value =` is bypassed by the framework's setter).
+        const descriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+        if (descriptor && descriptor.set) {
+          descriptor.set.call(el, opt.value);
+        } else {
+          el.value = opt.value;
+        }
+        el.dispatchEvent(new Event('input', { bubbles: true }));
         el.dispatchEvent(new Event('change', { bubbles: true }));
-        return { selected: opt.value };
+        return { selected: opt.value, label: opt.text.trim() };
       },
       [String(args.selector), String(args.value)],
     );

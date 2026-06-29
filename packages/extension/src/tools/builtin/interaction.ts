@@ -170,8 +170,51 @@ export const clickElement: ToolDefinition = {
           return null;
         })();
         if (!el) return { found: false };
-        (el as HTMLElement).click();
-        return { found: true, tag: el.tagName, text: (el as HTMLElement).innerText?.slice(0, 80) };
+        const target = el as HTMLElement;
+
+        // Bring the element into view before interacting (browser-use / AIPex do
+        // this first — coordinates and pointer hit-testing are meaningless for an
+        // off-screen element).
+        try {
+          target.scrollIntoView({ block: 'center', inline: 'center' });
+        } catch {
+          /* scrollIntoView can throw in detached nodes — ignore */
+        }
+
+        // Detect whether the element is actually hittable, so we can report when a
+        // click likely landed on an overlay instead of the intended target.
+        let obscured = false;
+        try {
+          const rect = target.getBoundingClientRect();
+          if (rect.width > 0 && rect.height > 0) {
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            const topEl = document.elementFromPoint(cx, cy);
+            obscured = !!topEl && topEl !== target && !target.contains(topEl) && !topEl.contains(target);
+          }
+        } catch {
+          /* ignore hit-test failures */
+        }
+
+        // Dispatch a full pointer/mouse sequence so widgets that listen for
+        // mousedown/mouseup (not just click) react — then fire the canonical
+        // .click() for navigation/submit semantics.
+        const opts = { bubbles: true, cancelable: true, view: window } as MouseEventInit;
+        try {
+          target.dispatchEvent(new PointerEvent('pointerdown', opts));
+        } catch {
+          /* PointerEvent unsupported — fall through to mouse events */
+        }
+        target.dispatchEvent(new MouseEvent('mousedown', opts));
+        target.dispatchEvent(new MouseEvent('mouseup', opts));
+        target.click();
+
+        return {
+          found: true,
+          tag: target.tagName,
+          text: target.innerText?.slice(0, 80),
+          ...(obscured ? { warning: 'Element may be covered by another element (overlay); click may not have reached it.' } : {}),
+        };
       },
       args: [annotationId, validated.selector ?? null, validated.text ?? null, validated.xpath ?? null],
     });
@@ -221,47 +264,80 @@ export const fillInput: ToolDefinition = {
         func: (selector: string, value: string) => {
           const el = document.querySelector(selector) as HTMLElement | null;
           if (!el) return { found: false };
+
+          try {
+            el.scrollIntoView({ block: 'center', inline: 'center' });
+          } catch {
+            /* ignore */
+          }
           el.focus();
-          const isContentEditable = el.isContentEditable || el.closest('[contenteditable="true"]');
-          if (isContentEditable || el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-            try {
-              if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
-                el.select();
-                document.execCommand('selectAll', false);
-                document.execCommand('insertText', false, value);
-                if (el.value !== value) {
-                  el.value = value;
-                  el.dispatchEvent(new Event('input', { bubbles: true }));
-                  el.dispatchEvent(new Event('change', { bubbles: true }));
-                }
-              } else {
-                const range = document.createRange();
-                range.selectNodeContents(el);
-                const sel = window.getSelection();
-                if (sel) {
-                  sel.removeAllRanges();
-                  sel.addRange(range);
-                }
-                document.execCommand('insertText', false, value);
-              }
-              return { found: true };
-            } catch {
-              // Fallback if execCommand fails
+
+          // contenteditable editors: insert via execCommand, falling back to textContent.
+          const isContentEditable = el.isContentEditable || !!el.closest('[contenteditable="true"]');
+          if (isContentEditable && !(el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)) {
+            const range = document.createRange();
+            range.selectNodeContents(el);
+            const sel = window.getSelection();
+            if (sel) {
+              sel.removeAllRanges();
+              sel.addRange(range);
             }
+            const ok = document.execCommand('insertText', false, value);
+            if (!ok) {
+              el.textContent = value;
+              el.dispatchEvent(new InputEvent('input', { bubbles: true }));
+            }
+            return { found: true, method: 'contenteditable' };
           }
+
           if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
-            el.value = value;
-            el.dispatchEvent(new Event('input', { bubbles: true }));
+            // REACT/VUE-COMPATIBLE VALUE SETTING (browser-use technique):
+            // Frameworks override the element's `value` property with their own
+            // setter to track changes. Assigning `el.value = x` directly bypasses
+            // their setter, so the framework never sees the update. Calling the
+            // *native* prototype setter writes the value in a way the framework's
+            // input listener detects.
+            const proto =
+              el instanceof HTMLTextAreaElement
+                ? HTMLTextAreaElement.prototype
+                : HTMLInputElement.prototype;
+            const descriptor = Object.getOwnPropertyDescriptor(proto, 'value');
+            if (descriptor && descriptor.set) {
+              descriptor.set.call(el, value);
+            } else {
+              el.value = value;
+            }
+
+            // Fire the events frameworks listen for, in realistic order.
+            el.dispatchEvent(new InputEvent('input', { bubbles: true }));
             el.dispatchEvent(new Event('change', { bubbles: true }));
-            return { found: true };
+
+            const ok = (el as HTMLInputElement | HTMLTextAreaElement).value === value;
+            return { found: true, method: 'native-setter', verified: ok };
           }
-          return { found: true };
+
+          return { found: false, reason: 'not-fillable' };
         },
         args: [validated.selector, validated.value],
       });
-      const data = res?.result as { found: boolean } | undefined;
-      if (!data?.found) return { error: 'Input not found.' };
-      return { filled: true };
+      const data = res?.result as
+        | { found: boolean; reason?: string; method?: string; verified?: boolean }
+        | undefined;
+      if (!data?.found) {
+        return {
+          error:
+            data?.reason === 'not-fillable'
+              ? 'Target is not an input, textarea, or contenteditable element.'
+              : 'Input not found.',
+        };
+      }
+      return {
+        filled: true,
+        method: data.method,
+        ...(data.verified === false
+          ? { warning: 'Value was set but did not read back as expected (the field may reformat or reject it).' }
+          : {}),
+      };
     } catch (error) {
       if (error instanceof z.ZodError) {
         const messages = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
