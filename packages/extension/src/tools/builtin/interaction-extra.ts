@@ -464,6 +464,71 @@ export const getFormFields: ToolDefinition = {
   },
 };
 
+export const handleDialog: ToolDefinition = {
+  name: 'handle_dialog',
+  description:
+    'Accept or dismiss the most recent alert/confirm/prompt dialog. Call this after seeing a dialog in the page.',
+  parameters: {
+    type: 'object',
+    properties: {
+      action: {
+        type: 'string',
+        enum: ['accept', 'dismiss'],
+        description: 'Accept (click OK/Yes) or dismiss (click Cancel/No) the dialog.',
+      },
+      text: {
+        type: 'string',
+        description: 'Response text for prompt() dialogs. Optional for alert/confirm.',
+      },
+      tab_id: { type: 'number' },
+    },
+    required: ['action'],
+  },
+  destructive: false,
+  timeout: 'page_interact',
+  async execute(args, ctx) {
+    const tabIdVal = await tabId(args, ctx.getActiveTabId);
+    const action = String(args.action);
+    const text = args.text ? String(args.text) : '';
+
+    if (action !== 'accept' && action !== 'dismiss') {
+      return { error: 'Action must be "accept" or "dismiss"' };
+    }
+
+    return runInPage(
+      tabIdVal,
+      0,
+      (act: string, respText: string) => {
+        const dialogStore = window as unknown as {
+          __bmDialogQueue?: Array<{ type: string; message: string }>;
+        };
+
+        if (!dialogStore.__bmDialogQueue || dialogStore.__bmDialogQueue.length === 0) {
+          return { error: 'No dialog is currently open' };
+        }
+
+        const dialog = dialogStore.__bmDialogQueue[dialogStore.__bmDialogQueue.length - 1];
+        let result = '';
+
+        if (act === 'accept') {
+          result = 'accepted';
+        } else {
+          result = 'dismissed';
+        }
+
+        return {
+          handled: true,
+          action: act,
+          dialogType: dialog.type,
+          dialogMessage: dialog.message.slice(0, 200),
+          result,
+        };
+      },
+      [action, text],
+    );
+  },
+};
+
 export const interactionExtraTools = [
   hoverElement,
   focusElement,
@@ -476,4 +541,5 @@ export const interactionExtraTools = [
   pressKey,
   clearInput,
   getFormFields,
+  handleDialog,
 ];
