@@ -262,124 +262,11 @@ export const getNetworkStatus: ToolDefinition = {
   },
 };
 
-export const performCoordinateAction: ToolDefinition = {
-  name: 'perform_coordinate_action',
-  description:
-    '[FALLBACK ONLY] Interact with page using pixel coordinates. Use only when element-based tools fail (canvas, drag-drop, sliders). ' +
-    'Requires calling capture_screenshot() first to get coordinate space.',
-  parameters: {
-    type: 'object',
-    properties: {
-      action: {
-        type: 'string',
-        enum: ['left_click', 'right_click', 'double_click', 'type', 'key', 'scroll', 'drag', 'hover'],
-        description: 'Action to perform at coordinate',
-      },
-      coordinate: {
-        type: 'array',
-        items: { type: 'number' },
-        minItems: 2,
-        maxItems: 2,
-        description: '[x, y] in screenshot pixel coordinates',
-      },
-      text: { type: 'string', description: 'Text to type (for action=type) or key to press (for action=key)' },
-      start_coordinate: {
-        type: 'array',
-        items: { type: 'number' },
-        minItems: 2,
-        maxItems: 2,
-        description: 'Starting [x, y] for drag action',
-      },
-      direction: { type: 'string', enum: ['up', 'down', 'left', 'right'], description: 'Direction for scroll' },
-      tab_id: { type: 'number' },
-    },
-    required: ['action', 'coordinate'],
-  },
-  destructive: false,
-  timeout: 'page_interact',
-  async execute(args, ctx) {
-    const tabIdVal = await tabId(args, ctx.getActiveTabId);
-    const action = String(args.action);
-    const [x, y] = args.coordinate as [number, number];
-    const text = args.text ? String(args.text) : '';
-    const direction = args.direction ? String(args.direction) : 'down';
-    const startCoord = args.start_coordinate as [number, number] | undefined;
-
-    if (!['left_click', 'right_click', 'double_click', 'type', 'key', 'scroll', 'drag', 'hover'].includes(action)) {
-      return { error: `Unknown action: ${action}` };
-    }
-
-    return runInPage(
-      tabIdVal,
-      (act: string, cx: number, cy: number, txt: string, dir: string, startCx?: number, startCy?: number) => {
-        try {
-          if (act === 'left_click' || act === 'right_click') {
-            const opts: MouseEventInit = {
-              bubbles: true,
-              button: act === 'right_click' ? 2 : 0,
-            };
-            const event = new MouseEvent(act === 'right_click' ? 'contextmenu' : 'click', opts);
-            document.elementFromPoint(cx, cy)?.dispatchEvent(event);
-            return { executed: true, action: act, position: [cx, cy] };
-          }
-
-          if (act === 'double_click') {
-            const event = new MouseEvent('dblclick', { bubbles: true });
-            document.elementFromPoint(cx, cy)?.dispatchEvent(event);
-            return { executed: true, action: 'double_click', position: [cx, cy] };
-          }
-
-          if (act === 'type') {
-            const el = document.activeElement as HTMLInputElement;
-            if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')) {
-              el.value += txt;
-              el.dispatchEvent(new Event('input', { bubbles: true }));
-              return { executed: true, action: 'type', text: txt };
-            }
-            return { error: 'No input element focused' };
-          }
-
-          if (act === 'key') {
-            const event = new KeyboardEvent('keydown', { key: txt, bubbles: true });
-            document.activeElement?.dispatchEvent(event);
-            return { executed: true, action: 'key', key: txt };
-          }
-
-          if (act === 'scroll') {
-            const amount = dir === 'up' || dir === 'left' ? -100 : 100;
-            if (dir === 'up' || dir === 'down') {
-              window.scrollBy(0, amount);
-            } else {
-              window.scrollBy(amount, 0);
-            }
-            return { executed: true, action: 'scroll', direction: dir };
-          }
-
-          if (act === 'drag' && startCx !== undefined && startCy !== undefined) {
-            const start = new MouseEvent('mousedown', { bubbles: true, clientX: startCx, clientY: startCy });
-            const move = new MouseEvent('mousemove', { bubbles: true, clientX: cx, clientY: cy });
-            const end = new MouseEvent('mouseup', { bubbles: true });
-            document.elementFromPoint(startCx, startCy)?.dispatchEvent(start);
-            document.elementFromPoint(cx, cy)?.dispatchEvent(move);
-            document.elementFromPoint(cx, cy)?.dispatchEvent(end);
-            return { executed: true, action: 'drag', from: [startCx, startCy], to: [cx, cy] };
-          }
-
-          if (act === 'hover') {
-            const event = new MouseEvent('mouseover', { bubbles: true });
-            document.elementFromPoint(cx, cy)?.dispatchEvent(event);
-            return { executed: true, action: 'hover', position: [cx, cy] };
-          }
-
-          return { error: 'Unknown action' };
-        } catch (e) {
-          return { error: e instanceof Error ? e.message : 'Unknown error' };
-        }
-      },
-      [action, x, y, text, direction, startCoord?.[0], startCoord?.[1]],
-    );
-  },
-};
+// NOTE: A `perform_coordinate_action` tool was removed here. Trusted, coordinate-
+// based interaction is already provided by debugger_click / debugger_type /
+// debugger_key (CDP Input.* events in debugger-interaction.ts), which dispatch
+// *trusted* events. A page-context MouseEvent version was both redundant and less
+// reliable (synthetic events are ignored by many sites), so it was dropped.
 
 export const pageExtraTools = [
   injectCss,
@@ -394,5 +281,4 @@ export const pageExtraTools = [
   setSessionStorage,
   getBrowserInfo,
   getNetworkStatus,
-  performCoordinateAction,
 ];

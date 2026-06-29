@@ -29,12 +29,8 @@ const scrollPageSchema = z.object({
   direction: z.enum(['up', 'down', 'top', 'bottom']).optional().default('down'),
   selector: z.string().optional(),
   y_percent: z.number().min(0).max(100).optional(),
-  tab_id: z.number().int().optional(),
-  frame_selector: z.string().optional(),
-});
-
-const findTextSchema = z.object({
-  text: z.string(),
+  pages: z.number().positive().optional(),
+  container_selector: z.string().optional(),
   tab_id: z.number().int().optional(),
   frame_selector: z.string().optional(),
 });
@@ -46,11 +42,6 @@ const scrollToTextSchema = z.object({
   frame_selector: z.string().optional(),
 });
 
-type ClickElementParams = z.infer<typeof clickElementSchema>;
-type FillInputParams = z.infer<typeof fillInputSchema>;
-type ScrollPageParams = z.infer<typeof scrollPageSchema>;
-type FindTextParams = z.infer<typeof findTextSchema>;
-type ScrollToTextParams = z.infer<typeof scrollToTextSchema>;
 
 async function resolveTabId(args: Record<string, unknown>, getActive: () => Promise<number>) {
   const id = args.tab_id;
@@ -190,7 +181,7 @@ export const clickElement: ToolDefinition = {
       return { clicked: true, tag: data.tag, text: data.text };
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const messages = error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+        const messages = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
         return { error: `Validation error: ${messages}` };
       }
       return { error: error instanceof Error ? error.message : 'Unknown error' };
@@ -273,7 +264,7 @@ export const fillInput: ToolDefinition = {
       return { filled: true };
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const messages = error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+        const messages = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
         return { error: `Validation error: ${messages}` };
       }
       return { error: error instanceof Error ? error.message : 'Unknown error' };
@@ -283,12 +274,22 @@ export const fillInput: ToolDefinition = {
 
 export const scrollPage: ToolDefinition = {
   name: 'scroll_page',
-  description: 'Scroll the page by a direction (up/down/top/bottom) or to a selector.',
+  description:
+    'Scroll the page or a scrollable container. Modes (in priority order): ' +
+    'selector (scroll an element into view), y_percent (jump to 0-100% of the document/container), ' +
+    'pages (scroll N viewport-heights in `direction`), or a plain direction (up/down/top/bottom). ' +
+    'Use container_selector to scroll inside a specific scrollable element instead of the window.',
   parameters: {
     type: 'object',
     properties: {
       direction: { type: 'string', enum: ['up', 'down', 'top', 'bottom'] },
-      selector: { type: 'string', description: 'Scroll this element into view instead.' },
+      selector: { type: 'string', description: 'Scroll this element into view.' },
+      y_percent: { type: 'number', description: 'Scroll to this vertical percentage (0=top, 100=bottom).' },
+      pages: { type: 'number', description: 'Number of viewport-heights to scroll in `direction` (e.g. 0.5, 1, 2).' },
+      container_selector: {
+        type: 'string',
+        description: 'CSS selector of a scrollable container to scroll within (defaults to the whole window).',
+      },
       tab_id: { type: 'number' },
       frame_selector: { type: 'string', description: 'Optional CSS selector of the iframe to scroll.' },
     },
@@ -309,28 +310,79 @@ export const scrollPage: ToolDefinition = {
       }
       const [res] = await chrome.scripting.executeScript({
         target: { tabId, frameIds: [targetFrameId] },
-        func: (direction: string | null, selector: string | null) => {
+        func: (
+          direction: string,
+          selector: string | null,
+          yPercent: number | null,
+          pages: number | null,
+          containerSelector: string | null,
+        ) => {
+          // Mode 1: scroll a specific element into view.
           if (selector) {
             const el = document.querySelector(selector);
-            if (!el) return { ok: false };
+            if (!el) return { ok: false, reason: 'selector-not-found' };
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            return { ok: true };
+            return { ok: true, mode: 'into-view', selector };
           }
-          const h = window.innerHeight;
-          if (direction === 'top') window.scrollTo({ top: 0 });
-          else if (direction === 'bottom') window.scrollTo({ top: document.body.scrollHeight });
-          else if (direction === 'up') window.scrollBy({ top: -h * 0.8 });
-          else window.scrollBy({ top: h * 0.8 });
-          return { ok: true, scrollY: window.scrollY };
+
+          // Resolve the scroll target: a container element, or the window/document.
+          const container = containerSelector ? document.querySelector(containerSelector) : null;
+          if (containerSelector && !container) {
+            return { ok: false, reason: 'container-not-found' };
+          }
+
+          const scrollEl =
+            (container as HTMLElement | null) ??
+            (document.scrollingElement as HTMLElement | null) ??
+            document.documentElement;
+          const viewportH = container
+            ? (container as HTMLElement).clientHeight
+            : window.innerHeight;
+          const maxTop = Math.max(0, scrollEl.scrollHeight - scrollEl.clientHeight);
+
+          // Mode 2: jump to a vertical percentage.
+          if (yPercent !== null) {
+            const top = (Math.min(100, Math.max(0, yPercent)) / 100) * maxTop;
+            scrollEl.scrollTo({ top, behavior: 'smooth' });
+            return { ok: true, mode: 'percent', yPercent, scrollTop: Math.round(top) };
+          }
+
+          // Mode 3: scroll by N viewport-heights in a direction.
+          if (pages !== null) {
+            const delta = viewportH * pages * (direction === 'up' ? -1 : 1);
+            scrollEl.scrollBy({ top: delta, behavior: 'smooth' });
+            return { ok: true, mode: 'pages', pages, direction: direction === 'up' ? 'up' : 'down' };
+          }
+
+          // Mode 4: plain direction.
+          if (direction === 'top') scrollEl.scrollTo({ top: 0, behavior: 'smooth' });
+          else if (direction === 'bottom') scrollEl.scrollTo({ top: maxTop, behavior: 'smooth' });
+          else if (direction === 'up') scrollEl.scrollBy({ top: -viewportH * 0.8, behavior: 'smooth' });
+          else scrollEl.scrollBy({ top: viewportH * 0.8, behavior: 'smooth' });
+          return { ok: true, mode: 'direction', direction, scrollTop: Math.round(scrollEl.scrollTop) };
         },
-        args: [validated.direction ?? 'down', validated.selector ?? null],
+        args: [
+          validated.direction ?? 'down',
+          validated.selector ?? null,
+          validated.y_percent ?? null,
+          validated.pages ?? null,
+          validated.container_selector ?? null,
+        ],
       });
-      const data = res?.result as { ok: boolean } | undefined;
-      if (!data?.ok) return { error: 'Scroll target not found.' };
+      const data = res?.result as { ok: boolean; reason?: string } | undefined;
+      if (!data?.ok) {
+        const reason =
+          data?.reason === 'container-not-found'
+            ? `Scroll container not found: ${validated.container_selector}`
+            : data?.reason === 'selector-not-found'
+              ? `Scroll target not found: ${validated.selector}`
+              : 'Scroll target not found.';
+        return { error: reason };
+      }
       return data;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const messages = error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+        const messages = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
         return { error: `Validation error: ${messages}` };
       }
       return { error: error instanceof Error ? error.message : 'Unknown error' };
@@ -388,7 +440,7 @@ export const submitForm: ToolDefinition = {
       return { submitted: true };
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const messages = error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+        const messages = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
         return { error: `Validation error: ${messages}` };
       }
       return { error: error instanceof Error ? error.message : 'Unknown error' };
@@ -512,7 +564,7 @@ export const scrollToText: ToolDefinition = {
       return (res?.result as Record<string, unknown>) ?? { found: false, error: 'Script failed' };
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const messages = error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+        const messages = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
         return { error: `Validation error: ${messages}` };
       }
       return { error: error instanceof Error ? error.message : 'Unknown error' };

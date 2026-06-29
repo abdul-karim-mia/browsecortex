@@ -467,18 +467,22 @@ export const getFormFields: ToolDefinition = {
 export const handleDialog: ToolDefinition = {
   name: 'handle_dialog',
   description:
-    'Accept or dismiss the most recent alert/confirm/prompt dialog. Call this after seeing a dialog in the page.',
+    'Arm an automatic handler for native JavaScript dialogs (alert/confirm/prompt). ' +
+    'Native dialogs are synchronous and block the page, so this must be called BEFORE the action ' +
+    'that triggers the dialog (e.g. before clicking a "Delete" button that calls confirm()). ' +
+    'It overrides window.alert/confirm/prompt to auto-respond per the chosen policy and records ' +
+    'each dialog. Call again with no trigger pending to read the log of dialogs handled so far.',
   parameters: {
     type: 'object',
     properties: {
       action: {
         type: 'string',
         enum: ['accept', 'dismiss'],
-        description: 'Accept (click OK/Yes) or dismiss (click Cancel/No) the dialog.',
+        description: 'How to respond to upcoming dialogs: accept (OK/true) or dismiss (Cancel/false).',
       },
       text: {
         type: 'string',
-        description: 'Response text for prompt() dialogs. Optional for alert/confirm.',
+        description: 'Response text returned for prompt() dialogs when accepting.',
       },
       tab_id: { type: 'number' },
     },
@@ -495,37 +499,58 @@ export const handleDialog: ToolDefinition = {
       return { error: 'Action must be "accept" or "dismiss"' };
     }
 
-    return runInPage(
-      tabIdVal,
-      0,
-      (act: string, respText: string) => {
-        const dialogStore = window as unknown as {
-          __bmDialogQueue?: Array<{ type: string; message: string }>;
-        };
+    try {
+      // Must run in the MAIN world: overriding window.alert/confirm/prompt in the
+      // isolated content-script world would not affect the page's own calls.
+      const [res] = await chrome.scripting.executeScript({
+        target: { tabId: tabIdVal },
+        world: 'MAIN',
+        func: (accept: boolean, promptText: string) => {
+          interface DialogState {
+            policy: { accept: boolean; text: string };
+            log: Array<{ type: string; message: string; response: string }>;
+            installed?: boolean;
+          }
+          const w = window as unknown as { __bmDialog?: DialogState };
+          if (!w.__bmDialog) {
+            w.__bmDialog = { policy: { accept, text: promptText }, log: [] };
+          }
+          const state = w.__bmDialog;
+          state.policy = { accept, text: promptText };
 
-        if (!dialogStore.__bmDialogQueue || dialogStore.__bmDialogQueue.length === 0) {
-          return { error: 'No dialog is currently open' };
-        }
+          if (!state.installed) {
+            state.installed = true;
+            window.alert = (message?: unknown) => {
+              state.log.push({ type: 'alert', message: String(message ?? ''), response: 'ok' });
+            };
+            window.confirm = (message?: unknown) => {
+              const r = state.policy.accept;
+              state.log.push({ type: 'confirm', message: String(message ?? ''), response: String(r) });
+              return r;
+            };
+            window.prompt = (message?: unknown) => {
+              const r = state.policy.accept ? state.policy.text : null;
+              state.log.push({ type: 'prompt', message: String(message ?? ''), response: r === null ? 'null' : r });
+              return r;
+            };
+          }
 
-        const dialog = dialogStore.__bmDialogQueue[dialogStore.__bmDialogQueue.length - 1];
-        let result = '';
+          return {
+            armed: true,
+            policy: state.policy,
+            handledCount: state.log.length,
+            log: state.log.slice(-10),
+          };
+        },
+        args: [action === 'accept', text],
+      });
 
-        if (act === 'accept') {
-          result = 'accepted';
-        } else {
-          result = 'dismissed';
-        }
-
-        return {
-          handled: true,
-          action: act,
-          dialogType: dialog.type,
-          dialogMessage: dialog.message.slice(0, 200),
-          result,
-        };
-      },
-      [action, text],
-    );
+      return (
+        (res?.result as Record<string, unknown>) ?? { error: 'Failed to arm dialog handler.' }
+      );
+    } catch (e) {
+      return { error: e instanceof Error ? e.message : String(e) };
+    }
   },
 };
 

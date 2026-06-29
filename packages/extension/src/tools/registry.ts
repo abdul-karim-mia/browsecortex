@@ -39,6 +39,7 @@ import { debuggerInteractionTools } from './builtin/debugger-interaction';
 import { externalAiTools } from './builtin/external-ai';
 import { ocrTools } from './builtin/ocr';
 import { mcpTools } from './builtin/mcp';
+import { cachingTools } from './builtin/caching';
 
 const ALL_TOOLS: ToolDefinition[] = [
   ...tabTools,
@@ -68,6 +69,7 @@ const ALL_TOOLS: ToolDefinition[] = [
   ...subagentTools,
   ...externalAiTools,
   ...mcpTools,
+  ...cachingTools,
 ];
 
 /** Tools that block on user input or run a full nested loop — not timeout-raced. */
