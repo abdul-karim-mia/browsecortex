@@ -23,6 +23,49 @@ let connected = false;
 let failedAttempts = 0;
 const MAX_BACKOFF_MS = 5 * 60_000;
 
+// MV3 service workers are evicted after ~30s idle, which silently tears down
+// the relay WebSocket *and* any pending reconnect timer. A periodic alarm
+// outlives eviction: when it fires it wakes the worker, re-imports this module
+// (re-registering the listener below), and reconnects if the socket is gone.
+// 0.5min is the minimum period Chrome honours for alarms.
+const KEEPALIVE_ALARM = 'relay-keepalive';
+const KEEPALIVE_PERIOD_MIN = 0.5;
+
+function ensureKeepaliveAlarm(): void {
+  chrome.alarms?.create(KEEPALIVE_ALARM, { periodInMinutes: KEEPALIVE_PERIOD_MIN });
+}
+
+function clearKeepaliveAlarm(): void {
+  chrome.alarms?.clear(KEEPALIVE_ALARM);
+}
+
+async function keepaliveTick(): Promise<void> {
+  const cfg = await getConfig();
+  if (!cfg.enabled) {
+    clearKeepaliveAlarm();
+    return;
+  }
+  if (connected && socket?.readyState === WebSocket.OPEN) {
+    // Best-effort application ping keeps intermediaries from dropping an idle
+    // socket. The relay ignores unknown extension messages, so this is safe.
+    try {
+      socket.send(JSON.stringify({ type: 'ping' }));
+    } catch {
+      /* socket dying — the reconnect path below handles it next tick */
+    }
+    return;
+  }
+  // Worker was likely evicted and the socket lost; reconnect from scratch.
+  failedAttempts = 0;
+  attemptConnect();
+}
+
+// Registered at module scope so it re-attaches every time the service worker
+// restarts and re-imports this module.
+chrome.alarms?.onAlarm.addListener((alarm) => {
+  if (alarm.name === KEEPALIVE_ALARM) void keepaliveTick();
+});
+
 const SAFE_BLOCKLIST = new Set(['run_javascript']);
 
 function isToolAllowed(name: string, access: string, custom: string[]): boolean {
@@ -110,8 +153,12 @@ export async function connect(): Promise<void> {
 
 async function attemptConnect(): Promise<void> {
   const cfg = await getConfig();
-  if (!cfg.enabled) return disconnect();
+  if (!cfg.enabled) {
+    clearKeepaliveAlarm();
+    return disconnect();
+  }
 
+  ensureKeepaliveAlarm();
   disconnect();
   // Auth via the `token.<value>` sub-protocol keeps the token out of the URL
   // (which would otherwise leak into devtools, logs, and process memory).

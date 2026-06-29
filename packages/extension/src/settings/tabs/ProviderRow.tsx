@@ -40,7 +40,7 @@ export function ProviderRow({ provider, allProviders, onChanged }: Props) {
   const others = allProviders.filter((p) => p.id !== provider.id);
 
   return (
-    <li class="rounded border border-gray-200 px-3 py-2 dark:border-gray-700">
+    <div class="rounded-xl border border-gray-200 px-4 py-3 dark:border-gray-700">
       <div class="flex items-center justify-between">
         <div>
           <div class="font-medium">
@@ -95,6 +95,6 @@ export function ProviderRow({ provider, allProviders, onChanged }: Props) {
           </select>
         </label>
       )}
-    </li>
+    </div>
   );
 }

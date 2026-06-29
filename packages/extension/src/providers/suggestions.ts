@@ -47,6 +47,11 @@ export const PROVIDER_SUGGESTIONS: ProviderSuggestion[] = [
     apiKeyUrl: 'https://console.x.ai/',
   },
   {
+    name: 'NVIDIA NIM',
+    baseUrl: 'https://integrate.api.nvidia.com/v1',
+    apiKeyUrl: 'https://build.nvidia.com/',
+  },
+  {
     name: 'MiniMax',
     baseUrl: 'https://api.minimax.chat/v1',
     apiKeyUrl: 'https://platform.minimaxi.com/',
@@ -131,6 +136,11 @@ export const PROVIDER_SUGGESTIONS: ProviderSuggestion[] = [
     name: 'Nebius AI',
     baseUrl: 'https://api.tokenfactory.nebius.com/v1/',
     apiKeyUrl: 'https://docs.tokenfactory.nebius.com/',
+  },
+  {
+    name: 'OpenCode Zen',
+    baseUrl: 'https://opencode.ai/zen/v1',
+    apiKeyUrl: 'https://opencode.ai/zen',
   },
   {
     name: 'OpenCode Go',

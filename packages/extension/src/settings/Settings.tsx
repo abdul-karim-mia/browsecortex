@@ -12,6 +12,7 @@ import { SkillsTab } from './tabs/SkillsTab';
 import { SitesTab } from './tabs/SitesTab';
 import { PlaygroundTab } from './tabs/PlaygroundTab';
 import { Icon } from '@/components/Icon';
+import { Logo } from '@/sidepanel/Logo';
 
 type Tab =
   | 'providers'
@@ -49,28 +50,39 @@ export function Settings() {
   const [tab, setTab] = useState<Tab>('providers');
 
   return (
-    <div class="mx-auto max-w-3xl p-6 text-gray-900 dark:text-gray-100">
-      <h1 class="mb-4 flex items-center gap-2 text-2xl font-bold">
-        <Icon name="brain" size={26} class="text-blue-500" />
-        BrowseCortex Settings
-      </h1>
-      <nav class="mb-6 flex flex-wrap gap-2 border-b border-gray-200 dark:border-gray-700">
-        {TABS.map((tEntry) => (
-          <button
-            key={tEntry.id}
-            type="button"
-            onClick={() => setTab(tEntry.id)}
-            class={`px-3 py-2 text-sm font-medium min-w-[100px] text-center ${
-              tab === tEntry.id
-                ? 'border-b-2 border-blue-500 text-blue-600'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            {tEntry.label}
-          </button>
-        ))}
-      </nav>
+    <div class="h-full overflow-y-auto bg-gradient-to-b from-gray-50 to-gray-100 text-gray-900 dark:from-gray-950 dark:to-gray-900 dark:text-gray-100">
+      {/* Sticky brand header */}
+      <header class="sticky top-0 z-10 border-b border-gray-200/70 bg-white/80 backdrop-blur-md dark:border-gray-800/70 dark:bg-gray-950/70">
+        <div class="mx-auto flex max-w-3xl items-center gap-3 px-6 py-4">
+          <Logo size={34} />
+          <div class="leading-tight">
+            <h1 class="text-lg font-bold tracking-tight">BrowseCortex</h1>
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Settings</p>
+          </div>
+        </div>
+      </header>
 
+      <div class="mx-auto max-w-3xl px-6 py-8">
+        {/* Segmented pill navigation */}
+        <nav class="mb-6 flex flex-wrap gap-1.5">
+          {TABS.map((tEntry) => (
+            <button
+              key={tEntry.id}
+              type="button"
+              onClick={() => setTab(tEntry.id)}
+              class={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
+                tab === tEntry.id
+                  ? 'bg-blue-600 text-white shadow-sm shadow-blue-600/30'
+                  : 'bg-white text-gray-600 ring-1 ring-gray-200 hover:bg-gray-50 hover:text-gray-900 dark:bg-gray-800/60 dark:text-gray-300 dark:ring-gray-700 dark:hover:bg-gray-800 dark:hover:text-white'
+              }`}
+            >
+              {tEntry.label}
+            </button>
+          ))}
+        </nav>
+
+        {/* Content card */}
+        <section class="rounded-2xl border border-gray-200/80 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/60">
       {tab === 'providers' && <ProvidersTab />}
       {tab === 'models' && <ModelsTab />}
       {tab === 'memory' && <MemoryTab />}
@@ -82,24 +94,25 @@ export function Settings() {
       {tab === 'skills' && <SkillsTab />}
       {tab === 'sites' && <SitesTab />}
       {tab === 'playground' && <PlaygroundTab />}
+        </section>
 
-      {/* Footer / Sponsorship Section */}
-      <footer class="mt-12 border-t border-gray-200 pt-6 text-center text-xs text-gray-500 dark:border-gray-700">
-        <p class="mb-3">
-          BrowseCortex is open-source. If you enjoy using it, please consider supporting the project!
-        </p>
-        <div class="flex justify-center">
+        {/* Footer / Sponsorship Section */}
+        <footer class="mt-10 flex flex-col items-center gap-3 text-center text-xs text-gray-500 dark:text-gray-400">
+          <p>
+            BrowseCortex is open-source. If you enjoy using it, please consider supporting the
+            project!
+          </p>
           <a
             href="https://paypal.me/akmia51"
             target="_blank"
             rel="noopener noreferrer"
-            class="flex items-center gap-1.5 rounded bg-blue-500/10 px-4 py-2 font-medium text-blue-600 hover:bg-blue-500/20 dark:text-blue-400"
+            class="inline-flex items-center gap-1.5 rounded-full bg-blue-600/10 px-4 py-2 font-medium text-blue-600 transition-colors hover:bg-blue-600/20 dark:text-blue-400"
           >
             <Icon name="sparkle" size={14} />
             Support on PayPal
           </a>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 }
