@@ -63,8 +63,13 @@ export const hoverElement: ToolDefinition = {
           return null;
         })();
         if (!el) return { error: 'Element not found.' };
-        for (const type of ['mouseenter', 'mouseover', 'mousemove']) {
-          el.dispatchEvent(new MouseEvent(type, { bubbles: true }));
+        try {
+          el.scrollIntoView({ block: 'center', inline: 'center' });
+        } catch {
+          /* ignore */
+        }
+        for (const type of ['mouseover', 'mouseenter', 'mousemove']) {
+          el.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, view: window }));
         }
         return { hovered: true };
       },
@@ -113,6 +118,11 @@ export const focusElement: ToolDefinition = {
           return null;
         })();
         if (!el) return { error: 'Element not found.' };
+        try {
+          el.scrollIntoView({ block: 'center', inline: 'center' });
+        } catch {
+          /* ignore */
+        }
         el.focus();
         return { focused: true };
       },
@@ -269,6 +279,13 @@ export const setCheckbox: ToolDefinition = {
       (selector: string, checked: boolean) => {
         const el = document.querySelector<HTMLInputElement>(selector);
         if (!el) return { error: 'Element not found.' };
+        try {
+          el.scrollIntoView({ block: 'center', inline: 'center' });
+        } catch {
+          /* ignore */
+        }
+        // Clicking toggles state and fires the change event that frameworks
+        // listen for — only click when a change is actually needed.
         if (el.checked !== checked) el.click();
         return { checked: el.checked };
       },
@@ -366,7 +383,10 @@ export const getDropdownOptions: ToolDefinition = {
 export const pressKey: ToolDefinition = {
   name: 'press_key',
   description:
-    'Dispatch a keyboard key (Enter, Tab, Escape, ArrowDown, etc.) to the focused element.',
+    'Dispatch a keyboard key (Enter, Tab, Escape, ArrowDown, etc.) to the focused element. ' +
+    'Note: these are synthetic (untrusted) events — handlers that read the key react, but ' +
+    'browser default actions (e.g. submitting a form on Enter) may not fire. For trusted key ' +
+    'events that drive default actions, use debugger_key.',
   parameters: {
     type: 'object',
     properties: {
@@ -395,8 +415,41 @@ export const pressKey: ToolDefinition = {
           ? document.querySelector<HTMLElement>(selector)
           : document.activeElement;
         if (!el) return { error: 'No target element.' };
+        if (el instanceof HTMLElement && selector) {
+          try {
+            el.scrollIntoView({ block: 'center', inline: 'center' });
+          } catch {
+            /* ignore */
+          }
+          el.focus();
+        }
+        // Populate code/keyCode too — many handlers read those rather than `key`.
+        const named: Record<string, { code: string; keyCode: number }> = {
+          Enter: { code: 'Enter', keyCode: 13 },
+          Tab: { code: 'Tab', keyCode: 9 },
+          Escape: { code: 'Escape', keyCode: 27 },
+          Backspace: { code: 'Backspace', keyCode: 8 },
+          Delete: { code: 'Delete', keyCode: 46 },
+          ArrowUp: { code: 'ArrowUp', keyCode: 38 },
+          ArrowDown: { code: 'ArrowDown', keyCode: 40 },
+          ArrowLeft: { code: 'ArrowLeft', keyCode: 37 },
+          ArrowRight: { code: 'ArrowRight', keyCode: 39 },
+          ' ': { code: 'Space', keyCode: 32 },
+        };
+        const meta = named[key] ?? {
+          code: key.length === 1 ? `Key${key.toUpperCase()}` : key,
+          keyCode: key.length === 1 ? key.toUpperCase().charCodeAt(0) : 0,
+        };
+        const init: KeyboardEventInit = {
+          key,
+          code: meta.code,
+          keyCode: meta.keyCode,
+          which: meta.keyCode,
+          bubbles: true,
+          cancelable: true,
+        } as KeyboardEventInit;
         for (const type of ['keydown', 'keypress', 'keyup']) {
-          el.dispatchEvent(new KeyboardEvent(type, { key, bubbles: true }));
+          el.dispatchEvent(new KeyboardEvent(type, init));
         }
         return { pressed: key };
       },
@@ -433,8 +486,21 @@ export const clearInput: ToolDefinition = {
       (selector: string) => {
         const el = document.querySelector<HTMLInputElement | HTMLTextAreaElement>(selector);
         if (!el) return { error: 'Element not found.' };
-        el.value = '';
-        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.focus();
+        // Use the native setter so React/Vue-controlled inputs register the clear
+        // (a plain `el.value = ''` is bypassed by the framework's own value setter).
+        const proto =
+          el instanceof HTMLTextAreaElement
+            ? HTMLTextAreaElement.prototype
+            : HTMLInputElement.prototype;
+        const descriptor = Object.getOwnPropertyDescriptor(proto, 'value');
+        if (descriptor && descriptor.set) {
+          descriptor.set.call(el, '');
+        } else {
+          el.value = '';
+        }
+        el.dispatchEvent(new InputEvent('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
         return { cleared: true };
       },
       [String(args.selector)],
