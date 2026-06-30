@@ -21,6 +21,7 @@ interface UseChatReturn {
   deleteMessage: (messageId: string) => Promise<void>;
   togglePin: (messageId: string, pinned: boolean) => Promise<void>;
   forkFrom: (messageId: string) => Promise<string | null>;
+  respondToAsk: (answers: Record<string, unknown>) => void;
   runStart: number;
   runTokens: number;
 }
@@ -257,6 +258,11 @@ export function useChat(conversationId: string): UseChatReturn {
     openRef.current = false;
   };
 
+  const respondToAsk = (answers: Record<string, unknown>) => {
+    send({ type: 'ask_user_response', answers });
+    setAsk(null);
+  };
+
   const forkFrom = async (messageId: string) => {
     if (running) return null;
     const { forkConversation } = await import('@/conversations/manager');
@@ -278,6 +284,7 @@ export function useChat(conversationId: string): UseChatReturn {
     deleteMessage,
     togglePin,
     forkFrom,
+    respondToAsk,
     runStart,
     runTokens,
   };

@@ -48,6 +48,7 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
     deleteMessage,
     togglePin,
     forkFrom,
+    respondToAsk,
     runStart,
     runTokens,
   } = useChat(conversationId);
@@ -277,10 +278,7 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
       {ask && (
         <AskUserWidget
           payload={ask}
-          onSubmit={(answers) => {
-            // TODO: wire up to useChat
-            console.log('Ask user response:', answers);
-          }}
+          onSubmit={(answers) => respondToAsk(answers)}
         />
       )}
 

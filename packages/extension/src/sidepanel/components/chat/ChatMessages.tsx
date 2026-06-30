@@ -27,9 +27,6 @@ export function ChatMessages({
   lines,
   running,
   scrollRef,
-  onPin,
-  onDelete,
-  onFork,
   onRetry,
   errored,
 }: Props) {

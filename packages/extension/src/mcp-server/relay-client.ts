@@ -127,10 +127,48 @@ async function handleRpc(method: string, params: Record<string, unknown>): Promi
     } else {
       result = await executeTool(name, args, ctx);
     }
-    return { content: [{ type: 'text', text: JSON.stringify(result) }] };
+    return { content: buildContent(result) };
   }
 
   throw new Error(`Unknown RPC method: ${method}`);
+}
+
+type McpContent =
+  | { type: 'text'; text: string }
+  | { type: 'image'; data: string; mimeType: string };
+
+/** Split a `data:image/...;base64,...` URL into an MCP image block, or null. */
+function dataUrlToImage(value: unknown): McpContent | null {
+  if (typeof value !== 'string' || !value.startsWith('data:image/')) return null;
+  const comma = value.indexOf(',');
+  const semicolon = value.indexOf(';');
+  if (comma < 0 || semicolon < 0 || semicolon > comma) return null;
+  return { type: 'image', mimeType: value.slice(5, semicolon), data: value.slice(comma + 1) };
+}
+
+/**
+ * Format a tool result into MCP content blocks. Screenshot-style results
+ * (a data-URL string, or an object with a `dataUrl` field) become native
+ * `image` blocks so vision-capable clients render them; everything else is
+ * serialized as a text block, exactly as before.
+ */
+function buildContent(result: unknown): McpContent[] {
+  const direct = dataUrlToImage(result);
+  if (direct) return [direct];
+
+  if (result && typeof result === 'object') {
+    const record = result as Record<string, unknown>;
+    const image = dataUrlToImage(record.dataUrl);
+    if (image) {
+      // Keep any sibling metadata (e.g. `note`) as an accompanying text block.
+      const { dataUrl: _omit, ...rest } = record;
+      const blocks: McpContent[] = [image];
+      if (Object.keys(rest).length > 0) blocks.push({ type: 'text', text: JSON.stringify(rest) });
+      return blocks;
+    }
+  }
+
+  return [{ type: 'text', text: JSON.stringify(result) }];
 }
 
 export function isConnected(): boolean {

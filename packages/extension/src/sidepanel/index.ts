@@ -1,7 +1,7 @@
 /** Organized exports for sidepanel components and utilities */
 
 // Components
-export { ChatTab } from './tabs/ChatTab.new';
+export { ChatTab } from './tabs/ChatTab';
 export { ChatMessages } from './components/chat/ChatMessages';
 export { ChatInput } from './components/chat/ChatInput';
 export { RunStatusBar } from './components/chat/RunStatusBar';

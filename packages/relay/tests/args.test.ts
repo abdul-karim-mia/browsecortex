@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { validatePort, tokenMatches } from '../src/index.js';
+import { validatePort, validateSeconds, tokenMatches } from '../src/index.js';
 
 describe('validatePort', () => {
   test('accepts valid ports', () => {
@@ -20,6 +20,22 @@ describe('validatePort', () => {
     expect(validatePort('80.5')).toBeNull();
     expect(validatePort('')).toBeNull();
     expect(validatePort(undefined)).toBeNull();
+  });
+});
+
+describe('validateSeconds', () => {
+  test('accepts zero and positive integers', () => {
+    expect(validateSeconds('0')).toBe(0);
+    expect(validateSeconds('30')).toBe(30);
+    expect(validateSeconds('3600')).toBe(3600);
+  });
+
+  test('rejects negative, non-integer, and missing values', () => {
+    expect(validateSeconds('-1')).toBeNull();
+    expect(validateSeconds('1.5')).toBeNull();
+    expect(validateSeconds('abc')).toBeNull();
+    expect(validateSeconds('')).toBeNull();
+    expect(validateSeconds(undefined)).toBeNull();
   });
 });
 

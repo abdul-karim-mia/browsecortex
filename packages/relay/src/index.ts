@@ -69,7 +69,7 @@ export function validatePort(raw: string | undefined): number | null {
 
 /** Parse a non-negative integer seconds value; returns null if invalid. */
 export function validateSeconds(raw: string | undefined): number | null {
-  if (raw === undefined) return null;
+  if (raw === undefined || raw.trim() === '') return null;
   const n = Number(raw);
   if (!Number.isInteger(n) || n < 0) return null;
   return n;
