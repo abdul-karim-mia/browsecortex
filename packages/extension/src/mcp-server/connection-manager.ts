@@ -78,7 +78,7 @@ async function checkRelayHealth(port: number): Promise<boolean> {
     });
     clearTimeout(timeout);
     return res.ok || res.status === 401; // 401 = relay is up but token wrong
-  } catch (e) {
+  } catch {
     return false;
   }
 }

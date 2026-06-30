@@ -332,7 +332,7 @@ export const waitForCondition: ToolDefinition = {
           try {
             const res = eval(script);
             if (res) return { ok: true };
-          } catch (e) {
+          } catch {
             // Ignore syntax/runtime errors during polling
           }
           await new Promise((r) => setTimeout(r, 250));
@@ -398,7 +398,7 @@ export const waitForUrl: ToolDefinition = {
         if (tab.url && matches(tab.url)) {
           return { ok: true, url: tab.url };
         }
-      } catch (e) {
+      } catch {
         // Tab might be loading or closed
       }
       await new Promise((r) => setTimeout(r, 250));

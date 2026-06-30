@@ -196,7 +196,7 @@ export async function readFile(
   if (options?.encoding === 'base64') {
     try {
       content = btoa(content);
-    } catch (err) {
+    } catch {
       content = bytesToBase64(new TextEncoder().encode(content));
     }
   }

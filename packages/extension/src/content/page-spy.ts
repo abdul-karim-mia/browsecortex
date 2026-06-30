@@ -116,7 +116,7 @@
         requests.shift();
       }
 
-      const fetchPromise = originalFetch.apply(this, arguments as any);
+      const fetchPromise = originalFetch.call(this, input, init);
 
       // Async response body/metadata capture without blocking client fetch
       fetchPromise.then(async (response) => {
@@ -167,16 +167,20 @@
   const originalXHRSend = XMLHttpRequest.prototype.send;
 
   if (typeof originalXHROpen === 'function' && typeof originalXHRSend === 'function') {
-    XMLHttpRequest.prototype.open = function (this: any, method: string, url: string | URL) {
+    XMLHttpRequest.prototype.open = function (
+      this: any,
+      method: string,
+      url: string | URL,
+      ...rest: any[]
+    ) {
       this.__method = method;
       this.__url = typeof url === 'string' ? url : (url as URL).href;
-      return originalXHROpen.apply(this, arguments as any);
+      return originalXHROpen.apply(this, [method, url, ...rest] as any);
     } as any;
 
     XMLHttpRequest.prototype.send = function (this: any, body?: any) {
-      const xhr = this;
-      const method = xhr.__method || 'GET';
-      const url = xhr.__url || '';
+      const method = this.__method || 'GET';
+      const url = this.__url || '';
       let requestBodyPromise: Promise<string> | undefined;
 
       try {
@@ -210,10 +214,10 @@
         requests.shift();
       }
 
-      xhr.addEventListener('load', () => {
-        reqEntry.status = xhr.status;
+      this.addEventListener('load', () => {
+        reqEntry.status = this.status;
         try {
-          const contentType = xhr.getResponseHeader('content-type') || '';
+          const contentType = this.getResponseHeader('content-type') || '';
           reqEntry.contentType = contentType;
 
           const isText = contentType && (
@@ -225,10 +229,10 @@
           );
 
           if (isText) {
-            if (!xhr.responseType || xhr.responseType === 'text') {
-              reqEntry.responseBody = (xhr.responseText || '').slice(0, 100000);
-            } else if (xhr.responseType === 'json') {
-              reqEntry.responseBody = JSON.stringify(xhr.response).slice(0, 100000);
+            if (!this.responseType || this.responseType === 'text') {
+              reqEntry.responseBody = (this.responseText || '').slice(0, 100000);
+            } else if (this.responseType === 'json') {
+              reqEntry.responseBody = JSON.stringify(this.response).slice(0, 100000);
             }
           }
         } catch {
@@ -242,7 +246,7 @@
         }).catch(() => {});
       }
 
-      return originalXHRSend.apply(this, arguments as any);
+      return originalXHRSend.call(this, body);
     };
   }
 })();

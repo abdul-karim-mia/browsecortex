@@ -16,7 +16,7 @@ async function resolveTabId(args: Record<string, unknown>, getActive: () => Prom
 function smartTruncate(text: string, limit: number): string {
   if (text.length <= limit) return text;
 
-  let truncated = text.slice(0, limit);
+  const truncated = text.slice(0, limit);
 
   // Try to find a complete sentence boundary within 80% of limit
   const sentenceThreshold = limit * 0.8;
