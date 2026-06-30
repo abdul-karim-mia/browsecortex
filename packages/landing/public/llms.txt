@@ -1,0 +1,200 @@
+# BrowseCortex: Open Source AI Browser Assistant — Technical Specification
+
+An open-source Chrome extension giving you a persistent AI companion with autonomous browser control. Bring your own AI provider (Google Gemini, OpenAI, Groq, Mistral, Ollama) and let the agent plan, navigate, and complete complex web tasks on your behalf.
+
+- **Website**: https://browsecortex.goakm.in
+- **Repository**: https://github.com/abdul-karim-mia/browsecortex
+- **Author**: Abdul karim mia
+- **License**: MIT License
+
+---
+
+## 1. Core Architecture
+
+### 1.1 The Agent Loop
+BrowseCortex runs a stateful reasoning and execution loop in a Service Worker background script:
+1. **Goal Analysis**: The user inputs a goal in the sidepanel (or via an MCP command).
+2. **Tools Registration**: The agent aggregates standard built-in tools and connected MCP tools into a schema definition.
+3. **Execution Decision (Plan)**: The LLM processes the history, determines the next tool to run, and defines its parameters.
+4. **Execution (Act)**: The extension performs the tool call synchronously or asynchronously with custom timeout limits.
+5. **Observation (Observe)**: The output of the tool (DOM elements, scraping results, file changes) is fed back into the context history.
+6. **Compaction**: When the conversation history approaches model limits, older turns are summarized into a context-preserving compaction note.
+
+### 1.2 Page Annotator (`page-spy`)
+To bypass expensive HTML scraping:
+- Injects a `page-spy.ts` content script that assigns a unique, high-contrast visual badge `[n]` to all interactive elements (links, inputs, buttons, select tags).
+- Returns a structured mapping containing the element's type, text, name, and tag.
+- The AI targets elements via simple ID references (e.g. `click_element({ annotation_id: 4 })`), allowing rapid, token-efficient DOM navigation.
+
+### 1.3 Sandboxed Filesystem (VFS)
+A secure virtual file system utilizing IndexedDB:
+- Files are isolated per conversation.
+- The agent can read, write, append, search, list, move, and zip files.
+- To transfer files from the sandbox to the user's local disk, the agent triggers `fs_export`, copying the file to the browser's standard Downloads folder.
+
+---
+
+## 2. In-Page Assist Features
+
+Users can toggle these assistant features under the **Features** settings tab:
+
+### 2.1 Highlight Toolbar
+- **Trigger**: Highlight text on any web page.
+- **Actions**: Rewrite for clarity, translate (25 languages), adjust tone, expand details, or read aloud using local text-to-speech. Includes a "Replace" button inside editable inputs.
+
+### 2.2 Inline Assist (`Ctrl+Shift+K`)
+- **Trigger**: Place the cursor inside any text field or comment box and press `Ctrl+Shift+K` (on macOS, use `Ctrl`, not `Cmd`).
+- **Actions**: Enter custom text prompts, load saved skill templates, and insert or replace text in place.
+
+### 2.3 Floating Bubble
+- **Trigger**: Click the floating brain icon in the bottom-right corner of any web page.
+- **Actions**: Instantly summarizes the current article into a structured TL;DR and key points.
+
+### 2.4 Quick AI Email Reply
+- **Trigger**: Inline buttons in Gmail or a floating pill in other webmail providers.
+- **Supported Hosts**: Gmail, Outlook, Proton Mail, iCloud Mail, Zoho Mail, Neo Mail, Fastmail, Tutanota, Mailfence, and Openprovider Mail.
+- **Action**: Reads the email thread history and drafts a contextual response.
+
+---
+
+## 3. Specialized Subagents
+
+BrowseCortex can spawn sandboxed subagents to delegate isolated tasks (stripped of the `spawn_agent` tool to prevent infinite recursion):
+
+* **general**: General-purpose agent with full tools permission. Used for self-contained sub-tasks to avoid main context token bloat.
+* **researcher**: Read-only investigator. Allowed tools: `navigate_to`, `open_tab`, `read_page_content`, `get_page_links`, `get_page_metadata`, `extract_table_data`, `find_text_on_page`, `scroll_page`, `screenshot_tab`, `analyze_screenshot`. Disallowed from clicking, typing, submitting forms, or changing tabs/files.
+* **summarizer**: Local content extractor. Read-only tools scoped strictly to the active page: `read_page_content`, `get_page_metadata`, `extract_table_data`, `find_text_on_page`. Cannot navigate away.
+* **form_filler**: Form automation agent. Allowed tools: `get_form_fields`, `get_dropdown_options`, `fill_input`, `clear_input`, `set_checkbox`, `select_dropdown`, `click_element`, `submit_form`, `wait_for_page_load`, `wait_for_network_idle`. Scoped strictly to form elements on the current tab.
+
+---
+
+## 4. Model Context Protocol (MCP)
+
+### 4.1 Consuming MCP Servers
+- Hook up external HTTP/SSE MCP servers under Settings → **MCP**.
+- Custom endpoints are queried dynamically; tools are namespaced in the format: `mcp__<server_name>__<tool_name>`.
+- Individual tools or entire servers can be toggled on or off inside the control tab.
+
+### 4.2 Exposing BrowseCortex as an MCP Server (Relay)
+- Allows external command-line agents (such as Claude Code) to control your active browser.
+- **Step 1**: Toggle **Enable MCP Server** in Settings → **MCP Server** and copy the access token.
+- **Step 2**: Start the WebSocket relay server locally:
+  `npx browsecortex-relay --port 7822 --token <your-token>`
+- **Step 3**: Point your external agent configuration at:
+  `http://localhost:7822/sse`
+- **Security**: The relay blocks destructive tools and arbitrary code actions (like `run_javascript`) if the **Safe tools only** toggle is enabled.
+
+---
+
+## 5. Built-in Tools Reference
+
+BrowseCortex registers 105 tools. The key functions are structured below:
+
+### 5.1 Navigation Tools
+- `navigate_to(url, tab_id?)`: Navigates to a URL. Auto-normalizes domains and redirects to HTTPS.
+- `go_back(tab_id?)`: Goes back in tab history (uses injected scripts for worker stability).
+- `go_forward(tab_id?)`: Goes forward in tab history.
+- `wait_for_page_load(tab_id?)`: Pauses execution until document readyState resolves to complete.
+- `wait_for_network_idle(tab_id?, timeout?)`: Halts until page network requests subside (~1s).
+
+### 5.2 Browser Tab Tools
+- `open_tab(url)`: Opens a URL in a new tab.
+- `close_tab(tab_id)`: Closes a browser tab (requests confirmation for user tabs).
+- `get_active_tab()`: Returns `id`, `title`, and `url` of the active viewport.
+- `get_all_tabs()`: Lists all open tabs across windows.
+- `switch_to_tab(tab_id)`: Switches focus to a tab.
+- `group_tabs(tab_ids, title?, color?)`: Groups tabs together.
+- `ungroup_tabs(tab_ids)`: Removes tabs from groups.
+- `pin_tab(tab_id, pinned)`: Pins or unpins a tab.
+
+### 5.3 Page Read & Scraping Tools
+- `read_page_content(tab_id?)`: Strips scripts/CSS, returning semantic page text.
+- `get_page_links(tab_id?)`: Extracts up to 100 anchor tags with labels and hrefs.
+- `get_page_metadata(tab_id?)`: Collects Open Graph, Twitter Card, and JSON-LD metadata.
+- `extract_table_data(tab_id?, selector?)`: Parses HTML tables into structured row arrays (max 5 tables).
+- `find_text_on_page(text, tab_id?)`: Checks for substring existence and returns context sentences.
+- `get_selected_text()`: Grabs text the user highlighted with their cursor.
+
+### 5.4 Page Interaction Tools
+- `annotate_page(tab_id?)`: Numbers interactive components on the active viewport.
+- `clear_annotations(tab_id?)`: Clears annotation badges.
+- `click_element(annotation_id?, selector?, text?, tab_id?)`: Click elements using annotations, selectors, or text.
+- `fill_input(selector, value, tab_id?)`: Enters text into inputs.
+- `clear_input(selector, tab_id?)`: Resets an input element.
+- `select_dropdown(selector, value, tab_id?)`: Selects select options.
+- `submit_form(selector, tab_id?)`: Submits forms.
+
+### 5.5 DevTools Debugger Tools
+- `debugger_click(x, y, button?, click_count?, tab_id?)`: view-coordinate click injection using Chrome DevTools Protocol. Perfect for canvases, maps, or tricky buttons.
+- `debugger_type(text, tab_id?)`: CDP-based text insertion. Essential for CodeMirror, Monaco, and other rich SPA code editors that bypass standard DOM setters.
+- `debugger_key(key, modifiers?, tab_id?)`: CDP keypress triggers (e.g. Enter, Backspace, Arrow keys).
+- `upload_file(selector, file_path, tab_id?)`: CDP file input automation.
+
+### 5.6 Filesystem (VFS) Tools
+- `fs_create_file(path, content?)`: Creates a sandboxed text file.
+- `fs_read_file(path)`: Reads a sandboxed file.
+- `fs_update_file(path, content, append?)`: Writes or appends to a sandboxed file.
+- `fs_delete_file(path)`: Deletes files or folders recursively.
+- `fs_create_zip(zip_path, source_prefix)`: Packs folders into a ZIP file.
+- `fs_export(path, filename)`: Triggers a browser download of the virtual file.
+- `fs_list(path)`: Lists directory contents.
+
+### 5.7 OCR Tools
+- `ocr_tesseract(image?, selector?, tab_id?)`: Locally run offline OCR using Tesseract.js (runs inside offscreen documents).
+- `ocr_native(image?, selector?, tab_id?)`: Hardware-accelerated OCR using the browser's native TextDetector API.
+
+### 5.8 Memory & Caching Tools
+- `save_memory(fact, type)`: Persists facts (user, agent, global, conversation) across chat sessions.
+- `search_memories(query)`: Search saved memories.
+- `cache_content(key, value, tab_id?)`: Caches string blocks (max 10k chars, 1h TTL) across tab navigations.
+- `get_cached_content(key?, tab_id?)`: Retrieves cached items.
+
+### 5.9 Task & Loop Tools
+- `create_task(title, subtasks?)`: Renders a checkable checklist in the chat UI.
+- `update_task(id, status, notes?)`: Marks subtasks complete and changes status.
+- `spawn_agent(agent_type, task)`: Spawns subagents.
+- `ask_user(questions)`: Prompts the user for details (badge notification is set to `!`).
+- `run_javascript(code)`: Injects custom JS scripts into active pages.
+- `screenshot_tab(tab_id?)`: Captures viewport screenshots.
+- `create_backup(password)`: Generates password-encrypted configuration backup downloads.
+
+---
+
+## 6. Custom Skills Format
+
+Skills are written as markdown files with instructions that BrowseCortex substitutes and parses:
+
+```markdown
+# [Skill Name]
+
+> [Brief subtitle summary]
+
+## Description
+[Expanded details detailing what this skill accomplishes]
+
+## Variables
+- `variable_name` — [variable description, e.g. target path]
+
+## Instructions
+1. Navigate to the page with navigate_to.
+2. Search for {{variable_name}} details.
+3. Write results to a file with fs_create_file.
+```
+
+- When loaded via `get_skill`, the agent substitutes variables formatted in double-braces `{{variable_name}}` with prompt values.
+- Shared skill registries require an `index.json` schema detailing:
+  ```json
+  {
+    "skills": [
+      {
+        "id": "skill-id",
+        "name": "Skill Name",
+        "path": "subfolder/skill.md",
+        "category": "workflows",
+        "author": "developer",
+        "version": "1.0",
+        "tags": ["automation"]
+      }
+    ]
+  }
+  ```

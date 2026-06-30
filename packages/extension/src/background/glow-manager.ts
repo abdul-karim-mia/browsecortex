@@ -4,17 +4,15 @@ import { log } from '@/log';
 export type AnimationState = 'idle' | 'thinking' | 'working' | 'error';
 
 let isAgentActive = false;
-let currentAnimationState: AnimationState = 'idle';
 let currentTabId: number | null = null;
 
 /**
  * Activate/deactivate agent and update glow state
  * @param active - Whether agent is active
- * @param state - Animation state (working, thinking, error)
+ * @param _state - Animation state (retained for API compatibility; glow state is driven by setAnimationState)
  */
-export function setAgentActive(active: boolean, state: AnimationState = 'working') {
+export function setAgentActive(active: boolean, _state: AnimationState = 'working') {
   isAgentActive = active;
-  currentAnimationState = active ? state : 'idle';
 
   if (!active) {
     clearGlow();
@@ -29,8 +27,6 @@ export function setAgentActive(active: boolean, state: AnimationState = 'working
  */
 export function setAnimationState(state: AnimationState) {
   if (!isAgentActive) return;
-
-  currentAnimationState = state;
 
   // Send state update to all active tabs
   if (currentTabId !== null) {

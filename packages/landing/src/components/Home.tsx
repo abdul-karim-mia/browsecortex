@@ -551,6 +551,65 @@ export function Home({ onNavigate, downloadUrl }: HomeProps) {
         </div>
       </section>
 
+      {/* Why & Use Cases Section */}
+      <section className="section-usecases">
+        <div className="container">
+          <div className="section-header-center">
+            <h2 className="section-title">Why BrowseCortex?</h2>
+            <p className="section-subtitle">
+              Who it is for, how it helps, and real-world sample use cases to kickstart your web automation pipeline.
+            </p>
+          </div>
+
+          <div className="usecases-grid">
+            {/* Card 1: Developers & AI Engineers */}
+            <div className="usecase-card glass hover-glow blue-tag">
+              <span className="usecase-tag">For Developers</span>
+              <h3>Streamline Agent Testing</h3>
+              <p>
+                Perfect for developers building web agents, scraping networks, or testing complex UI workflows. Connect your CLI client (like Claude Code) directly to your live Chrome profile using the WebSocket relay server to test interactions inside your real-world browsing sessions.
+              </p>
+              <div className="usecase-example">
+                <div className="usecase-example-title">Sample Use Case</div>
+                <div className="usecase-example-body">
+                  "Expose my browser to my CLI terminal agent, ask it to log into my staging app, and audit form validations."
+                </div>
+              </div>
+            </div>
+
+            {/* Card 2: Researchers & Analysts */}
+            <div className="usecase-card glass hover-glow">
+              <span className="usecase-tag">For Researchers</span>
+              <h3>Bypass Automation Hurdles</h3>
+              <p>
+                Traditional headless scrapers (Puppeteer, Selenium) are blocked by Cloudflare, logins, and CAPTCHAs. BrowseCortex runs inside your active user profile, leveraging existing sessions, cookies, and local credentials to aggregate and extract tables or data smoothly.
+              </p>
+              <div className="usecase-example">
+                <div className="usecase-example-title">Sample Use Case</div>
+                <div className="usecase-example-body">
+                  "Log in to LinkedIn, gather job listings matching my tech stack requirements, and save to a text spreadsheet."
+                </div>
+              </div>
+            </div>
+
+            {/* Card 3: Power Users */}
+            <div className="usecase-card glass hover-glow pink-tag">
+              <span className="usecase-tag">For Power Users</span>
+              <h3>No-Code Personal Skills</h3>
+              <p>
+                Write simple, text-based guides (Skills) to teach the AI assistant how to complete routine tasks. Let the agent automate form filling, text translations, summaries, and complex zipping or exports without writing single lines of code.
+              </p>
+              <div className="usecase-example">
+                <div className="usecase-example-title">Sample Use Case</div>
+                <div className="usecase-example-body">
+                  "Locate top tech meetups in SOMA this week, compile their locations into a text calendar file, and save it to Downloads."
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Advanced Core Capabilities Section */}
       <section className="section-capabilities">
         <div className="container">

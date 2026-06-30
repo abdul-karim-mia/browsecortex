@@ -89,7 +89,7 @@ export class ParticleSystem {
     });
   }
 
-  render(ctx: CanvasRenderingContext2D, w: number, h: number, enableTrails = true): void {
+  render(ctx: CanvasRenderingContext2D, _w: number, _h: number, enableTrails = true): void {
     // Render trails first (behind particles)
     if (enableTrails) {
       this.renderTrails(ctx);

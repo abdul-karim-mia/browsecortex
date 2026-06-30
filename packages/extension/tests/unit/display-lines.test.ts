@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { messagesToLines } from '@/sidepanel/displayLines';
+import { messagesToLines } from '@/sidepanel/utils/displayLines';
 import type { Message } from '@/types';
 
 function msg(partial: Partial<Message>): Message {

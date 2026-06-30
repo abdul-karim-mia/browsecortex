@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { renderMarkdown } from '@/sidepanel/markdown';
+import { renderMarkdown } from '@/sidepanel/utils/markdown';
 
 describe('renderMarkdown', () => {
   it('escapes HTML to prevent injection', () => {

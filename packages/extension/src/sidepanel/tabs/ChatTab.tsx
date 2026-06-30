@@ -28,9 +28,11 @@ export interface ChatControls {
 interface Props {
   conversationId: string;
   registerControls?: (controls: ChatControls | null) => void;
+  /** Switch the app to a newly-forked conversation (B8). */
+  onForked?: (newConversationId: string) => void;
 }
 
-export function ChatTab({ conversationId, registerControls }: Props) {
+export function ChatTab({ conversationId, registerControls, onForked }: Props) {
   // Extract chat logic into hook
   const {
     lines,
@@ -205,13 +207,18 @@ export function ChatTab({ conversationId, registerControls }: Props) {
         ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400'
         : 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400';
 
+  const handleFork = async (messageId: string) => {
+    const newId = await forkFrom(messageId);
+    if (newId) onForked?.(newId);
+  };
+
   const contextValue = {
     lines,
     running,
     conversationId,
     onPin: togglePin,
     onDelete: deleteMessage,
-    onFork: forkFrom,
+    onFork: handleFork,
   };
 
   return (

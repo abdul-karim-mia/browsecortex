@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Instruct AI Agents on where to find LLM documentation context
+Disallow: /dist/
+
+# Sitemap location
+Sitemap: https://browsecortex.goakm.in/sitemap.xml
