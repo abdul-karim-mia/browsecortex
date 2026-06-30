@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 import { getConfig, regenerateToken, setConfig, type McpServerConfig } from '@/mcp-server/config';
-import { getRelayCommand, checkRelayStatus, detectOS } from '@/mcp-server/launcher';
+import { getRelayCommand } from '@/mcp-server/launcher';
 import {
   subscribeToConnectionState,
   startMonitoring,
@@ -53,6 +53,22 @@ export function McpServerTab() {
   };
 
   const relayCmd = getRelayCommand(cfg.port, cfg.token);
+
+  // Zero-config client setup: the stdio bridge auto-spawns the relay, so the
+  // user only pastes this into their MCP client (Claude Desktop, Cursor, …).
+  const mcpClientConfig = JSON.stringify(
+    {
+      mcpServers: {
+        browsecortex: {
+          command: 'npx',
+          args: ['browsecortex-mcp', '--token', cfg.token, '--port', String(cfg.port)],
+        },
+      },
+    },
+    null,
+    2,
+  );
+  const streamableUrl = `http://localhost:${cfg.port}/mcp`;
 
   const statusEmojis: Record<string, string> = {
     disabled: '⚪',
@@ -119,6 +135,35 @@ export function McpServerTab() {
             )}
           </div>
 
+          {/* Recommended: zero-config stdio bridge (auto-starts the relay) */}
+          <div class="rounded-lg border border-blue-300 bg-white p-3 dark:border-blue-800 dark:bg-gray-900">
+            <div class="text-xs font-semibold text-blue-900 dark:text-blue-100">
+              ⭐ Recommended — one-command setup
+            </div>
+            <p class="mt-1 text-xs text-gray-600 dark:text-gray-300">
+              Paste this into your MCP client config (Claude Desktop, Cursor, …). The{' '}
+              <code class="rounded bg-gray-100 px-1 dark:bg-gray-800">browsecortex-mcp</code> bridge
+              auto-starts the relay for you — no separate terminal command needed (Node.js 20+
+              required).
+            </p>
+            <div class="mt-2 flex items-start gap-2">
+              <pre class="flex-1 overflow-x-auto rounded bg-gray-100 px-2 py-2 text-xs dark:bg-gray-800 font-mono">
+                {mcpClientConfig}
+              </pre>
+              <button
+                type="button"
+                onClick={() => copy(mcpClientConfig, 'mcpjson')}
+                class="whitespace-nowrap rounded bg-blue-500 px-2 py-1 text-xs font-semibold text-white hover:bg-blue-600"
+              >
+                {copied === 'mcpjson' ? '✓ Copied' : 'Copy'}
+              </button>
+            </div>
+          </div>
+
+          <div class="pt-1 text-xs font-semibold text-blue-900 dark:text-blue-100">
+            Advanced — run the relay manually instead:
+          </div>
+
           {/* Step 1 */}
           <div class="flex gap-3">
             <div class="flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white flex-shrink-0">
@@ -166,7 +211,26 @@ export function McpServerTab() {
               <div class="text-xs font-semibold">Configure your agent</div>
               <div class="mt-1 space-y-2">
                 <div>
-                  <div class="text-xs text-gray-600 dark:text-gray-300 mb-1">MCP SSE endpoint:</div>
+                  <div class="text-xs text-gray-600 dark:text-gray-300 mb-1">
+                    StreamableHTTP endpoint <span class="text-green-600 dark:text-green-400">(recommended)</span>:
+                  </div>
+                  <div class="flex gap-2 items-center">
+                    <code class="flex-1 truncate rounded bg-gray-100 px-2 py-1 text-xs dark:bg-gray-800 font-mono">
+                      {streamableUrl}
+                    </code>
+                    <button
+                      type="button"
+                      onClick={() => copy(streamableUrl, 'mcp')}
+                      class="text-xs text-blue-600 hover:underline dark:text-blue-400"
+                    >
+                      {copied === 'mcp' ? '✓ Copied' : 'Copy'}
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <div class="text-xs text-gray-600 dark:text-gray-300 mb-1">
+                    MCP SSE endpoint <span class="text-gray-400">(legacy)</span>:
+                  </div>
                   <div class="flex gap-2 items-center">
                     <code class="flex-1 truncate rounded bg-gray-100 px-2 py-1 text-xs dark:bg-gray-800 font-mono">
                       http://localhost:{cfg.port}/sse

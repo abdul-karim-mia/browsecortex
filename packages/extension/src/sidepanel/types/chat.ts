@@ -25,12 +25,19 @@ export interface ChatState {
   atBottom: boolean;
 }
 
+export interface Question {
+  id?: string;
+  type?: 'text' | 'single_select' | 'multi_select' | 'confirm';
+  question: string;
+  placeholder?: string;
+  options?: string[];
+  allow_custom?: boolean;
+  required?: boolean;
+}
+
 export interface AskUserPayload {
-  [key: string]: {
-    type: string;
-    question: string;
-    options?: Array<{ label: string; value: unknown }>;
-  };
+  message?: string;
+  questions: Question[];
 }
 
 export interface Attachment {

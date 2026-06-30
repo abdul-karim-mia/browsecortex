@@ -142,7 +142,7 @@ export function useChat(conversationId: string): UseChatReturn {
       closeAssistantStream();
       setThinking(false);
       closeThinkingLine();
-      setAsk(msg.questions as AskUserPayload);
+      setAsk(msg.questions as unknown as AskUserPayload);
     } else if (msg.type === 'done') {
       setRunning(false);
       setThinking(false);

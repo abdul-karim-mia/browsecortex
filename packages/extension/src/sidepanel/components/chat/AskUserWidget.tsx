@@ -1,16 +1,5 @@
 import { useState } from 'preact/hooks';
-
-/** Question shape from the ask_user tool (PLAN §18). id/type are optional in
- * practice — models sometimes omit them despite the schema. */
-export interface Question {
-  id?: string;
-  type?: 'text' | 'single_select' | 'multi_select' | 'confirm';
-  question: string;
-  placeholder?: string;
-  options?: string[];
-  allow_custom?: boolean;
-  required?: boolean;
-}
+import type { AskUserPayload } from '../../types/chat';
 
 /** Slug a question into a short, stable answer key. */
 function slug(text: string): string {
@@ -19,11 +8,6 @@ function slug(text: string): string {
     .replace(/[^a-z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '')
     .slice(0, 40);
-}
-
-export interface AskUserPayload {
-  message?: string;
-  questions: Question[];
 }
 
 interface Props {

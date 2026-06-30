@@ -5,7 +5,7 @@ import { Icon } from '@/components/Icon';
 import { MessageBubble } from '../message/MessageBubble';
 import { WorkingBlock } from '../working/WorkingBlock';
 import { t } from '@/i18n';
-import type { ChatLine, Block } from '../../types/chat';
+import type { ChatLine } from '../../types/chat';
 import { groupLines } from '../../utils/displayLines';
 import { useAutoScroll } from '../../hooks/useAutoScroll';
 
