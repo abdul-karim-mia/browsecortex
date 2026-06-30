@@ -64,6 +64,8 @@ export function Home({ onNavigate, downloadUrl }: HomeProps) {
     fetchStats();
   }, []);
 
+
+
   // Simulator sequence steps
   const simulationSequence: SimStep[] = [
     {
@@ -269,6 +271,25 @@ export function Home({ onNavigate, downloadUrl }: HomeProps) {
     <div>
       {/* Hero Section */}
       <section className="section-hero">
+        {/* Layer 1: Ambient radial blobs */}
+        <div className="hero-blob-container" aria-hidden="true">
+          <div className="hero-blob-1"></div>
+          <div className="hero-blob-2"></div>
+          <div className="hero-blob-3"></div>
+        </div>
+
+        {/* Layer 2: Concentric ripple animation */}
+        <div className="hero-ripple-container" aria-hidden="true">
+          <div className="hero-ripple-circle circle-1"></div>
+          <div className="hero-ripple-circle circle-2"></div>
+          <div className="hero-ripple-circle circle-3"></div>
+          <div className="hero-ripple-circle circle-4"></div>
+          <div className="hero-ripple-circle circle-5"></div>
+          <div className="hero-ripple-circle circle-6"></div>
+          <div className="hero-ripple-circle circle-7"></div>
+          <div className="hero-ripple-circle circle-8"></div>
+        </div>
+
         <div className="container hero-container">
           <div className="hero-text-content">
             <div className="badge-container">
