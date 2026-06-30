@@ -1,6 +1,7 @@
 import { renderMarkdown } from '../../utils/markdown';
 import { MessageActions } from './MessageActions';
 import { useChatContext } from '../../context/ChatContext';
+import { Icon } from '@/components/Icon';
 import type { ChatLine } from '../../types/chat';
 
 interface Props {

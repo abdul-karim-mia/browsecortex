@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { ServerMessage } from '../types/protocol';
-import type { ChatLine, AskUserPayload, Attachment, ChatState } from '../types/chat';
+import type { ChatLine, AskUserPayload, Attachment } from '../types/chat';
 import { usePort } from './usePort';
 import { messagesToLines } from '../utils/displayLines';
 import { Storage } from '@/storage';

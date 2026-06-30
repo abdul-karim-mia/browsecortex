@@ -27,7 +27,7 @@ export { renderMarkdown } from './utils/markdown';
 export { highlightCode } from './utils/highlighter';
 
 // Types
-export type { ChatLine, Block, ChatState, Attachment } from './types/chat';
+export type { ChatLine, ChatState, Attachment } from './types/chat';
 export type { ClientMessage, ServerMessage, ToolCall } from './types/protocol';
 
 // Context

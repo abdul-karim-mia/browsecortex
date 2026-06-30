@@ -320,13 +320,11 @@ chrome.runtime.onConnect.addListener((port) => {
         const history = await getApiHistory(msg.conversationId);
 
         // Wrap emit to automatically update glow state based on agent events
-        let hasToolCalls = false;
         const emitWithGlowTracking = (msg: ServerMessage) => {
           // Update glow state based on event type
           if (msg.type === 'reasoning') {
             setAnimationState('thinking');
           } else if (msg.type === 'tool_call') {
-            hasToolCalls = true;
             setAnimationState('working');
           } else if (msg.type === 'done') {
             // Don't disable glow yet - let the finally block handle it

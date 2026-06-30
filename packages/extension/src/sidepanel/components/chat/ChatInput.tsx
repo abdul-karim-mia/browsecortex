@@ -5,8 +5,6 @@ import { Icon } from '@/components/Icon';
 import { t } from '@/i18n';
 import type { Attachment } from '../../types/chat';
 import type { Settings } from '@/types';
-import { ModelPickerPopup } from '../modals/ModelPickerPopup';
-import { ModePickerPopup } from '../modals/ModePickerPopup';
 
 interface Props {
   input: string;
@@ -39,7 +37,6 @@ export function ChatInput({
   running,
   connected,
   settings,
-  onSettingsChange,
   modelSupportsThinking,
   textareaRef,
   dragOver,

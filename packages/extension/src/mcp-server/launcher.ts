@@ -82,8 +82,8 @@ export async function checkRelayStatus(port: number): Promise<boolean> {
  * Will be implemented in Phase 3 with host app support.
  */
 export async function launchRelayNative(
-  port: number,
-  token: string,
+  _port: number,
+  _token: string,
 ): Promise<RelayStatus> {
   // Placeholder for Phase 3
   // Will use chrome.runtime.connectNative('browsecortex_relay_launcher')

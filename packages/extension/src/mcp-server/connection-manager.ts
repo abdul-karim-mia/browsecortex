@@ -7,7 +7,7 @@
  * - Auto-recovery suggestions
  */
 
-import { getConfig, type McpServerConfig } from './config';
+import { getConfig } from './config';
 import { log } from '@/log';
 
 export type ConnectionStatus =

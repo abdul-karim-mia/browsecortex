@@ -24,6 +24,6 @@ export type ServerMessage =
   | { type: 'reasoning_done'; ms: number }
   | { type: 'tool_call'; call: ToolCall }
   | { type: 'tool_result'; toolCallId: string; content: string; isError?: boolean }
-  | { type: 'ask_user'; questions: Record<string, unknown> }
+  | { type: 'ask_user'; questions: unknown }
   | { type: 'done' }
   | { type: 'error'; message: string };

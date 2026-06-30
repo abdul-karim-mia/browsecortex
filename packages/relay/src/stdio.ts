@@ -24,7 +24,6 @@ import { parseArgs } from './index.js';
 
 const { port, token } = parseArgs(process.argv.slice(2));
 const BASE = `http://localhost:${port}`;
-const HEALTH_URL = `${BASE}/health`;
 const MCP_URL = `${BASE}/mcp`;
 const SPAWN_IDLE_SEC = 30; // relay self-terminates 30s after we + the browser leave
 const MAX_SPAWN_WAIT_MS = 8000;
@@ -40,12 +39,26 @@ function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-async function relayAlive(): Promise<boolean> {
+const STATUS_URL = `${BASE}/status`;
+
+type RelayState = 'ready' | 'wrong-token' | 'down';
+
+/**
+ * Probe the relay *with our token*. `/health` is tokenless, so it can't tell a
+ * relay that accepts our token apart from a stale one holding the port with a
+ * different token — `/status` (authenticated) can.
+ */
+async function probeRelay(): Promise<RelayState> {
   try {
-    const res = await fetch(HEALTH_URL, { signal: AbortSignal.timeout(1500) });
-    return res.ok;
+    const res = await fetch(STATUS_URL, {
+      headers: { Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(1500),
+    });
+    if (res.ok) return 'ready';
+    if (res.status === 401) return 'wrong-token';
+    return 'down';
   } catch {
-    return false;
+    return 'down';
   }
 }
 
@@ -69,15 +82,26 @@ function spawnRelay(): void {
   child.unref(); // don't keep this bridge alive on the relay's behalf
 }
 
-/** Ensure a relay is reachable, spawning one if needed. Returns false if it never came up. */
+/** Ensure a relay we can authenticate to is reachable, spawning one if needed. */
 async function ensureRelay(): Promise<boolean> {
-  if (await relayAlive()) return true;
+  const state = await probeRelay();
+  if (state === 'ready') return true;
+  if (state === 'wrong-token') {
+    // A relay is already on this port but rejects our token — spawning a second
+    // would just hit EADDRINUSE. Tell the user how to resolve it.
+    log(
+      `A relay is already running on port ${port} but rejects this token. ` +
+        `Stop that relay, or set BROWSECORTEX_MCP_TOKEN to match the extension's ` +
+        `Auth Token (Settings → MCP server), then retry.`,
+    );
+    return false;
+  }
   spawnRelay();
   const deadline = Date.now() + MAX_SPAWN_WAIT_MS;
   let delay = 200;
   while (Date.now() < deadline) {
     await sleep(delay);
-    if (await relayAlive()) return true;
+    if ((await probeRelay()) === 'ready') return true;
     delay = Math.min(delay * 1.5, 1000);
   }
   return false;

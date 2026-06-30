@@ -1,6 +1,7 @@
 /** Hook for managing auto-scroll behavior */
 
-import { RefObject, useEffect, useState } from 'preact/hooks';
+import type { RefObject } from 'preact';
+import { useEffect, useState } from 'preact/hooks';
 
 const SCROLL_BOTTOM_THRESHOLD = 80;
 

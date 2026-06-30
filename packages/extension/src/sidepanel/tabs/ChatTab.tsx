@@ -10,7 +10,6 @@ import { Storage } from '@/storage';
 import type { Settings } from '@/types';
 import { Icon } from '@/components/Icon';
 import { ChatMessages } from '../components/chat/ChatMessages';
-import { ChatInput } from '../components/chat/ChatInput';
 import { RunStatusBar } from '../components/chat/RunStatusBar';
 import { AskUserWidget } from '../components/chat/AskUserWidget';
 import { ModelPickerPopup } from '../components/modals/ModelPickerPopup';
@@ -29,10 +28,9 @@ export interface ChatControls {
 interface Props {
   conversationId: string;
   registerControls?: (controls: ChatControls | null) => void;
-  onForked?: (newConversationId: string) => void;
 }
 
-export function ChatTab({ conversationId, registerControls, onForked }: Props) {
+export function ChatTab({ conversationId, registerControls }: Props) {
   // Extract chat logic into hook
   const {
     lines,
@@ -40,7 +38,6 @@ export function ChatTab({ conversationId, registerControls, onForked }: Props) {
     thinking,
     errored,
     ask,
-    connected,
     submit,
     retry,
     stop,

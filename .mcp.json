@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "browsecortex": {
+      "command": "node",
+      "args": [
+        "packages/relay/dist/stdio.js",
+        "--token",
+        "${BROWSECORTEX_MCP_TOKEN}",
+        "--port",
+        "${BROWSECORTEX_MCP_PORT:-7822}"
+      ]
+    }
+  }
+}
